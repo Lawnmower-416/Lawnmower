@@ -1,2 +1,4 @@
 # Lawnmower
-It's not an actual 🚜. Map Editing Toolset on the Browser
+It's not an actual 🚜. 
+
+It's a Map Editing Toolset on the 🕸 Browser 🗺
