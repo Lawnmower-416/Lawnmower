@@ -11,6 +11,25 @@ exports.Register = async(leq,les) =>  {
         lastName: sub.lastName,
         email: sub.email,
       }
+      return les.status(200).json(
+        {
+         suc:true,
+         message:'The user has successfully signed up',
+         uData
+        }
+        )
+        }
+    });
+    }
+exports.UserLogin = (leq,les) => {}
+
+
+
+
+
+
+
+
 
     }
 
