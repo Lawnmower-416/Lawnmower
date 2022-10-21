@@ -296,9 +296,10 @@ deleteAccount = async (req, res) => {
 }
 
 module.exports = {
+    loggedIn,
     login,
     logout,
-    createUser,
+    register,
     changePassword,
     deleteAccount
 }
