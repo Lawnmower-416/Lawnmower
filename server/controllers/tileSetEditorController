@@ -1,0 +1,18 @@
+const Tileset = require("../../models/tileset-schema.js");
+
+module.exports.getTilesetsForMapById = async (req, res) => {
+    const id = req.params.tilesetId;
+    await Tileset.findById(id, (err, tileset) => {
+        if(err) res.status(500).json({ success: false, errorMessage: err});
+        return res.status(200).json({ success: true, tileset: tileset});
+    });
+}
+
+module.exports.updateTileset = async (req, res) => {
+    const id = req.params.tilesetId;
+    const updatedTileset = req.body;
+    await Tileset.findOneAndUpdate({ _id: id}, updatedTileset, {new: true}, (err, tileset) => {
+        if(err) return res.status(500).json({ success: false, errorMessage: err});
+        return res.status(200).json({ success: true, tag: tileset});
+    });
+}
