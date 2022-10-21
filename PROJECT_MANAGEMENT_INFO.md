@@ -6,8 +6,10 @@ FEATURE
     - Adding a Feature/Components
 CLEAN
     - Removing Comments and Structuring Code
+    - Reorganizing folder/file structure
 UPDATE
     - Updating previously written code
+    - Can also be abstracting out code
 FIX
     - Fix a bug that was presented before
 TEST
