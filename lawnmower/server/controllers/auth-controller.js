@@ -1,9 +1,9 @@
 const {AUser} = require("../mod/usermod");
-exports.Register = async(leq,les) =>  {
-    const auser = new AUser(leq.body);
+exports.Register = async(req,res) =>  {
+    const auser = new AUser(req.body);
     await auser.save((err, sub) => {
         if(error) {
-            return les.status(422).json({errors:err})
+            return res.status(422).json({errors:err})
         
        } else {
         const uData = {
@@ -11,7 +11,7 @@ exports.Register = async(leq,les) =>  {
         lastName: sub.lastName,
         email: sub.email,
       }
-      return les.status(200).json(
+      return res.status(200).json(
         {
          suc:true,
          message:'The user has successfully signed up',
@@ -21,7 +21,7 @@ exports.Register = async(leq,les) =>  {
         }
     });
     }
-exports.UserLogin = (leq,les) => {}
+exports.UserLogin = (leq,les) => {a}
 
 
 
