@@ -12,9 +12,9 @@ FIX
 TEST
     - Writing tests
 
-# MAKE SURE THAT YOU CREATE A NEW BRANCH (WITH THE `production` BRANCH AS THE BASE) IN THE FOLLOWING FORMAT:
-<TAG> Brief Summary of Branch
+## Make Sure that you `CREATE A NEW BRANCH` (WITH THE `production` BRANCH AS THE BASE):
+## And, your branch name should be in the following format: `<TAG> Brief Summary of Branch`
 
 ### Example -> FEATURE: Adding Controllers to Backend
 
-## ALSO, ON THE GITHUB PROJECT BOARD, PUT YOUR `BRANCH_NAME` FOR THE ``TITLE`` AND USE THE ``DESCRIPTION`` TO DETAIL YOUR WORK
+## Also, on the GitHub Project Tab, PUT YOUR `BRANCH_NAME` FOR THE ``TITLE`` AND USE THE ``DESCRIPTION`` to talk about the work details
