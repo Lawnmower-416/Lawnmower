@@ -12,8 +12,8 @@ FIX
 TEST
     - Writing tests
 
-## Make Sure that you `CREATE A NEW BRANCH` (WITH THE `production` BRANCH AS THE BASE) in the following format:
-### `<TAG> Brief Summary of Branch`
+## Make Sure that you `CREATE A NEW BRANCH` (WITH THE `production` BRANCH AS THE BASE):
+## And, your branch name should be in the following format: `<TAG> Brief Summary of Branch`
 
 ### Example -> FEATURE: Adding Controllers to Backend
 
