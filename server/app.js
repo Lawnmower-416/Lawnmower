@@ -7,6 +7,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+const hostname = "0.0.0.0";
+const port = 3000;
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -16,5 +18,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+app.listen(port, hostname, () => {
+  console.log(`Listening on port ${port}`)
+});
 
 module.exports = app;
