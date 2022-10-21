@@ -2,7 +2,8 @@ name: Deploy using AWS SSM Send-Command
 on: push
 branches:
   - master
-jobs: run_script
+jobs: 
+  - job: run_script
 
 run_script:
   start: null
