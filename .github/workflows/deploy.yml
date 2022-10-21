@@ -2,7 +2,7 @@ name: AWS SSM Send-Command
 
 on:
   push:
-    branches: [master]
+    branches: [production]
 
 jobs:
   start:
