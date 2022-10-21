@@ -1,6 +1,7 @@
 # Project Management Notes
 Use the following tags for the type of work being done in Project Management:
 
+```
 FEATURE
     - Adding a Feature/Components
 CLEAN
@@ -11,6 +12,7 @@ FIX
     - Fix a bug that was presented before
 TEST
     - Writing tests
+```
 
 ## Make Sure that you `CREATE A NEW BRANCH` (WITH THE `production` BRANCH AS THE BASE):
 ## And, your branch name should be in the following format: `<TAG> Brief Summary of Branch`
