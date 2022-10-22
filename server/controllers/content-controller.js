@@ -235,3 +235,14 @@ getTilesets = async (req, res) => {
         });
     });
 }
+
+module.exports = {
+    createMap,
+    deleteMap,
+    getMapById,
+    getMaps,
+    createTileset,
+    deleteTileset,
+    getTilesetById,
+    getTilesets
+}
