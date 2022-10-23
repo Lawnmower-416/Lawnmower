@@ -12,7 +12,7 @@ createMap = async (body, userId) => {
     let newMap = new Map(body);
     if (newMap) {
         newMap.owner = userId;
-        User.findOne({ _id: userId }, (err, user) => {
+        await User.findOne({ _id: userId }, (err, user) => {
             if (err) {
                 return null;
             }
@@ -32,7 +32,7 @@ createMap = async (body, userId) => {
 }
 
 deleteMap = async (mapId, userId) => {
-    Map.findById({ _id: mapId }, (err, map) => {
+    await Map.findById({ _id: mapId }, (err, map) => {
         if (err) {
             return null;
         }
@@ -44,7 +44,7 @@ deleteMap = async (mapId, userId) => {
 }
 
 getMapById = async (mapId, userId) => {
-    let map = Map.findOne({ _id: mapId});
+    let map = await Map.findOne({ _id: mapId});
     if (!map) {
         return null;
     }
@@ -58,7 +58,7 @@ getMapById = async (mapId, userId) => {
 getMaps = async () => {
     let maps = [];
     for (let i = 0; i < user.maps.length; i++) {
-        let map = Map.findOne({ _id: user.maps[i] });
+        let map = await Map.findOne({ _id: user.maps[i] });
         if (map) {
             maps.push(map);
         }
@@ -70,7 +70,7 @@ createTileset = async (body, userId) => {
     let newTileset = new Tileset(body);
     if (newTileset) {
         newTileset.owner = userId;
-        User.findOne({ _id: userId }, (err, user) => {
+        await User.findOne({ _id: userId }, (err, user) => {
             if (err) {
                 return null;
             }
@@ -90,7 +90,7 @@ createTileset = async (body, userId) => {
 }
 
 deleteTileset = async (tilesetId, userId) => {
-    Tileset.findById({ _id: tilesetId }, (err, tileset) => {
+    await Tileset.findById({ _id: tilesetId }, (err, tileset) => {
         if (err) {
             return null;
         }
@@ -102,7 +102,7 @@ deleteTileset = async (tilesetId, userId) => {
 }
 
 getTilesetById = async (tilesetId, userId) => {
-    let tileset = Tileset.findOne({ _id: tilesetId});
+    let tileset = await Tileset.findOne({ _id: tilesetId});
     if (!tileset) {
         return null;
     }
@@ -116,7 +116,7 @@ getTilesetById = async (tilesetId, userId) => {
 getTilesets = async () => {
     let tilesets = [];
     for (let i = 0; i < user.tilesets.length; i++) {
-        let tileset = Tileset.findOne({ _id: user.tilesets[i] });
+        let tileset = await Tileset.findOne({ _id: user.tilesets[i] });
         if (tileset) {
             tilesets.push(tileset);
         }
