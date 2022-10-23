@@ -1,6 +1,6 @@
-const Map = require('../models/map-model');
-const Tileset = require('../models/tileset-model');
-const User = require('../models/user-models');
+const Map = require('../models/map-schema');
+const Tileset = require('../models/tileset-schema');
+const User = require('../models/user-schema');
 
 // content-controller-generalized.js is a generalization of database interactions
 // content-controller-generalized.js handles json req, res and calls mongoose-manager.js

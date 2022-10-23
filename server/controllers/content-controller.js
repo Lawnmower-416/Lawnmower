@@ -1,5 +1,5 @@
-const Map = require('../models/map-model');
-const Tileset = require('../models/tileset-model');
+const Map = require('../models/map-schema');
+const Tileset = require('../models/tileset-schema');
 const User = require('../models/user-schema');
 
 createMap = async (req, res) => {
