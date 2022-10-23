@@ -147,7 +147,7 @@ register = async (req, res) => {
         await res.cookie("token", token, {
             httpOnly: true,
             secure: true,
-            sameSite: "none"
+            sameSite: true
         }).status(200).json({
             success: true,
             user: {
