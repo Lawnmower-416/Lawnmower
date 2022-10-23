@@ -45,7 +45,7 @@ function getTag(req, res) {
     }
 }
 
-function updatetag(req, res) {
+function updateTag(req, res) {
     const name = req.body;
     if (!name) {
         return res.status(400).json({
@@ -68,7 +68,7 @@ function updatetag(req, res) {
     }
 }
 
-function deletetag(req, res) {
+function deleteTag(req, res) {
     const name = req.body;
     if (!name) {
         return res.status(400).json({
