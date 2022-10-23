@@ -1,4 +1,4 @@
-const databaseManager = require("AWSManager/mapeditor-controller");
+const databaseManager = require("./AWSManager/mapeditor-controller");
 
 module.exports.getMap = async (req, res) => {
     const id = req.params.mapId;

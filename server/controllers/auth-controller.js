@@ -271,11 +271,29 @@ deleteAccount = async (req, res) => {
     }
 }
 
+MapVerify = async (req, res, next) => {
+    const collaborator = this.verifyUser(req); // Returns the userId
+    if (!collaborator) return res.status(401).json({ success: false, errorMessage: "Unauthorized"})
+    const response = await Map.findOne({ _id: req.params.mapId, owner: collaborator });
+    if (response.status === 200) next(); // Pass to the next in pipeline
+    else return res.status(401).json({ success: false, errorMessage: "Unauthorized"});
+};
+
+TilesetVerify = async (req, res, next) => {
+    const collaborator = this.verifyUser(req); // Returns the userId
+    if (!collaborator) return res.status(401).json({ success: false, errorMessage: "Unauthorized"})
+    const response = await Tileset.findOne({ _id: req.params.mapId, owner: collaborator });
+    if (response.status === 200) next(); // Pass to the next in pipeline
+    else return res.status(401).json({ success: false, errorMessage: "Unauthorized"});
+};
+
 module.exports = {
     loggedIn,
     login,
     logout,
     register,
     changePassword,
-    deleteAccount
+    deleteAccount,
+    MapVerify,
+    TilesetVerify
 }

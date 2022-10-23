@@ -6,8 +6,7 @@ const logger = require('morgan');
 const authRouter = require('./routes/auth-router');
 const contentRouter = require('./routes/content-router');
 const mapTileRouter = require('./routes/map-tile-router');
-const tilesetRouter = require('./routes/tileset-router');
-
+// const tilesetRouter = require('./routes/tileset-router');
 const testRouter = require('./routes/test-router');
 
 const app = express();
@@ -21,7 +20,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', authRouter);
-app.use('/', usersRouter);
+app.use('/', contentRouter);
+// app.use('/', userRouter);
 app.use('/', mapTileRouter);
 app.use('/test', testRouter);
 
