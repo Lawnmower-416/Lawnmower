@@ -12,7 +12,7 @@ createMap = async (body, userId) => {
     let newMap = new Map(body);
     if (newMap) {
         newMap.owner = userId;
-        await User.findOne({ _id: userId }, (err, user) => {
+        User.findOne({ _id: userId }, (err, user) => {
             if (err) {
                 return null;
             }
@@ -65,7 +65,7 @@ createTileset = async (body, userId) => {
     let newTileset = new Tileset(body);
     if (newTileset) {
         newTileset.owner = userId;
-        await User.findOne({ _id: userId }, (err, user) => {
+        User.findOne({ _id: userId }, (err, user) => {
             if (err) {
                 return null;
             }
