@@ -7,7 +7,7 @@ function createTag(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     }
-    let newTag = databaseManager.createTag(name, req.user._id);
+    let newTag = databaseManager.createTag(name, req.tagId);
     if (newTag) {
         return res.status(200).json({
             successMessage: 'Tag created',
@@ -48,7 +48,7 @@ function updatetag(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let tag = databaseManager.updateTag(body, req.user._id);
+        let tag = databaseManager.updateTag(body, req.tagId);
         if (tag) {
             return res.status(200).json({
                 successMessage: 'tag updated',
@@ -69,7 +69,7 @@ function deletetag(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let tag = databaseManager.deletetag(body, req.user._id);
+        let tag = databaseManager.deletetag(body, req.tagId);
         if (tag) {
             return res.status(200).json({
                 successMessage: 'tag deleted',
