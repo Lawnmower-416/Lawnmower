@@ -48,7 +48,7 @@ function authManager() {
         }, process.env.JWT_SECRET);
     }
 
-    const verifyByType = async (type, req, res) => {
+    verifyByType = async (type, req, res) => {
         // Check to see if the user performing the change is a collaborator
         const collaborator = this.verifyUser(req); // Returns the userId
         if (!collaborator) return res.status(401).json({ success: false, errorMessage: "Unauthorized"})
