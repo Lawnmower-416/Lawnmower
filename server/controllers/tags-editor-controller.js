@@ -1,7 +1,7 @@
 const databaseManager = require("AWSManager/tagseditor-controller");
 
 function createTag(req, res) {
-    const {name} = req.body;
+    const name = req.body;
     if (!name) {
         return res.status(400).json({
             errorMessage: 'Improperly formatted request'
@@ -27,7 +27,7 @@ function getTag(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let tag = databaseManager.getTag(body, req.tagId);
+        let tag = databaseManager.getTag(name, req.tagId);
         if (tag) {
             return res.status(200).json({
                 successMessage: 'Tag found',
@@ -48,7 +48,7 @@ function updatetag(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let tag = databaseManager.updateTag(body, req.tagId);
+        let tag = databaseManager.updateTag(name, req.tagId);
         if (tag) {
             return res.status(200).json({
                 successMessage: 'tag updated',
