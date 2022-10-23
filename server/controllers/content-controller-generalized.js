@@ -2,8 +2,8 @@ const databaseManager= require('../controllers/AWSManager/mongoose-manager');
 // this controller is generalized to work with any db
 
 function createMap(req, res) {
-    const body = req.body;
-    if (!body) {
+    const {owner, title, height, width, tileSize} = req.body;
+    if (!owner || !title || !height || !width || !tileSize) {
         return res.status(400).json({
             errorMessage: 'Improperly formatted request'
         });
