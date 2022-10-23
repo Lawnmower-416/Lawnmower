@@ -8,7 +8,7 @@ function createMap(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     }
-    let newMap = databaseManager.createMap(body, req.user._id);
+    let newMap = databaseManager.createMap(body, req.userId);
     if (newMap) {
         return res.status(200).json({
             successMessage: 'Map created',
@@ -22,7 +22,7 @@ function createMap(req, res) {
 }
 
 function deleteMap(req, res) {
-    let map = databaseManager.deleteMap(req.params.mapId, req.user._id);
+    let map = databaseManager.deleteMap(req.params.mapId, req.userId);
     if (map) {
         return res.status(200).json({
             successMessage: 'Map deleted',
@@ -36,7 +36,7 @@ function deleteMap(req, res) {
 }
 
 function getMapById(req, res) {
-    let map = databaseManager.getMapById(req.params.mapId, req.user._id);
+    let map = databaseManager.getMapById(req.params.mapId, req.userId);
     if (map) {
         return res.status(200).json({
             map: map
@@ -48,7 +48,7 @@ function getMapById(req, res) {
 }
 
 function getMaps(req, res) {
-    let maps = databaseManager.getMaps(req.user._id);
+    let maps = databaseManager.getMaps(req.userId);
     if (maps) {
         return res.status(200).json({
             maps: maps
@@ -66,7 +66,7 @@ function createTileset(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     }
-    let newTileset = databaseManager.createTileset(body, req.user._id);
+    let newTileset = databaseManager.createTileset(body, req.userId);
     if (newTileset) {
         return res.status(200).json({
             successMessage: 'Tileset created',
@@ -80,7 +80,7 @@ function createTileset(req, res) {
 }
 
 function deleteTileset(req, res) {
-    let tileset = databaseManager.deleteTileset(req.params.tilesetId, req.user._id);
+    let tileset = databaseManager.deleteTileset(req.params.tilesetId, req.userId);
     if (tileset) {
         return res.status(200).json({
             successMessage: 'Tileset deleted',
@@ -94,7 +94,7 @@ function deleteTileset(req, res) {
 }
 
 function getTilesetById(req, res) {
-    let tileset = databaseManager.getTilesetById(req.params.tilesetId, req.user._id);
+    let tileset = databaseManager.getTilesetById(req.params.tilesetId, req.userId);
     if (tileset) {
         return res.status(200).json({
             tileset: tileset
@@ -106,7 +106,7 @@ function getTilesetById(req, res) {
 }
 
 function getTilesets(req, res) {
-    let tilesets = databaseManager.getTilesets(req.user._id);
+    let tilesets = databaseManager.getTilesets(req.userId);
     if (tilesets) {
         return res.status(200).json({
             tilesets: tilesets

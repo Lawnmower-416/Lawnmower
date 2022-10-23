@@ -8,7 +8,7 @@ function createLayer(req, res) {
             error: 'Improperly formatted request',
         })
     }
-    let newLayer = databaseManager.createLayer(body, req.user._id)
+    let newLayer = databaseManager.createLayer(body, req.userId)
     if (newLayer) {
         return res.status(200).json({
             success: true,
@@ -29,7 +29,7 @@ function deleteLayer(req, res) {
             error: 'Improperly formatted request'
         })
     }
-    let layer = databaseManager.deleteLayer(req.params.layerId, req.user._id)
+    let layer = databaseManager.deleteLayer(req.params.layerId, req.userId)
     if (layer) {
         return res.status(200).json({
             success: true,
@@ -50,7 +50,7 @@ function getLayer(req, res) {
             error: 'Improperly formatted request'
         })
     }
-    let layer = databaseManager.getLayer(req.params.layerId, req.user._id)
+    let layer = databaseManager.getLayer(req.params.layerId, req.userId)
     if (layer) {
         return res.status(200).json({
             success: true,
@@ -71,7 +71,7 @@ function updateLayer(req, res) {
             error: 'Improperly formatted request'
         })
     }
-    let layer = databaseManager.updateLayer(req.params.layerId, req.user._id, body)
+    let layer = databaseManager.updateLayer(req.params.layerId, req.userId, body)
     if (layer) {
         return res.status(200).json({
             success: true,
