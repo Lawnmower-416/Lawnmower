@@ -83,3 +83,10 @@ function updateLayer(req, res) {
         error: 'Layer not found'
     })
 }
+
+module.exports = {
+    createLayer,
+    deleteLayer,
+    getLayer,
+    updateLayer
+}
