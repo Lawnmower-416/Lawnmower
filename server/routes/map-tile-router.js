@@ -5,14 +5,14 @@ const MapEditorController = require('../controllers/map-editor-controller')
 const TilesetEditorController = require('../controllers/tileset-editor-controller')
 const LayerEditorController = require('../controllers/layer-editor-controller')
 const PropertyEditorController = require('../controllers/property-editor-controller')
-const TagsController = require('../controllers/tags-controller')
+const TagsController = require('../controllers/tags-editor-controller')
 
 // gets all basic info about a map needed for editing
 router.get('/map/:mapId', auth.MapVerify.verify, MapEditorController.getMap)
 // Handles update a map in the database request
 router.put('/map/:mapId', auth.MapVerify.verify, MapEditorController.updateMap)
 // Gets all tilesets for the maps
-router.get('/map/:mapId/tilesets', auth.TilesetVerify.verify, TilesetEditorController.getTilesetsForById)
+router.get('/map/:mapId/tilesets', auth.TilesetVerify.verify, TilesetEditorController.getTilesetsForMapById)
 // Hanldes update a tileset in the database request
 router.put('/map/:mapId/tileset/:tilesetId', auth.TilesetVerify.verify, TilesetEditorController.updateTileset)
 
@@ -29,7 +29,7 @@ router.put('/map/:mapId/layer/:layerId/property/:propertyId', auth.MapVerify.ver
 router.delete('/map/:mapId/layer/:layerId/property/:propertyId', auth.MapVerify.verify, PropertyEditorController.deleteProperty)
 
 // Tag Routes
-router.get('/tags', auth.verify, TagsController.getTags)
+router.get('/tags', auth.verify, TagsController.getTag)
 router.post('/tag/:tagId', auth.verify, TagsController.createTag)
 router.put('/tag/:tagId', auth.verify, TagsController.updateTag)
 // ability to delete tag is for backend admins only
