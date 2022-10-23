@@ -25,6 +25,10 @@ app.use('/', contentRouter);
 app.use('/', mapTileRouter);
 app.use('/test', testRouter);
 
+// INITIALIZE OUR DATABASE OBJECT
+const db = require('./db');
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 app.listen(port, hostname, () => {
   console.log(`Listening on port ${port}`)
 });
