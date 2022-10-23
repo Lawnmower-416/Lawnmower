@@ -11,7 +11,7 @@ function createProperty(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     }
-    let newProperty = databaseManager.createProperty(body, req.user._id);
+    let newProperty = databaseManager.createProperty(body, req.userId);
     if (newProperty) {
         return res.status(200).json({
             successMessage: 'Property created',
@@ -31,7 +31,7 @@ function getProperty(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let property = databaseManager.getProperty(body, req.user._id);
+        let property = databaseManager.getProperty(body, req.userId);
         if (property) {
             return res.status(200).json({
                 successMessage: 'Property found',
@@ -52,7 +52,7 @@ function updateProperty(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let property = databaseManager.updateProperty(body, req.user._id);
+        let property = databaseManager.updateProperty(body, req.userId);
         if (property) {
             return res.status(200).json({
                 successMessage: 'Property updated',
@@ -73,7 +73,7 @@ function deleteProperty(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let property = databaseManager.deleteProperty(body, req.user._id);
+        let property = databaseManager.deleteProperty(body, req.userId);
         if (property) {
             return res.status(200).json({
                 successMessage: 'Property deleted',

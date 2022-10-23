@@ -17,7 +17,7 @@ createMap = async (req, res) => {
         });
     }
 
-    User.findOne({ _id: req.user._id }, (err, user) => {
+    User.findOne({ _id: req.userId }, (err, user) => {
         user.maps.push(map);
         user
             .save()
@@ -53,7 +53,7 @@ deleteMap = async (req, res) => {
             });
         }
 
-        User.findOne({ _id: req.user._id }, (err, user) => {
+        User.findOne({ _id: req.userId }, (err, user) => {
             user.maps.pull(map);
             user
                 .save()
@@ -94,7 +94,7 @@ getMapById = async (req, res) => {
             });
         }
 
-        if (map.public == false && req.user._id !== map.owner) {
+        if (map.public == false && req.userId !== map.owner) {
             return res.status(401).json({
                 errorMessage: 'Unauthorized'
             });
@@ -134,7 +134,7 @@ createTileset = async (req, res) => {
         });
     }
 
-    User.findOne({ _id: req.user._id }, (err, user) => {
+    User.findOne({ _id: req.userId }, (err, user) => {
         user.tilesets.push(tileset);
         user
             .save()
@@ -170,7 +170,7 @@ deleteTileset = async (req, res) => {
             });
         }
 
-        User.findOne({ _id: req.user._id }, (err, user) => {
+        User.findOne({ _id: req.userId }, (err, user) => {
             user.tilesets.pull(tileset);
             user
                 .save()
@@ -211,7 +211,7 @@ getTilesetById = async (req, res) => {
             });
         }
 
-        if (tileset.public == false && req.user._id !== tileset.owner) {
+        if (tileset.public == false && req.userId !== tileset.owner) {
             return res.status(401).json({
                 errorMessage: 'Unauthorized'
             });
