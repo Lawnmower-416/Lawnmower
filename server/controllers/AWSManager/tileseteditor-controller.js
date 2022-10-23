@@ -1,12 +1,10 @@
 const Tileset = require("../../models/tileset-schema.js");
 
 module.exports.createTileset = async (req,res) => {
-    console.log(req.body)
     db.TileSet.create({
         name: req.body.name,
         thumbnail_url: req.body.thumbnail_url
     }).then(function (data) {
-        console.log(data)
         res.json(data)
     }).catch(function (error) {
         res.status(500).json(error)
@@ -25,7 +23,6 @@ module.exports.getAllTilesets = async (req,res) => {
     db.TileSet.findAll({}).then((TileSets) => {
         res.json(TileSets)
     }).catch(error => {
-        console.log(error.message);
         res.status(500).send(error.message)
     })
 }
