@@ -1,7 +1,7 @@
 const databaseManager = require("AWSManager/tagseditor-controller");
 
 function createTag(req, res) {
-    const name = req.body;
+    const {name} = req.body;
     if (!name) {
         return res.status(400).json({
             errorMessage: 'Improperly formatted request'
@@ -10,12 +10,11 @@ function createTag(req, res) {
     let newTag = databaseManager.createTag(name, req.tagId);
     if (newTag) {
         return res.status(200).json({
-            successMessage: 'Tag created',
-            tag: newtag
+            success:true
         });
     } else {
         return res.status(400).json({
-            errorMessage: 'Unable to create tag'
+            success:false, errorMessage: "Unable to create tag"
         });
     }
 }
@@ -30,12 +29,11 @@ function getTag(req, res) {
         let tag = databaseManager.getTag(name, req.tagId);
         if (tag) {
             return res.status(200).json({
-                successMessage: 'Tag found',
-                tag: tag
+                success:true
             });
         } else {
             return res.status(400).json({
-                errorMessage: 'Unable to find tag'
+                success:false, errorMessage: "Unable to find tag"
             });
         }
     }
@@ -51,12 +49,11 @@ function updatetag(req, res) {
         let tag = databaseManager.updateTag(name, req.tagId);
         if (tag) {
             return res.status(200).json({
-                successMessage: 'tag updated',
-                tag: tag
+                success:true
             });
         } else {
             return res.status(400).json({
-                errorMessage: 'Unable to update tag'
+                success:false, errorMessage: "Unable to update tag"
             });
         }
     }
@@ -72,12 +69,11 @@ function deletetag(req, res) {
         let tag = databaseManager.deletetag(body, req.tagId);
         if (tag) {
             return res.status(200).json({
-                successMessage: 'tag deleted',
-                tag: tag
+                success:true
             });
         } else {
             return res.status(400).json({
-                errorMessage: 'Unable to delete tag'
+                success:false, errorMessage: 'Unable to delete tag'
             });
         }
     }
