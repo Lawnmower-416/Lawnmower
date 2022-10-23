@@ -1,63 +1,62 @@
-const Tileset = require("../../models/tileset-schema.js");
+const Tileset = require("../../models/tileset-schema");
+const Map = require("../../models/map-schema");
 
-module.exports.createTileset = async (req,res) => {
-    db.TileSet.create({
-        name: req.body.name,
-        thumbnail_url: req.body.thumbnail_url
+module.exports.createTileset = async (body) => {
+    await Tileset.create({
+        name: body.name,
+        thumbnail_url: body.thumbnail_url
     }).then(function (data) {
-        res.json(data)
+        return data;
     }).catch(function (error) {
-        res.status(500).json(error)
+        return null;
     });
+    return null;
 }
 
-module.exports.getTilesetsForMapById = async (req, res) => {
-    const id = req.params.tilesetId;
-    await Tileset.findById(id, (err, tileset) => {
-        if(err) res.status(500).json({ success: false, errorMessage: err});
-        return res.status(200).json({ success: true, tileset: tileset});
+module.exports.getTilesetsForMapById = async (mapId) => {
+    await Map.find({ _id: mapId }, (err, map) => {
+        if(err) return null;
+        return map.tilesets;
     });
+    return null;
 }
 
-module.exports.getAllTilesets = async (req,res) => {
-    db.TileSet.findAll({}).then((TileSets) => {
-        res.json(TileSets)
+module.exports.getAllTilesets = async () => {
+    await Tileset.findAll({}).then((Tilesets) => {
+        return Tilesets;
     }).catch(error => {
-        res.status(500).send(error.message)
-    })
-}
-
-
-module.exports.getATileset = async (req,res) => {
-    db.TileSet.findOne({
-        where: {
-            name: req.params.name
-        }
-    }).then(function (singleTileSet) {
-        res.send(singleTileSet)
-    }).catch(error => {
-        res.status(500).send(error.message)
-    })
-}
-
-module.exports.updateTileset = async (req, res) => {
-    const id = req.params.tilesetId;
-    const updatedTileset = req.body;
-    await Tileset.findOneAndUpdate({ _id: id}, updatedTileset, {new: true}, (err, tileset) => {
-        if(err) return res.status(500).json({ success: false, errorMessage: err});
-        return res.status(200).json({ success: true, tag: tileset});
+        return null;
     });
+    return null;
 }
 
-module.exports.deleteTileset = async (req, res) => {
-    db.TileSet.destroy({
-        where: {
-            id: req.params.id
-        }
-    }).then(function (deleteTileSet) {
-        res.json(deleteTileSet)
+module.exports.getATileset = async (tilesetId) => { 
+    await Tileset.findOne({
+        _id: tilesetId
+    }).then(function (singleTileset) {
+        return singleTileset;
     }).catch(error => {
-        res.status(500).send(error.message)
-    })
+        return null;
+    });
+    return null;
+}
+
+module.exports.updateTileset = async (tilesetId , updatedTileset) => {
+    await Tileset.findOneAndUpdate({ _id: tilesetId}, updatedTileset, {new: true}, (err, tileset) => {
+        if(err) return null;
+        return tileset;
+    });
+    return null;
+}
+
+module.exports.deleteTileset = async (tilesetId) => {
+    await Tileset.findOneAndDelete({
+        id: tilesetId
+    }).then(function (deleteTileset) {
+        return deleteTileset;
+    }).catch(error => {
+        return null;
+    });
+    return null;
 }
 
