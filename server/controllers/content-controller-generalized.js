@@ -3,6 +3,7 @@ const databaseManager= require('../controllers/AWSManager/mongoose-manager');
 
 function createMap(req, res) {
     const {owner, title, height, width, tileSize} = req.body;
+    const body = {owner, title, height, width, tileSize};
     if (!owner || !title || !height || !width || !tileSize) {
         return res.status(400).json({
             errorMessage: 'Improperly formatted request'
