@@ -1,4 +1,4 @@
-const Layer = require("../../models/layer-schema.js");
+const Layer = require("../../models/layer-schema");
 
 module.exports.createLayer = async (layer, user_id) => {
     if (!layer) return null;

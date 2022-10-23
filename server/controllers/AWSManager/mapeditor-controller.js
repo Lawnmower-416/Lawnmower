@@ -1,4 +1,4 @@
-const Map = require("../../models/map-schema.js");
+const Map = require("../../models/map-schema");
 
 module.exports.getMap = async (mapId) => {
     await Map.findById(mapId, (err, map) => {
