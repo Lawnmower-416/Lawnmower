@@ -63,13 +63,13 @@ function authManager() {
         }
     }
 
-    Map = (req, res) => {
+    MapVerify = (req, res) => {
         verify = (req, res) => {
             return verifyByType('map', req, res);
         };
     };
 
-    Tileset = (req, res) => {
+    TilesetVerify = (req, res) => {
         verify = (req, res) => {
             return verifyByType('tileset', req, res);
         };
