@@ -36,7 +36,7 @@ login = async (req, res) => {
         if (!email || !password) {
             return res
                 .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
+                .json({ success: false, errorMessage: "Please enter all required fields." });
         }
 
         const existingUser = await User.findOne({ email: email });
@@ -44,6 +44,7 @@ login = async (req, res) => {
             return res
                 .status(401)
                 .json({
+                    success: false,
                     errorMessage: "Wrong username or password provided."
                 })
         }
@@ -53,6 +54,7 @@ login = async (req, res) => {
             return res
                 .status(401)
                 .json({
+                    success: false,
                     errorMessage: "Wrong email or password provided."
                 })
         }
@@ -74,8 +76,8 @@ login = async (req, res) => {
         })
 
     } catch (err) {
-        console.error(err);
-        res.status(500).send();
+        // console.error(err);
+        return res.status({ success: false, errorMessage: err});
     }
 }
 
@@ -86,10 +88,10 @@ logout = async (req, res) => {
             expires: new Date(0),
             secure: true,
             sameSite: true
-        }).send();
+        }).json({ success: true, message: "Logged Out" });
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        res.status(500).json({ success: false, errorMessage: err })
     }
 }
 
@@ -99,7 +101,7 @@ register = async (req, res) => {
         if (!firstName || !lastName || !email || !password || !passwordVerify) {
             return res
                 .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
+                .json({ success: false, errorMessage: "Please enter all required fields." });
         }
 
         if (password.length < 8) {
@@ -114,6 +116,7 @@ register = async (req, res) => {
             return res
                 .status(400)
                 .json({
+                    success: false,
                     errorMessage: "Please enter the same password twice."
                 })
         }
@@ -144,7 +147,7 @@ register = async (req, res) => {
         await res.cookie("token", token, {
             httpOnly: true,
             secure: true,
-            sameSite: "none"
+            sameSite: true
         }).status(200).json({
             success: true,
             user: {
@@ -152,7 +155,7 @@ register = async (req, res) => {
                 lastName: savedUser.lastName,  
                 email: savedUser.email              
             }
-        })
+        });
     } catch (err) {
         return res.status(500).json({ success: false, errorMessage: err });
     }
@@ -207,14 +210,14 @@ changePassword = async (req, res) => {
         const passwordHash = await bcrypt.hash(password, salt);
 
         const updatedUser = await User.findOneAndUpdate({ _id: userId }, { passwordHash: passwordHash });
-        
+
         // LOGIN THE USER
         const token = auth.signToken(updatedUser._id);
         
         await res.cookie("token", token, {
             httpOnly: true,
             secure: true,
-            sameSite: "none"
+            sameSite: true
         }).status(200).json({
             success: true,
             user: {
