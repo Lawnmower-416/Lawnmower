@@ -1,4 +1,4 @@
-const databaseManager= require('../database/mongoose-manager');
+const databaseManager= require('../controllers/AWSManager/mongoose-manager');
 // this controller is generalized to work with any db
 
 function createMap(req, res) {
