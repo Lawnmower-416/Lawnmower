@@ -1,6 +1,6 @@
-const Map = require('../models/map-model');
-const Tileset = require('../models/tileset-model');
-const User = require('../models/user-model');
+const Map = require('../models/map-schema');
+const Tileset = require('../models/tileset-schema');
+const User = require('../models/user-schema');
 
 createMap = async (req, res) => {
     const body = req.body;
