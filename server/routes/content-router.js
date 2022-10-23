@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const auth = require('../auth')
-const ContentController = require('../controllers/content-controller')
+const ContentController = require('../controllers/content-controller-generalized')
 
 router.post('/map', auth.verify, ContentController.createMap)
 router.delete('/map/:mapId', auth.verify, ContentController.deleteMap)
