@@ -154,7 +154,7 @@ register = async (req, res) => {
             }
         })
     } catch (err) {
-        res.status(500).send();
+        return res.status(500).json({ success: false, errorMessage: err });
     }
 }
 
