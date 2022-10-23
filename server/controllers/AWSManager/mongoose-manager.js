@@ -16,17 +16,12 @@ createMap = async (body, userId) => {
             if (err) {
                 return null;
             }
-            user.maps.push(newMap._id);
-            user
-                .save()
-                .then(() => {
-                    newMap.save();
-                    return newMap;
-                })
-                .catch((err) => {
-                    return null;
-                }
-            );
+            newMap.save().then((map) => {
+                user.maps.push(map._id);
+                user.save().then(() => {return map;})
+                    .catch(err => {return null;})
+            }).catch(err => {return null;})
+           
         });
     }       
 }
@@ -74,17 +69,11 @@ createTileset = async (body, userId) => {
             if (err) {
                 return null;
             }
-            user.tilesets.push(newTileset._id);
-            user
-                .save()
-                .then(() => {
-                    newTileset.save();
-                    return newTileset;
-                })
-                .catch((err) => {
-                    return null;
-                }
-            );
+            newTileset.save().then((tileset) => {
+                user.tilesets.push(tileset._id);
+                user.save().then(() => {return tileset;})
+                    .catch(err => {return null;})
+            }).catch(err => {return null;})
         });
     }
 }
