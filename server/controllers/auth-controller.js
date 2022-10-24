@@ -1,5 +1,7 @@
 const auth = require('../auth')
-const User = require('../models/user-schema')
+const Map = require('../models/map-schema');
+const Tileset = require('../models/tileset-schema');
+const User = require('../models/user-schema');
 const bcrypt = require('bcryptjs');
 
 loggedIn = async (req, res) => {
@@ -275,18 +277,29 @@ deleteAccount = async (req, res) => {
 }
 
 MapVerify = async (req, res, next) => {
-    const collaborator = this.verifyUser(req); // Returns the userId
-    if (!collaborator) return res.status(401).json({ success: false, errorMessage: "Unauthorized"})
-    const response = await Map.findOne({ _id: req.params.mapId, owner: collaborator });
-    if (response.status === 200) next(); // Pass to the next in pipeline
+    const collaborator = auth.verifyUser(req); // Returns the userId
+    if (!collaborator) {
+        return res.status(401).json({ success: false, errorMessage: "Unauthorized"});
+    }
+    const response = await Map.findOne({ _id: req.params.mapId, $or: [{owner: collaborator}, {collaborators: collaborator }] });
+    if (response) {
+        req.userId = collaborator;
+        next(); // Pass to the next in pipeline
+    }
     else return res.status(401).json({ success: false, errorMessage: "Unauthorized"});
 };
 
 TilesetVerify = async (req, res, next) => {
-    const collaborator = this.verifyUser(req); // Returns the userId
-    if (!collaborator) return res.status(401).json({ success: false, errorMessage: "Unauthorized"})
-    const response = await Tileset.findOne({ _id: req.params.mapId, owner: collaborator });
-    if (response.status === 200) next(); // Pass to the next in pipeline
+    const collaborator = auth.verifyUser(req); // Returns the userId
+    if (!collaborator) {
+        return res.status(401).json({ success: false, errorMessage: "Unauthorized"});
+    }
+    const response = await Tileset.findOne({ _id: req.params.tilesetId, $or: [{owner: collaborator}, {collaborators: collaborator }] });
+    console.log("resposne", response);
+    if (response) {
+        req.userId = collaborator;
+        next(); // Pass to the next in pipeline
+    }
     else return res.status(401).json({ success: false, errorMessage: "Unauthorized"});
 };
 

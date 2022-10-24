@@ -9,112 +9,141 @@ function createMap(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     }
-    let newMap = databaseManager.createMap(body, req.userId);
-    if (newMap) {
-        return res.status(200).json({
-            successMessage: 'Map created',
-            map: newMap
-        });
-    } else {
-        return res.status(400).json({
-            errorMessage: 'Unable to create map'
-        });
+    let newMap;
+    databaseManager.createMap(body, req.userId).then((map) => 
+    {
+        newMap = map;
+        if (newMap) {
+            return res.status(200).json({
+                successMessage: 'Map created',
+                map: newMap
+            });
+        } else {
+            return res.status(400).json({
+                errorMessage: 'Unable to create map'
+            });
+        }
     }
+    );
 }
 
 function deleteMap(req, res) {
-    let map = databaseManager.deleteMap(req.params.mapId, req.userId);
-    if (map) {
-        return res.status(200).json({
-            successMessage: 'Map deleted',
-            map: map
-        });
-    } else {
-        return res.status(400).json({
-            errorMessage: 'Unable to delete map'
-        });
-    }
+    databaseManager.deleteMap(req.params.mapId, req.userId).then((deletedMap) => {;
+        if (deletedMap) {
+            return res.status(200).json({
+                successMessage: 'Map deleted',
+                map: deletedMap
+            });
+        } else {
+            return res.status(400).json({
+                errorMessage: 'Unable to delete map'
+            });
+        }
+    }).catch(err => res.status(400).json({
+        success: false,
+        errorMessage: err
+    }));
 }
 
 function getMapById(req, res) {
-    let map = databaseManager.getMapById(req.params.mapId, req.userId);
-    if (map) {
-        return res.status(200).json({
-            map: map
+    databaseManager.getMapById(req.params.mapId, req.userId).then((map) => {
+        if (map) {
+            return res.status(200).json({
+                success:true,
+                map: map
+            });
+        }
+        return res.status(404).json({
+            success:false,
+            errorMessage: 'Map not found'
         });
-    }
-    return res.status(404).json({
-        errorMessage: 'Map not found'
     });
 }
 
+// only get public maps for community page viewing
 function getMaps(req, res) {
-    let maps = databaseManager.getMaps(req.userId);
-    if (maps) {
-        return res.status(200).json({
-            maps: maps
+    databaseManager.getMaps().then((maps) => {;
+        if (maps) {
+            return res.status(200).json({
+                success: true,
+                maps: maps
+            });
+        }
+        return res.status(404).json({
+            success: false,
+            errorMessage: 'Maps not found'
         });
-    }
-    return res.status(404).json({
-        errorMessage: 'Maps not found'
     });
 }
 
 function createTileset(req, res) {
-    const body = req.body;
-    if (!body) {
+    const {owner, title, tileSize} = req.body;
+    const body = {owner, title, tileSize};
+    if (!owner || !title || !tileSize) {
         return res.status(400).json({
             errorMessage: 'Improperly formatted request'
         });
     }
-    let newTileset = databaseManager.createTileset(body, req.userId);
-    if (newTileset) {
-        return res.status(200).json({
-            successMessage: 'Tileset created',
-            tileset: newTileset
-        });
-    } else {
-        return res.status(400).json({
-            errorMessage: 'Unable to create tileset'
-        });
-    }
-}
-
-function deleteTileset(req, res) {
-    let tileset = databaseManager.deleteTileset(req.params.tilesetId, req.userId);
-    if (tileset) {
-        return res.status(200).json({
-            successMessage: 'Tileset deleted',
-            tileset: tileset
-        });
-    } else {
-        return res.status(400).json({
-            errorMessage: 'Unable to delete tileset'
-        });
-    }
-}
-
-function getTilesetById(req, res) {
-    let tileset = databaseManager.getTilesetById(req.params.tilesetId, req.userId);
-    if (tileset) {
-        return res.status(200).json({
-            tileset: tileset
-        });
-    }
-    return res.status(404).json({
-        errorMessage: 'Tileset not found'
+    databaseManager.createTileset(body, req.userId).then((tileset) => {
+        if (tileset) {
+            return res.status(200).json({
+                successMessage: 'Tileset created',
+                tileset: tileset
+            });
+        } else {
+            return res.status(400).json({
+                errorMessage: 'Unable to create tileset'
+            });
+        }
     });
 }
 
-function getTilesets(req, res) {
-    let tilesets = databaseManager.getTilesets(req.userId);
-    if (tilesets) {
-        return res.status(200).json({
-            tilesets: tilesets
+function deleteTileset(req, res) {
+    databaseManager.deleteTileset(req.params.tilesetId, req.userId).then((deletedTileset) => {
+        if (deletedTileset) {
+            return res.status(200).json({
+                message: 'Tileset deleted',
+                tileset: deletedTileset,
+                success: true
+            });
+        } else {
+            return res.status(400).json({
+                success: false,
+                errorMessage: 'Unable to delete tileset'
+            });
+        }
+    }).catch(err => res.status(400).json({
+        success: false,
+        errorMessage: err
+    }));
+}
+
+function getTilesetById(req, res) {
+    databaseManager.getTilesetById(req.params.tilesetId, req.userId).then((tileset) => {
+        if (tileset) {
+            return res.status(200).json({
+                success: true,
+                tileset: tileset
+            });
+        }
+        return res.status(404).json({
+            errorMessage: 'Tileset not found',
+            success: false
         });
-    }
-    return res.status(404).json({
-        errorMessage: 'Tilesets not found'
+    });
+}
+
+// only get public tilesets for community page viewing
+function getTilesets(req, res) {
+    databaseManager.getTilesets().then((tilesets) => {
+        if (tilesets) {
+            return res.status(200).json({
+                tilesets: tilesets
+            });
+        }
+        return res.status(404).json({
+            errorMessage: 'Tilesets not found'
+        });
     });
 }
 

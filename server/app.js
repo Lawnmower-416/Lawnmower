@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const dotenv = require('dotenv');
 
 const authRouter = require('./routes/auth-router');
 const contentRouter = require('./routes/content-router');
@@ -9,6 +10,7 @@ const mapTileRouter = require('./routes/map-tile-router');
 // const tilesetRouter = require('./routes/tileset-router');
 const testRouter = require('./routes/test-router');
 
+dotenv.config();
 const app = express();
 const hostname = "0.0.0.0";
 const port = 3000;
@@ -22,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auth', authRouter);
 app.use('/', contentRouter);
 // app.use('/', userRouter);
-app.use('/', mapTileRouter);
+app.use('/editor/', mapTileRouter);
 app.use('/test', testRouter);
 
 // INITIALIZE OUR DATABASE OBJECT

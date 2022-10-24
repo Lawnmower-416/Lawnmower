@@ -5,23 +5,26 @@
 const databaseManager = require('./AWSManager/propertyeditor-controller.js');
 
 function createProperty(req, res) {
-    const body = req.body;
-    if (!body) {
+    const {name} = req.body;
+    if (!name) {
         return res.status(400).json({
             errorMessage: 'Improperly formatted request'
         });
     }
-    let newProperty = databaseManager.createProperty(body, req.userId);
-    if (newProperty) {
-        return res.status(200).json({
-            successMessage: 'Property created',
-            property: newProperty
-        });
-    } else {
-        return res.status(400).json({
-            errorMessage: 'Unable to create property'
-        });
-    }
+
+    databaseManager.createProperty(name, req.params.layerId).then((newProperty) => {
+        if (newProperty) {
+            return res.status(200).json({
+                successMessage: 'Property created',
+                property: newProperty
+            });
+        } else {
+            return res.status(400).json({
+                errorMessage: 'Unable to create property'
+            });
+        }
+    });
+    
 }
 
 function getProperty(req, res) {
@@ -31,17 +34,18 @@ function getProperty(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let property = databaseManager.getProperty(body, req.userId);
-        if (property) {
-            return res.status(200).json({
-                successMessage: 'Property found',
-                property: property
-            });
-        } else {
-            return res.status(400).json({
-                errorMessage: 'Unable to find property'
-            });
-        }
+        databaseManager.getProperty(req.params.propertyId).then((property) => {
+            if (property) {
+                return res.status(200).json({
+                    success: true,
+                    property: property
+                });
+            } else {
+                return res.status(400).json({
+                    errorMessage: 'Unable to find property'
+                });
+            }
+        });
     }
 }
 
@@ -52,17 +56,18 @@ function updateProperty(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let property = databaseManager.updateProperty(body, req.userId);
-        if (property) {
-            return res.status(200).json({
-                successMessage: 'Property updated',
-                property: property
-            });
-        } else {
-            return res.status(400).json({
-                errorMessage: 'Unable to update property'
-            });
-        }
+        databaseManager.updateProperty(body, req.params.propertyId).then((property) => {
+            if (property) {
+                return res.status(200).json({
+                    successMessage: 'Property updated',
+                    property: property
+                });
+            } else {
+                return res.status(400).json({
+                    errorMessage: 'Unable to update property'
+                });
+            }
+        });
     }
 }
 
@@ -73,17 +78,18 @@ function deleteProperty(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let property = databaseManager.deleteProperty(body, req.userId);
-        if (property) {
-            return res.status(200).json({
-                successMessage: 'Property deleted',
-                property: property
-            });
-        } else {
-            return res.status(400).json({
-                errorMessage: 'Unable to delete property'
-            });
-        }
+        databaseManager.deleteProperty(req.params.propertyId).then((property) => {
+            if (property) {
+                return res.status(200).json({
+                    successMessage: 'Property deleted',
+                    property: property
+                });
+            } else {
+                return res.status(400).json({
+                    errorMessage: 'Unable to delete property'
+                });
+            }
+        });
     }
 }
 

@@ -1,45 +1,49 @@
 const databaseManager = require('./AWSManager/layereditor-controller')
 
 function createLayer(req, res) {
-    const body = req.body
-    if (!body) {
+    const name = req.body
+    if (!name) {
         return res.status(400).json({
             success: false,
             error: 'Improperly formatted request',
-        })
+        });
     }
-    let newLayer = databaseManager.createLayer(body, req.userId)
-    if (newLayer) {
-        return res.status(200).json({
-            success: true,
-            layer: newLayer,
-        })
-    }
-    return res.status(400).json({
-        success: false,
-        error: 'Unable to create layer'
-    })
+    databaseManager.createLayer(name, req.params.mapId).then((newLayer) => {
+        if (newLayer) {
+            return res.status(200).json({
+                success: true,
+                layer: newLayer,
+            });
+        }
+        return res.status(400).json({
+            success: false,
+            error: 'Unable to create layer'
+        });
+    });
+
 }
 
 function deleteLayer(req, res) {
-    const body = req.body
+    const body = req.body;
     if (!body) {
         return res.status(400).json({
             success: false,
             error: 'Improperly formatted request'
-        })
+        });
     }
-    let layer = databaseManager.deleteLayer(req.params.layerId, req.userId)
-    if (layer) {
-        return res.status(200).json({
-            success: true,
-            layer: layer,
-        })
-    }
-    return res.status(400).json({
-        success: false,
-        error: 'Unable to delete layer'
+    databaseManager.deleteLayer(req.params.layerId, req.params.mapId).then((deletedLayer) => {
+        if (deletedLayer) {
+            return res.status(200).json({
+                success: true,
+                layer: deletedLayer,
+            });
+        }
+        return res.status(400).json({
+            success: false,
+            error: 'Unable to delete layer'
+        });
     })
+
 }
 
 function getLayer(req, res) {
@@ -48,18 +52,19 @@ function getLayer(req, res) {
         return res.status(400).json({
             success: false,
             error: 'Improperly formatted request'
-        })
+        });
     }
-    let layer = databaseManager.getLayer(req.params.layerId, req.userId)
-    if (layer) {
-        return res.status(200).json({
-            success: true,
-            layer: layer,
-        })
-    }
-    return res.status(404).json({
-        success: false,
-        error: 'Layer not found'
+    databaseManager.getLayer(req.params.layerId).then((layer) => {
+        if (layer) {
+            return res.status(200).json({
+                success: true,
+                layer: layer,
+            });
+        }
+        return res.status(404).json({
+            success: false,
+            error: 'Layer not found'
+        });
     })
 }
 
@@ -71,16 +76,17 @@ function updateLayer(req, res) {
             error: 'Improperly formatted request'
         })
     }
-    let layer = databaseManager.updateLayer(req.params.layerId, req.userId, body)
-    if (layer) {
-        return res.status(200).json({
-            success: true,
-            layer: layer,
+    databaseManager.updateLayer(req.params.layerId, body).then((updatedLayer) => {
+        if (updatedLayer) {
+            return res.status(200).json({
+                success: true,
+                layer: updatedLayer,
+            })
+        }
+        return res.status(404).json({
+            success: false,
+            error: 'Layer not found'
         })
-    }
-    return res.status(404).json({
-        success: false,
-        error: 'Layer not found'
     })
 }
 

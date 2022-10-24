@@ -5,12 +5,12 @@ const ObjectId = Schema.Types.ObjectId;
 const LayerSchema = new Schema(
     {
         name: { type: String, required: true },
-        locked: { type: Boolean, required: true },
-        visible: { type: Boolean, required: true },
+        locked: { type: Boolean },
+        visible: { type: Boolean },
         properties: [{ type: ObjectId, ref: 'Property' }],
         height: { type: Number },
         width: { type: Number },
-        data: { type: [Number], required: true },
+        data: { type: [Number]},
     },
     { timestamps: true }
 );

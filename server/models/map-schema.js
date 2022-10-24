@@ -15,7 +15,7 @@ const MapSchema = new Schema(
         deleted: { type: Boolean },
         collaborators: { type: [{ type: ObjectId, ref: 'User'}] },
         viewers: { type: [{ type: ObjectId, ref: 'User'}] },
-        public: { type: Boolean},
+        public: { type: Boolean, default: false },
         tilesets: { type: [{ type: ObjectId, ref: 'Tileset'}] },
         height: { type: Number, required: true},
         width: { type: Number, required: true},

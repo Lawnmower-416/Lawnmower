@@ -8,86 +8,88 @@ function createTag(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     }
-    let newTag = databaseManager.createTag(name, req.tagId);
-    if (newTag) {
-        return res.status(200).json({
-            success: true,
-            tag: newTag
-        });
-    } else {
-        return res.status(400).json({
-            success:false,
-            errorMessage: "Unable to create tag"
-        });
-    }
+    databaseManager.createTag(name).then((newTag) => {
+        if (newTag) {
+            return res.status(200).json({
+                success: true,
+                tag: newTag
+            });
+        } else {
+            return res.status(400).json({
+                success:false,
+                errorMessage: "Unable to create tag"
+            });
+        }
+    });
 }
 
 function getTag(req, res) {
-    const name = req.body;
-    if (!name) {
+    if (!req.params.tagId) {
         return res.status(400).json({
             success: false,
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let tag = databaseManager.getTag(name, req.tagId);
-        if (tag) {
-            return res.status(200).json({
-                success: true,
-                tag: tag
-            });
-        } else {
-            return res.status(400).json({
-                success:false,
-                errorMessage: "Unable to find tag"
-            });
-        }
+        databaseManager.getTag(req.params.tagId).then((tag) => {
+            if (tag) {
+                return res.status(200).json({
+                    success: true,
+                    tag: tag
+                });
+            } else {
+                return res.status(400).json({
+                    success:false,
+                    errorMessage: "Unable to find tag"
+                });
+            }
+        });  
     }
 }
 
 function updateTag(req, res) {
-    const name = req.body;
-    if (!name) {
+    const {name} = req.body;
+    if (!req.params.tagId || !name) {
         return res.status(400).json({
             success: false,
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let tag = databaseManager.updateTag(name, req.tagId);
-        if (tag) {
-            return res.status(200).json({
-                success: true,
-                tag: tag
-            });
-        } else {
-            return res.status(400).json({
-                success: false,
-                errorMessage: "Unable to update tag"
-            });
-        }
+        databaseManager.updateTag(name, req.params.tagId).then((tag) => {
+            if (tag) {
+                return res.status(200).json({
+                    success: true,
+                    tag: tag
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    errorMessage: "Unable to update tag"
+                });
+            }
+        });
     }
 }
 
 function deleteTag(req, res) {
-    const name = req.body;
-    if (!name) {
+    if (!req.params.tagId) {
         return res.status(400).json({
             success: false,
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        let tag = databaseManager.deletetag(body, req.tagId);
-        if (tag) {
-            return res.status(200).json({
-                success: true,
-                tag: tag
-            });
-        } else {
-            return res.status(400).json({
-                success:false,
-                errorMessage: 'Unable to delete tag'
-            });
-        }
+        databaseManager.deleteTag(req.params.tagId).then((tag) => {
+            if (tag) {
+                return res.status(200).json({
+                    success: true,
+                    tag: tag
+                });
+            } else {
+                return res.status(400).json({
+                    success:false,
+                    errorMessage: 'Unable to delete tag'
+                });
+            }
+        });
     }
 }
 
