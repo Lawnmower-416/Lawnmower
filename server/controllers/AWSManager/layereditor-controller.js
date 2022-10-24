@@ -20,7 +20,7 @@ module.exports.deleteLayer = async (layerId, mapId) => {
     if(!layerId) return null;
 
     const deletedLayer = await Layer.findOneAndDelete({_id: layerId}).catch(err => {return null;});
-    if (!deletedLayer._id) return null;
+    if (!deletedLayer) return null;
     const fetchedMap = await Map.findOne({_id: mapId}).catch(err => {return null;});
     fetchedMap.layers.pull({_id: layerId});
     await fetchedMap.save();
@@ -37,6 +37,6 @@ module.exports.getLayer = async (layerId) => {
 
 module.exports.updateLayer = async (layerId, newLayer) => {
     const updatedLayer = await Layer.findOneAndUpdate({_id: layerId}, newLayer, {new: true});
-    if (!updatedLayer._id) return null;
+    if (!updatedLayer) return null;
     return updatedLayer;
 };

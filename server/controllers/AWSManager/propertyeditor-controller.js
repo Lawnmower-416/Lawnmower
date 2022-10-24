@@ -16,7 +16,7 @@ module.exports.createProperty = async (name, layerId) => {
 
 module.exports.deleteProperty = async (propertyId) => {
     const deletedProperty = await Property.findOneAndDelete({ _id: propertyId });
-    if (!deletedProperty._id) return null;
+    if (!deletedProperty) return null;
     return deletedProperty;
 };
 
