@@ -1,7 +1,7 @@
 const databaseManager = require('./AWSManager/layereditor-controller')
 
 function createLayer(req, res) {
-    const name = req.body
+    const name = req.body;
     if (!name) {
         return res.status(400).json({
             success: false,

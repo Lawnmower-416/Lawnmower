@@ -4,8 +4,7 @@ const Map = require("../../models/map-schema");
 module.exports.createLayer = async (layerName, mapId) => {
     if (!layerName) return null;
 
-    const newLayer = new Layer(layerName);
-    if (!newLayer._id) return null;
+    const newLayer = new Layer(layerName).catch(err => {return null;});
     const savedLayer = await newLayer.save();
 
     // Save into map
