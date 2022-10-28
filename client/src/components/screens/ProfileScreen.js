@@ -1,11 +1,15 @@
 export default function Profile() {
     return (
         <div id="page-bg">
-            <div id="user-icon">
-                <img src="logo" alt="user-logo" />
-                <img src="edit" alt="edit-icon" />
+            <div id="user-info">
+                <div id="user-icon">
+                    <img id="user-logo" src="images/user-placeholder.png" alt="user-logo" />
+                    <img src="edit" alt="edit-icon" />
+                </div>
+                <div id="user-panel">
+                    <h1>Panel</h1>
+                </div>
             </div>
-            <div id="user-info"></div>
             <div id="tabs">
                 <input className="tabs" type={"button"} value="Maps" />
                 <input className="tabs" type={"button"} value="Tilesets" />
