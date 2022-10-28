@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 
+
 const Header = () => {
   const [sidebar, setSidebar] = useState(false);
   const navArray = [
