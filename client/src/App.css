@@ -36,3 +36,56 @@
     transform: rotate(360deg);
   }
 }
+
+body, html {
+  padding: 3%;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), linear-gradient(290.23deg, #54C941 0%, #ABDE81 100%, #C9E8B1 100%);
+  backdrop-filter: blur(2px);
+  /* Note: backdrop-filter has minimal browser support */
+}
+
+/* Profile Screen - START */
+#page-bg {
+  
+}
+
+#user-info {
+  background-color: black;
+  display: flex;
+}
+
+#user-icon {
+  position: relative;
+  /* left: 50%; */
+  /* transform: translateX(-150%); */
+  background-color: red;
+  width: 50%;
+  text-align: center;
+}
+
+#user-logo {
+  width: 50%;
+}
+
+#user-panel {
+  background-color: green;
+  position: relative;
+  width: 50%;
+  text-align: center;
+  /* transform: translateX(50%); */
+}
+
+#tabs {
+
+}
+
+#create-map-tileset {
+
+}
+
+#user-content {
+
+}
+
+
+/* Profile Screen - END */
