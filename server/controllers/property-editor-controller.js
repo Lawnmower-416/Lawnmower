@@ -2,7 +2,7 @@
 // our implementation uses AWS
 
 // databaseMananger requires propertyeditor-controller.js from AWSManager
-const databaseManager = require('./AWSManager/propertyeditor-controller.js');
+const databaseManager = require('./AWSManager/AWSpropertyeditor-manager.js');
 
 function createProperty(req, res) {
     const {name} = req.body;

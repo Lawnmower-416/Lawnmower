@@ -1,5 +1,5 @@
-const databaseManager = require("./AWSManager/mapeditor-controller");
-const mongooseManager = require("../controllers/AWSManager/mongoose-manager");
+const databaseManager = require("./AWSManager/AWSmapeditor-manager");
+const mongooseManager = require("./AWSManager/AWSmongoose-manager");
 
 module.exports.updateMap = async (req, res) => {
     const id = req.params.mapId;

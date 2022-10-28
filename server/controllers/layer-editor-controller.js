@@ -1,4 +1,4 @@
-const databaseManager = require('./AWSManager/layereditor-controller')
+const databaseManager = require('./AWSManager/AWSlayereditor-manager');
 
 function createLayer(req, res) {
     const name = req.body;
