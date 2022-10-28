@@ -1,4 +1,4 @@
-const databaseManager = require("./AWSManager/tagseditor-controller");
+const databaseManager = require("./AWSManager/AWStagseditor-manager");
 
 function createTag(req, res) {
     const {name} = req.body;

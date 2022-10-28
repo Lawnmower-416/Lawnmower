@@ -1,4 +1,4 @@
-const databaseManager = require('./AWSManager/tileseteditor-controller')
+const databaseManager = require('./AWSManager/AWStileseteditor-manager')
 
 function getTilesetsForMapById(req, res) {
     const body = req.body;
