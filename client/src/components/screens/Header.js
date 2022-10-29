@@ -10,7 +10,8 @@ const Header = () => {
   const navArray = [
     { navItem: "FAQ", to: "/faq" },
     { navItem: "About", to: "/about" },
-    { navItem: "Support", to: "/contactus" },
+    { navItem: "Support", to: "/support" },
+
   ];
   return (
     <div className="headerWrapper ">
@@ -49,13 +50,13 @@ const Header = () => {
         </div>
         <div className="hidden md:flex gap-x-6 font-inter font-bold ">
           <Link
-            to="/signin"
+            to="/login"
             className="text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
           >
             Sign Up
           </Link>
           <Link
-            to="/signup"
+            to="/register"
             className="text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
           >
             Sign In
@@ -74,13 +75,13 @@ const Header = () => {
             </Link>
           ))}
           <Link
-            to="/signin"
+            to="/login"
             className="text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
           >
             Sign Up
           </Link>
           <Link
-            to="/signup"
+            to="/register"
             className="text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
           >
             Sign In

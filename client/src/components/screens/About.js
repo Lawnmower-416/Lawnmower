@@ -1,7 +1,10 @@
 import React from "react";
+import Header from "./Header";
 
 const About = () => {
   return (
+    <div>
+      <Header />
     <div className=" min-h-screen pt-20">
       <div className="max-w-screen-2xl mx-auto w-11/12 lg:w-8/12">
         <h2 className="font-inter font-bold text-[#004B00] text-5xl xl:text-7xl 2xl:text-9xl">
@@ -33,6 +36,7 @@ const About = () => {
           </p>
         </div>
       </div>
+    </div>
     </div>
   );
 };
