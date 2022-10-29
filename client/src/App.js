@@ -20,7 +20,7 @@ function App() {
         <Route path="/register" exact element={<RegisterScreen/>} />
         <Route path="/faq" exact element={<Faq/>} />
         <Route path="/about" exact element={<About/>} />
-        <Route path="/contact" exact element={<ContactUs/>} />
+        <Route path="/support" exact element={<ContactUs/>} />
       </Routes>
 
     </BrowserRouter>
