@@ -5,7 +5,16 @@
   .my-container {
     @apply max-w-screen-2xl mx-auto w-11/12;
   }
+  .bg-gradient-green {
+		background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+			linear-gradient(0deg, rgba(255, 255, 0, 0.1), rgba(255, 255, 0, 0.1)),
+			linear-gradient(290.23deg, #83de74 0%, #abde81 100%, #abde81 100%);
+	}
+	body {
+		font-family: "Inter", sans-serif;
+	}
 }
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @layer utilities {
   .headerWrapper {
     background: rgba(214, 214, 214, 0.9);
@@ -29,4 +38,21 @@
   .faq {
     grid-template-columns: 1fr 40px;
   }
+}
+
+.modal:not(.active) {
+	opacity: 0;
+	visibility: hidden;
+}
+.modal:not(.active) .modal-content {
+	transform: translateY(-30px);
+}
+.flex-grow {
+	flex-grow: 1;
+}
+label {
+	cursor: pointer;
+}
+input:checked ~ .check-icon {
+	background: #006400;
 }
