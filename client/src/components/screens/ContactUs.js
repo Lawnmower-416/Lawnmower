@@ -1,7 +1,10 @@
 import React from "react";
+import Header from "./Header";
 
 const ContactUs = () => {
   return (
+    <div>
+      <Header />
     <div className="pt-24">
       <div className="rounded-lg  my-container grid grid-cols-1 lg:grid-cols-2 items-center bg-[#61CA5F]">
         <div className="py-8 px-3 sm:px-6 bg-white order-2 lg:order-1">
@@ -68,6 +71,7 @@ const ContactUs = () => {
           <img src="images/contact.png" alt="#" />
         </div>
       </div>
+    </div>
     </div>
   );
 };
