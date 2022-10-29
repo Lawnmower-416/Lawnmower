@@ -7,7 +7,12 @@ module.exports = {
   ],
   theme: {
     colors: {
-      'editor-primary': '#344E41'
+      'editor-primary': '#344E41',
+      'light-green': "#87C56C",
+      "dark-green": "#004500",
+      "red": "#D51300",
+      "white": "#FFFFFF",
+      "black": "#000000",
     },
     extend: {
       fontFamily: {

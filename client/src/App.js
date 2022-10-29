@@ -13,10 +13,9 @@ function App() {
     <BrowserRouter>
 
       <Routes>
-        {/* <Route path="/" exact element={<HomeWrapper />} />
-        <Route path="/login" exact element={<LoginScreen />} />
-        <Route path="/register" exact element={<RegisterScreen />} /> */}
-        <Route path="/" exact element={<ProfileScreen />} />
+        <Route path="/" exact element={<HomeWrapper/>} />
+        <Route path="/login" exact element={<LoginScreen/>} />
+        <Route path="/register" exact element={<RegisterScreen/>} />
       </Routes>
 
     </BrowserRouter>
