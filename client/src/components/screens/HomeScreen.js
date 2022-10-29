@@ -1,6 +1,11 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
+  const buttonClick = () => {
+    console.log("button clicked");
+  };
+
   return (
     <div>
     <div className="flex flex-col main-background pb-8 shadow-xl">
@@ -19,16 +24,19 @@ const HeroSection = () => {
             Create tilesets and 2D maps
           </p>
           <div className="flex flex-col justify-center items-center pt-8">
-            <button className="outline-none bg-button-bg px-8 rounded-lg py-3 text-white  font-bold text-2xl text-center sm:text-3xl lg:text-4xl xl:text-5xl  2xl:text-6xl font-inter">
-              SIGN UP FOR FREE
-            </button>
+            <Link to="/register">
+              <button onClick={buttonClick}
+                className="outline-none bg-dark-green px-5 rounded-xl py-3 text-white hover:bg-black font-bold text-2xl text-center sm:text-3xl lg:text-4xl xl:text-5xl  2xl:text-6xl font-inter">
+                SIGN UP FOR FREE
+              </button>
+            </Link>
             <div className="pt-2 flex justify-between items-center gap-6 lg:gap-10">
-              <p className="font-inter text-white font-bold text-md sm:text-lg lg:text-xl xl:text-2xl 2xl:text-4xl">
+              <Link to='/login' className="font-inter text-white font-bold text-md sm:text-md lg:text-xl xl:text-2xl 2xl:text-4xl">
                 Existing User?
-              </p>
-              <p className="font-inter text-white font-bold text-md sm:text-lg lg:text-xl xl:text-2xl 2xl:text-4xl">
+              </Link>
+              <Link className="font-inter text-white font-bold text-md sm:text-lg lg:text-xl xl:text-2xl 2xl:text-4xl">
                 Enter as a guest
-              </p>
+              </Link>
             </div>
           </div>
         </div>
