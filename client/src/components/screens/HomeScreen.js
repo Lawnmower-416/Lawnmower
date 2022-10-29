@@ -2,10 +2,11 @@ import React from "react";
 
 const HeroSection = () => {
   return (
-    <div className="main-background ">
+    <div>
+    <div className="flex flex-col main-background pb-8 shadow-xl">
       <div className="my-container grid gap-6 items-center grid-cols-1 lg:grid-cols-2 py-16">
         <img
-          src="images/hero.png"
+          src="./hero.png"
           alt="#"
           className="w-full md:w-8/12 mx-auto lg:w-full order-2 lg:order-1"
         />
@@ -32,6 +33,30 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
+    </div>
+
+    <div className="flex justify-center pt-10">
+      <div className="grid grid-cols-3 w-3/4  ">
+          <div className="flex flex-col">
+            <h1 className="text-5xl text-center">Create</h1>
+            <img src="../create.png" alt="createImg" className="h-3/4 mx-auto p-5"/>
+            <p className="text-center">Creates worlds tile by tile</p>
+          </div>
+          <div className="flex flex-col">
+            <h1 className="text-5xl text-center">Collaborate</h1>
+            <img src="../collaborate.png" alt="createImg" className="h-3/4 mx-auto p-5"/>
+            <p className="text-center">Invite friends to create with you</p>
+          </div>
+          <div className="flex flex-col">
+            <h1 className="text-5xl text-center">Share</h1>
+            <img src="../share.png" alt="createImg" className="h-3/4 mx-auto p-5"/>
+            <p className="text-center">Publish your work to the world and browse other creations</p>
+          </div>
+      </div>
+    </div>
+
+
+
     </div>
   );
 };
