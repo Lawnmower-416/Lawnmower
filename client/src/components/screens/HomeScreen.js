@@ -1,6 +1,6 @@
 import React from "react";
 
-const HeroSection = () => {
+const HomeScreen = () => {
   return (
     <div>
     <div className="flex flex-col main-background pb-8 shadow-xl">
@@ -61,4 +61,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection;
+export default HomeScreen;

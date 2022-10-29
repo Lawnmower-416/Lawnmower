@@ -18,7 +18,7 @@ const Header = () => {
       <div className="flex justify-between items-center max-w-screen-2xl mx-auto py-2 header w-11/12">
         <Link to="/" className="flex items-center gap-1 sm:gap-3">
           <img
-            src="images/logo.png"
+            src="./logo.png"
             alt="#"
             className="w-16 lg:w-20 2xl:w-28"
           />
