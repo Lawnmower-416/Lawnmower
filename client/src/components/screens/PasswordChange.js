@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Input from "../Input/Input";
+import Input from "./Input";
 
 const PasswordChange = () => {
   const [values, setValues] = useState({
