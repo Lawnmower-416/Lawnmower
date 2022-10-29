@@ -1,5 +1,6 @@
 import React from "react";
 import SingleFaq from "./SingleFaq";
+import Header from "./Header";
 
 const Faq = () => {
   const faqArray = [
@@ -32,6 +33,8 @@ const Faq = () => {
   ];
 
   return (
+    <div>
+      <Header />
     <div className="min-h-screen pt-24">
       <h3 className="font-inter font-extrabold text-3xl md:text-4xl xl:text-5xl my-container pb-8 max-w-2xl">
         Frequently Asked Questions
@@ -42,6 +45,7 @@ const Faq = () => {
           <SingleFaq {...el} key={i} />
         ))}
       </div>
+    </div>
     </div>
   );
 };
