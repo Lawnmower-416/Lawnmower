@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Input from "../Input/Input";
+import Input from "./Input";
 
 const RegisterScreen = () => {
   const [values, setValues] = useState({
