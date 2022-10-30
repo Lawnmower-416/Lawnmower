@@ -22,7 +22,7 @@ function App() {
         <Route path="/faq" exact element={<Faq/>} />
         <Route path="/about" exact element={<About/>} />
         <Route path="/support" exact element={<ContactUs/>} />
-        <Route path="/editor" exact element={<MapEditor/>} />
+        <Route path="/mapEditor" exact element={<MapEditor/>} />
       </Routes>
 
     </BrowserRouter>
