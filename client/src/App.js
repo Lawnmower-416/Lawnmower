@@ -9,6 +9,7 @@ import Faq from './components/screens/Faq';
 import About from './components/screens/About';
 import ContactUs from './components/screens/ContactUs';
 
+import MapEditor from './Pages/MapEditor';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/faq" exact element={<Faq/>} />
         <Route path="/about" exact element={<About/>} />
         <Route path="/support" exact element={<ContactUs/>} />
+        <Route path="/editor" exact element={<MapEditor/>} />
       </Routes>
 
     </BrowserRouter>
