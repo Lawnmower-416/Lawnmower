@@ -1,7 +1,7 @@
 import Headerbar from "./editor/Headerbar";
 import LayerSidebar from "./editor/LayerSidebar";
 import MainEditor from "./editor/MainEditor";
-import TileSidebar from "./editor/TileSidebar";
+import TilesetSidebar from "./editor/TilesetSidebar";
 
 function MapEditor() {
     const layers = [
@@ -20,7 +20,7 @@ function MapEditor() {
             <div className="flex h-screen">
                 <LayerSidebar layers={layers}/>
                 <MainEditor />
-                <TileSidebar tilesets={tilesets}/>
+                <TilesetSidebar tilesets={tilesets}/>
             </div>
         </div>
         

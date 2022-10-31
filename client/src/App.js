@@ -10,8 +10,8 @@ import About from './components/screens/About';
 import ContactUs from './components/screens/ContactUs';
 import CommunityScreen from './components/screens/CommunityScreen';
 import PasswordChange from './components/screens/PasswordChange';
-
 import MapEditor from './components/screens/MapEditor';
+import TilesetEditor from './components/screens/TilesetEditor';
 
 function App() {
   return (
@@ -25,6 +25,7 @@ function App() {
         <Route path="/about" exact element={<About/>} />
         <Route path="/support" exact element={<ContactUs/>} />
         <Route path="/mapEditor" exact element={<MapEditor/>} />
+        <Route path="/tilesetEditor" exact element={<TilesetEditor/>} />
         <Route path="/community" exact element={<CommunityScreen/>} />
         <Route path="/change-password" exact element={<PasswordChange/>} />
       </Routes>
