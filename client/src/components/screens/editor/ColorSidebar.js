@@ -14,7 +14,7 @@ function ColorSidebar({ colors, currentColor, setCurrentColor, addColor }) {
                             <div className="grid grid-cols-4">
                                 {colors.map((item) => (
                                     <div 
-                                        className="p-4 hover:cursor-pointer" 
+                                        className="h-12 hover:cursor-pointer" 
                                         style={{backgroundColor: `rgba(${item.red}, ${item.blue}, ${item.green}, ${item.alpha})`}}
                                         onClick={() => setCurrentColor(item)}/>
                                 ))}

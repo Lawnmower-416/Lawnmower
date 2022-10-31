@@ -146,15 +146,15 @@ export default function CommunityScreen() {
                         <div className="flex bg-darker-green w-auto h-5/6 rounded-tr-3xl rounded-b-3xl">
                             <div className="w-full h-auto mx-10 my-4 overflow-y-auto">
                                 <div className='mr-5'>
-                                    <ItemCard/>
+                                    <ItemCard isMap={mapTabBool}/>
                                     <div className="p-2"/>
-                                    <ItemCard/>
+                                    <ItemCard isMap={mapTabBool}/>
                                     <div className="p-2"/>
-                                    <ItemCard/>
+                                    <ItemCard isMap={mapTabBool}/>
                                     <div className="p-2"/>
-                                    <ItemCard/>
+                                    <ItemCard isMap={mapTabBool}/>
                                     <div className="p-2"/>
-                                    <ItemCard/>
+                                    <ItemCard isMap={mapTabBool}/>
                                 </div>
                             </div>
                         </div>

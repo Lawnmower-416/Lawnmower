@@ -41,7 +41,7 @@ function MapSettingsModal({isOpen, setIsOpen}) {
                                 >
                                     Settings
                                 </Dialog.Title>
-                                <div className="">
+                                <div className="bg-editor-background">
                                     <div className="grid grid-rows-4">
                                         <div className="row-span-1">
                                             Title

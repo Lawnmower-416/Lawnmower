@@ -49,7 +49,7 @@ function ExportModal({isOpen, setIsOpen}) {
                                 >
                                     Export
                                 </Dialog.Title>
-                                <div className="">
+                                <div className="bg-editor-background">
                                     <Listbox value={selected} onChange={setSelected} className="relative mt-1" as="div">
                                         <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-sm cursor-default focus:outline-none focus:ring-1 focus:ring-editor-highlight focus:border-editor-highlight sm:text-sm">
                                             <span className="block truncate">{selected}</span>

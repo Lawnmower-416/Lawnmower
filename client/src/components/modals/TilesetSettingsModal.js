@@ -45,7 +45,7 @@ function TilesetSettingsModal({isOpen, setIsOpen}) {
                                 >
                                     Settings
                                 </Dialog.Title>
-                                <div className="">
+                                <div className="bg-editor-background">
                                     <div className="grid grid-rows-4">
                                         <div className="row-span-1">
                                             Title
@@ -54,7 +54,7 @@ function TilesetSettingsModal({isOpen, setIsOpen}) {
                                             <input type="text" className="w-full text-black p-2" value={"Title"}/>
                                         </div>
                                         <div className="row-span-1">
-                                            Map Size
+                                            Tile Size
                                         </div>
                                         <span className="row-span-1 flex justify-center">
                                             <div className="mr-7">
