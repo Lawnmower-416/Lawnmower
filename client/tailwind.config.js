@@ -22,13 +22,20 @@ module.exports = {
       "dark-gray": "#dadada",
       "darker-gray": "#5A5A5A",
       "darker-green": "#006400",
+      "dark-green-lighter": "#006400",
+      "light-grey": "#D6D6D6",
       "light-gray": "#d6d6d6",
-      "light-grey": "#d6d6d6"
     },
     extend: {
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       },
+      backgroundImage: (theme) => ({
+        'gradient-primary': 'linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), linear-gradient(290.23deg, #54C941 0%, #ABDE81 100%, #C9E8B1 100%)',
+      }),
+      gridTemplateRows: {
+        'profile': 'auto auto auto'
+      }
     },
   },
   plugins: [],

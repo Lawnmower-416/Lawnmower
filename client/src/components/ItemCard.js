@@ -12,12 +12,16 @@ import CommentCard from "./CommentCard";
  * @returns render
  */
 export default function ItemCard(props) {
+    const {map} = props;
+    const {tileset} = props;
+
+    // console.log(map);
     const [show, setShow] = useState(false);
     const [like, setLike] = useState(false);
     const [dislike, setDislike] = useState(false);
-    const [likeCount, setLikeCount] = useState(props.likes || 0);
-    const [dislikeCount, setDislikeCount] = useState(props.dislikes || 0);
-    const [views, setViews] = useState(props.views || 0);
+    const [likeCount, setLikeCount] = useState((map && map.likedUsers) || (tileset && tileset.likedUsers) || 0);
+    const [dislikeCount, setDislikeCount] = useState((map && map.dislikedUsers) || (tileset && tileset.dislikedUsers) || 0);
+    const [views, setViews] = useState((map && map.views) || (tileset && tileset.views) || 0);
     const [points, setPoints] = useState(likeCount - dislikeCount);
     // console.log(show);
 
@@ -74,7 +78,7 @@ export default function ItemCard(props) {
 
     return (
         <div className="snap-start flex flex-col">
-            <div className="flex flex-row p-1 max-w bg-light-gray rounded-t-xl shadow-lg items-center space-x-4">
+            <div className="flex flex-row p-1 max-w bg-light-grey rounded-t-xl shadow-lg items-center space-x-4">
                 {/* Column 1: Likes/Dislikes */}
                     <div className="order-1 items-center p-2">
                             <div className="align-middle text-center items-center">
@@ -93,9 +97,9 @@ export default function ItemCard(props) {
                     </div>
                 {/* Column 3: Map/Tileset Name, Author, Creation Date */}
                     <div className="flex flex-col flex-grow order-3 align-middle p-2">
-                        <p className="text-3xl font-bold">{props.title || "Title"}</p>
-                        <p className="text-xl">By: {props.owner || "Author"}</p>
-                        <p className="text-xl">Created: {props.created || "Date"}</p>
+                        <p className="text-3xl font-bold">{(map && map.title) || (tileset && tileset.title) || "Title"}</p>
+                        <p className="text-xl">By: {(map && map.owner) || (tileset && tileset.owner) || "Author"}</p>
+                        <p className="text-xl">Created: {(map && map.creationDate) || (tileset && tileset.creationDate) || "Date"}</p>
                     </div>
                 {/* Column 4: Public/Private, Views, Delete, Show Comments */}
                     <div className="flex flex-col order-last text-left space-y-3">
@@ -112,7 +116,7 @@ export default function ItemCard(props) {
             <div className={`flex flex-col p-1 pt-3 ${show ? 'h-[32rem]' : '' } max-w-full ${!show ? 'bg-light-grey' : 'bg-light-green' } overflow-y-auto overflow-x-hidden rounded-b-xl shadow-lg space-y-4`}>
                 {
                     show ?
-                    (<><CommentCard /><CommentCard /><CommentCard /><CommentCard /></>)
+                    map.comments.map(comment => <CommentCard key={Math.random() * 100} inProfile={props.inProfile} comment={comment} />)
                     : <div></div>
                 }
             </div>

@@ -21,6 +21,10 @@
     mix-blend-mode: normal;
     box-shadow: 5px 10px 20px rgba(0, 0, 0, 0.25);
   }
+  svg {
+    display: inline-flexbox;
+    margin: auto;
+  }
   .header {
     max-width: 1700px;
     margin: 0 auto;

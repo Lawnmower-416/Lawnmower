@@ -1,0 +1,70 @@
+body, html {
+  padding: 3%;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), linear-gradient(290.23deg, #54C941 0%, #ABDE81 100%, #C9E8B1 100%);
+  backdrop-filter: blur(2px);
+  /* Note: backdrop-filter has minimal browser support */
+}
+
+/* Profile Screen - START */
+#user-info {
+  /* background-color: black; */
+  display: flex;
+}
+
+#user-icon {
+  position: relative;
+  /* left: 50%; */
+  /* transform: translateX(-150%); */
+  /* background-color: red; */
+  width: 50%;
+  display: inline-flexbox;
+}
+
+#user-icon #user-logo  {
+  width: 35%;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.user-logo-edit {
+  width: 5%;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#user-panel {
+  padding: 2%;
+  background-color: green;
+  position: relative;
+  width: 50%;
+  color: white;
+}
+
+#profile-user-name, #profile-user-email, #profile-join-date, #profile-points {
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+#profile-user-name h1, #profile-user-email h1, #profile-join-date, #profile-points {
+  width: 80%;
+  font-size: 14pt;
+  padding: 1%;
+  /* background-color: black; */
+}
+#profile-user-name .user-logo-edit, #profile-user-email .user-logo-edit {
+  position: relative;
+  left: 0%;
+  transform: translate(100%, 17.5%);
+}
+
+#user-content {
+  width: 100%;
+}
+
+#profile-pagination {
+  text-align: center;
+}
+
+/* Profile Screen - END */
