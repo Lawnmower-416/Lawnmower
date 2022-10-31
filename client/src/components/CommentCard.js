@@ -86,10 +86,10 @@ export default function CommentCard(props) {
             {/* Column 2: Commenter, Content */}
                 <div className="flex flex-col flex-grow order-2 p-2">
                     <div className="order-1 p-2">
-                        <p className="text-3xl font-bold">{comment.owner || "Commenter"}</p>
+                        <p className="text-3xl font-bold">{(comment && comment.owner) || "Commenter"}</p>
                     </div>
                     <div className="flex-grow order-1 p-2">
-                        <p className="text-xl">{comment.contentType || "Comment Goes Here"}</p>
+                        <p className="text-xl">{(comment && comment.contentType) || "Comment Goes Here"}</p>
                     </div>
                 </div>
             {/* Column 3: Reply */}
