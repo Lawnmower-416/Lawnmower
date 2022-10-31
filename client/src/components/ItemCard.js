@@ -4,6 +4,11 @@ import { TrashIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import CommentCard from "./CommentCard";
 import { DeleteMapModal } from "./modals/DeleteMapModal/DeleteMap";
+import { Menu } from '@headlessui/react';
+import ModalThree from "./modals/ReportModal/Report";
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
 
 /**
  *  Needs to pass in the following objects:
@@ -27,6 +32,15 @@ export default function ItemCard(props) {
     // console.log(show);
 
     const [deleteMapModal, setDeleteMapModal] = useState(false);
+    const [modalOpen3, setModalOpen3] = useState(false);
+
+    // this is such a bandaid fix, I'm sorry
+    const location = useLocation();
+    const path = location.pathname;
+    let menuCSS = "absolute translate-y-16 translate-x-0 bg-darker-gray rounded-xl shadow-lg w-"
+    if (path === "/profile") {
+        menuCSS = "absolute translate-y-10 translate-x-0 bg-darker-gray rounded-xl shadow-lg w-"
+    }
 
     const handleLike = () => {
         // Handle the case where if the user already disliked...
@@ -79,6 +93,7 @@ export default function ItemCard(props) {
         if (!show) setViews((prevCount) => prevCount + 1);
     }
 
+
     return (
         <><DeleteMapModal modalOpen={deleteMapModal} setModalOpen={setDeleteMapModal} mapName={(map && map.title) || "Title"} />
         <div className="snap-start flex flex-col">
@@ -102,7 +117,28 @@ export default function ItemCard(props) {
                 {/* Column 3: Map/Tileset Name, Author, Creation Date */}
                     <div className="flex flex-col flex-grow order-3 align-middle p-2">
                         <p className="text-3xl font-bold">{(map && map.title) || (tileset && tileset.title) || "Title"}</p>
-                        <p className="text-xl">By: {(map && map.owner) || (tileset && tileset.owner) || "Author"}</p>
+                        <Menu>
+                            <Menu.Button>
+                                <p className="text-xl text-left">By: {(map && map.owner) || (tileset && tileset.owner) || "Author"}</p>
+                            </Menu.Button>
+                            <Menu.Items className={menuCSS}>
+                                <Menu.Item>
+                                        {({ active }) => (
+                                            <Link to="/profile" className="block px-4 py-2 text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray"
+                                            >Profile                                            
+                                            </Link>
+                                        )}
+                                </Menu.Item>
+                                <Menu.Item>
+                                    {/*TODO: this menu is dynamic based on if the user is logged in or not*/}
+                                        {({ active }) => (
+                                            <button className="block px-4 py-2 text-md hover:bg-darker-gray rounded-b-xl w-full"
+                                            onClick={() => setModalOpen3(!modalOpen3)}>Report                                            
+                                            </button>
+                                        )}
+                                </Menu.Item>
+                            </Menu.Items>
+                        </Menu>
                         <p className="text-xl">Created: {(map && map.creationDate) || (tileset && tileset.creationDate) || "Date"}</p>
                     </div>
                 {/* Column 4: Public/Private, Views, Delete, Show Comments */}
@@ -124,6 +160,7 @@ export default function ItemCard(props) {
                     : <div></div>
                 }
             </div>
+            <ModalThree modalOpen={modalOpen3} setModalOpen={setModalOpen3} />
         </div>
         </>
     )
