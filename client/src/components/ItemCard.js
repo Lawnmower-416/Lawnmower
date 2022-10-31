@@ -6,6 +6,7 @@ import CommentCard from "./CommentCard";
 import { Menu } from '@headlessui/react';
 import ModalThree from "./modals/ReportModal/Report";
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 
 
@@ -31,6 +32,14 @@ export default function ItemCard(props) {
     // console.log(show);
 
     const [modalOpen3, setModalOpen3] = useState(false);
+
+    // this is such a bandaid fix, I'm sorry
+    const location = useLocation();
+    const path = location.pathname;
+    let menuCSS = "absolute translate-y-16 translate-x-0 bg-darker-gray rounded-xl shadow-lg w-"
+    if (path === "/profile") {
+        menuCSS = "absolute translate-y-10 translate-x-0 bg-darker-gray rounded-xl shadow-lg w-"
+    }
 
     const handleLike = () => {
         // Handle the case where if the user already disliked...
@@ -108,9 +117,9 @@ export default function ItemCard(props) {
                         <p className="text-3xl font-bold">{(map && map.title) || (tileset && tileset.title) || "Title"}</p>
                         <Menu>
                             <Menu.Button>
-                                <p className="text-xl">By: {(map && map.owner) || (tileset && tileset.owner) || "Author"}</p>
+                                <p className="text-xl text-left">By: {(map && map.owner) || (tileset && tileset.owner) || "Author"}</p>
                             </Menu.Button>
-                            <Menu.Items className="absolute translate-y-16 translate-x-64 bg-darker-gray rounded-xl shadow-lg w-">
+                            <Menu.Items className={menuCSS}>
                                 <Menu.Item>
                                         {({ active }) => (
                                             <Link to="/profile" className="block px-4 py-2 text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray"
