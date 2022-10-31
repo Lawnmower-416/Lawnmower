@@ -7,7 +7,6 @@ import CommentCard from "./CommentCard";
 import { DeleteMapModal } from "./modals/DeleteMapModal/DeleteMap";
 import { Menu } from '@headlessui/react';
 import ModalThree from "./modals/ReportModal/Report";
-import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 
@@ -120,7 +119,6 @@ export default function ItemCard(props) {
                     <div className="flex flex-col flex-grow order-3 align-middle p-2">
 
                         <Link className="text-3xl font-bold" to={(isMap ? "/mapEditor" : "/tilesetEditor")}>{(map && map.title) || (tileset && tileset.title) || "Title"}</Link>
-                        <p className="text-xl">By: {(map && map.owner) || (tileset && tileset.owner) || "Author"}</p>
 
                         <Menu>
                             <Menu.Button>
