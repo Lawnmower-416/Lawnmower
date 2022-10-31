@@ -20,7 +20,7 @@ const ModalOne = ({ modalOpen, setModalOpen }) => {
 	return (
 		<>
 			<div
-				className={`modal fixed inset-0 overflow-y-auto duration-100 ${
+				className={`modal fixed z-50 inset-0 overflow-y-auto duration-100 ${
 					modalOpen ? "active" : ""
 				}`}
 			>
@@ -42,7 +42,7 @@ const ModalOne = ({ modalOpen, setModalOpen }) => {
 							<button
 								className={`rounded-lg py-2 sm:py-3 px-4 sm:px-6 text-white cursor-pointer duration-300 bg-purple`}
 							>
-								Publish
+								Public
 							</button>
 						</div>
 						{/* Copy Input Grp */}
@@ -93,13 +93,7 @@ const ModalOne = ({ modalOpen, setModalOpen }) => {
 								</div>
 								<h5 className="text-[18px] font-medium text-white flex items-center gap-1">
 									<div className="relative">
-										<select className="text-white bg-transparent appearance-none outline-none shadow-none border-none pr-6 pl-1 relative z-10 cursor-pointer">
-											<option className="text-black text-sm">
-												Editor
-											</option>
-											<option className="text-black text-sm">
-												Owner
-											</option>
+										<select className="text-black bg-transparent appearance-none outline-none shadow-none border-none pr-6 pl-1 relative z-10 cursor-pointer">
 											<option className="text-black text-sm">
 												Editor
 											</option>
@@ -129,13 +123,7 @@ const ModalOne = ({ modalOpen, setModalOpen }) => {
 								</div>
 								<h5 className="text-[18px] font-medium text-white flex items-center gap-1">
 									<div className="relative">
-										<select className="text-white bg-transparent appearance-none outline-none shadow-none border-none pr-6 pl-1 relative z-10 cursor-pointer">
-											<option className="text-black text-sm">
-												Editor
-											</option>
-											<option className="text-black text-sm">
-												Owner
-											</option>
+										<select className="text-black bg-transparent appearance-none outline-none shadow-none border-none pr-6 pl-1 relative z-10 cursor-pointer">
 											<option className="text-black text-sm">
 												Editor
 											</option>

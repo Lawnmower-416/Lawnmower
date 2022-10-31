@@ -7,6 +7,7 @@ import MapSettingsModal from "../modals/MapSettingsModal";
 import ExportModal from "../modals/Export";
 import EditHistoryModal from "../modals/EditHistoryModal";
 import ImportTilesetModal from "../modals/ImportTilesetModal";
+import ModalOne from "../modals/ShareModal/Share";
 
 
 function MapEditor() {    
@@ -14,6 +15,8 @@ function MapEditor() {
     const [historyOpen, setHistoryOpen] = useState(false);
     const [exportOpen, setExportOpen] = useState(false);
     const [importOpen, setImportOpen] = useState(false);
+
+    const [shareOpen, setShareOpen] = useState(false);
 
     const layers = [
         { name: 'Layer 1', current: true, isLocked: false, isVisible: true },
@@ -31,7 +34,14 @@ function MapEditor() {
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
             <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} />
             <ImportTilesetModal isOpen={importOpen} setIsOpen={setImportOpen} tilesets={tilesets}/>
-            <Headerbar setSettingsOpen={setSettingsOpen} setHistoryOpen={setHistoryOpen} setExportOpen={setExportOpen}/>
+            <ModalOne modalOpen={shareOpen} setModalOpen={setShareOpen} />
+
+            <Headerbar 
+                setSettingsOpen={setSettingsOpen} 
+                setHistoryOpen={setHistoryOpen} 
+                setExportOpen={setExportOpen} 
+                setShareOpen={setShareOpen} 
+            />
             <div className="flex h-screen">
                 <LayerSidebar layers={layers}/>
                 <MainEditor />

@@ -2,7 +2,7 @@ import { HomeIcon, CloudIcon, UserPlusIcon, ArrowDownTrayIcon, Cog6ToothIcon } f
 import { Disclosure } from '@headlessui/react'
 import { Link } from 'react-router-dom';
 
-function Headerbar({setSettingsOpen, setHistoryOpen, setExportOpen}) {
+function Headerbar({setSettingsOpen, setHistoryOpen, setExportOpen, setShareOpen}) {
     return (
         <Disclosure as="nav" className="bg-editor-primary h-14">
             {() => (
@@ -40,7 +40,7 @@ function Headerbar({setSettingsOpen, setHistoryOpen, setExportOpen}) {
                                 type="button"
                                 className="bg-editor-highlight px-5 py-1 rounded-full text-white"
                             >
-                                <div className="flex justify-between items-center">
+                                <div className="flex justify-between items-center" onClick={() => setShareOpen(true)}>
                                     <UserPlusIcon className="h-5 w-5 text-white hover:text-editor-highlight"/>
                                     Share
                                 </div>
