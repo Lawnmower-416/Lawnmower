@@ -14,7 +14,7 @@ function MainEditor(props) {
     return (
         <main className="flex flex-col w-full bg-white overflow-x-hidden overflow-y-auto mb-14">
             <Toolbar />
-            <div className="flex w-full mx-auto px-6 py-8">
+            <div className="flex w-full mx-auto px-6 py-8 justify-center">
                 {ref === null ? <div /> : <canvas ref={ref} width="1024" height="576" />}
             </div>
       </main>
