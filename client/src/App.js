@@ -8,7 +8,8 @@ import RegisterScreen from './components/screens/RegisterScreen';
 import Faq from './components/screens/Faq';
 import About from './components/screens/About';
 import ContactUs from './components/screens/ContactUs';
-
+import CommunityScreen from './components/screens/CommunityScreen';
+import PasswordChange from './components/screens/PasswordChange';
 import MapEditor from './Pages/MapEditor';
 import TilesetEditor from './Pages/TilesetEditor';
 
@@ -25,6 +26,8 @@ function App() {
         <Route path="/support" exact element={<ContactUs/>} />
         <Route path="/mapEditor" exact element={<MapEditor/>} />
         <Route path="/tilesetEditor" exact element={<TilesetEditor/>} />
+        <Route path="/community" exact element={<CommunityScreen/>} />
+        <Route path="/change-password" exact element={<PasswordChange/>} />
       </Routes>
 
     </BrowserRouter>
