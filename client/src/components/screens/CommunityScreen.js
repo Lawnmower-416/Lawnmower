@@ -2,6 +2,8 @@ import React from 'react';
 import Header from './Header';
 import { BsFilter } from 'react-icons/bs';
 import { Menu } from '@headlessui/react';
+import ItemCard from '../ItemCard';
+
 
 export default function CommunityScreen() {
     console.log("rendering CommunityScreen");
@@ -134,13 +136,23 @@ export default function CommunityScreen() {
                             <button onClick={handleMapToTilesetTab}className={tilesetTabCSS}>Tilesets</button>
                         </div>
 
-                        <div className="flex bg-darker-green w-auto h-5/6 rounded-tr-3xl rounded-b-3xl">
-                            <div className="w-full h-auto mx-10 mt-4 border-2">
-                                
 
+                                    {/*item cards are hard-coded for now*/}
+                        <div className="flex bg-darker-green w-auto h-5/6 rounded-tr-3xl rounded-b-3xl">
+                            <div className="w-full h-auto mx-10 my-4 overflow-y-auto">
+                                <div className='mr-5'>
+                                    <ItemCard/>
+                                    <div className="p-2"/>
+                                    <ItemCard/>
+                                    <div className="p-2"/>
+                                    <ItemCard/>
+                                    <div className="p-2"/>
+                                    <ItemCard/>
+                                    <div className="p-2"/>
+                                    <ItemCard/>
+                                </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
