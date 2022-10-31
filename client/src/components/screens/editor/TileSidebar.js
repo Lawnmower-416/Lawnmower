@@ -1,6 +1,6 @@
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 function TileSidebar({ tiles, setCurrentTile, addTile }) {
 
     return (
