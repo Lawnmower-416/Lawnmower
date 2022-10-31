@@ -32,8 +32,8 @@
   .main-background {
     background-image: linear-gradient(
       to left,
-      #54c941 50%,
-      rgb(171, 222, 129, 1) 100%
+      #54c941 10%,
+      #C9E8B1 100%
     );
   }
   .heading-leading {

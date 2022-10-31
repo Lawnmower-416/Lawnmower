@@ -3,22 +3,35 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
+import { useLocation } from "react-router-dom";
 
 const Header = () => {
   
   const [sidebar, setSidebar] = useState(false);
-  const navArray = [
+  let navArray = [
     { navItem: "FAQ", to: "/faq" },
     { navItem: "About", to: "/about" },
     { navItem: "Support", to: "/support" },
 
   ];
+
+  // check the route. set navArray to empty array if the route is anything other than home, login, register, faq, about, support
+  const location = useLocation();
+  const path = location.pathname;
+  if (path !== "/" && path !== "/login" && path !== "/register" && path !== "/faq" && path !== "/about" && path !== "/support") {
+    navArray = [];
+  }
+
+
+  // TODO: implement account checking, where header no longer shows Sign Up/Sign In if user is logged in
+
+
   return (
     <div className="headerWrapper ">
       <div className="flex justify-between items-center max-w-screen-2xl mx-auto py-2 header w-11/12">
         <Link to="/" className="flex items-center gap-1 sm:gap-3">
           <img
-            src="images/logo.png"
+            src="./logo.png"
             alt="#"
             className="w-16 lg:w-20 2xl:w-28"
           />
@@ -50,13 +63,13 @@ const Header = () => {
         </div>
         <div className="hidden md:flex gap-x-6 font-inter font-bold ">
           <Link
-            to="/login"
+            to="/register"
             className="text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
           >
             Sign Up
           </Link>
           <Link
-            to="/register"
+            to="/login"
             className="text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
           >
             Sign In

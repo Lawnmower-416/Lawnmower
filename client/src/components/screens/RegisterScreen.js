@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Input from "./Input";
+import Header from "./Header";
 
 const RegisterScreen = () => {
   const [values, setValues] = useState({
@@ -49,24 +50,20 @@ const RegisterScreen = () => {
   };
   console.log(values);
   return (
+    <div>
+      <Header />
     <div className="main-background min-h-screen pt-20">
       <div className="my-container flex flex-col lg:grid grid-cols-1 lg:grid-cols-2 items-center lg:items-start ">
         <div className="mx-auto pt-20">
           <p className="font-inter font-bold text-4xl xl:text-5xl text-center">
             Create An Account
           </p>
-          <img src="images/contactus.png" alt="#" className="w-96 lg:w-full" />
+          <img src="./contactus.png" alt="#" className="w-96 lg:w-full" />
         </div>
         <div className=" max-w-lg w-full">
           {inputs.map((el, i) => (
             <Input {...el} key={i} value={values["size"]} onChange={onChange} />
           ))}
-          <Link
-            to="/forgotpassword"
-            className="text-[#0000EE] font-inter font-bold underline-offset-2 underline tex-lg lg:text-xl"
-          >
-            Forgot Password?
-          </Link>
           <div className="flex justify-center flex-col items-center">
             <button
               type="submit"
@@ -75,7 +72,7 @@ const RegisterScreen = () => {
               Create Account
             </button>
             <Link
-              to="/signin"
+              to="/login"
               className="text-[#0000EE] font-inter font-bold text-xl sm:text-2xl lg:text-3xl"
             >
               or Sign In
@@ -83,6 +80,7 @@ const RegisterScreen = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

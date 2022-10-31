@@ -8,11 +8,20 @@ module.exports = {
   theme: {
     colors: {
       'editor-primary': '#344E41',
+      'editor-secondary': '#588157',
+      'editor-tertiary': '#A3B18A',
+      'editor-background': '#DAD7CD',
+      'editor-highlight': '#428BC1',
+      'white': '#FFFFFF',
       'light-green': "#87C56C",
       "dark-green": "#004500",
       "red": "#D51300",
       "white": "#FFFFFF",
       "black": "#000000",
+      "purple": "#640064",
+      "dark-gray": "#dadada",
+      "darker-gray": "#5A5A5A",
+      "darker-green": "#006400",
       "dark-green-lighter": "#006400",
       "light-grey": "#D6D6D6"
     },
