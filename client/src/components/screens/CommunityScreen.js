@@ -1,6 +1,5 @@
 import React from 'react';
 import Header from './Header';
-import ContentCard from '../ContentCard';
 import { BsFilter } from 'react-icons/bs';
 import { Menu } from '@headlessui/react';
 
