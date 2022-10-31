@@ -1,9 +1,19 @@
 import {PencilIcon, UserCircleIcon} from "@heroicons/react/24/solid";
+import { useState } from "react";
+import { mapsForOneRandomUser } from "../../utils/mockData/ItemCard_MockData";
 import ItemCard from "./../ItemCard";
 import Header from "./Header";
 // import {UserCircleIcon} from "@heroicons/react/24/outline";
 
 export default function Profile() {
+    // Get the user...
+    const userMaps = mapsForOneRandomUser();
+    // const userTilesets = tilesetsForOneRandomUser();
+    // const userComments
+
+    const [editing, setEditing] = useState("");
+    const [change, handleChange] = useState("");
+
     return (
         <>
             <Header/>
@@ -48,7 +58,8 @@ export default function Profile() {
                 {/* Row 3 */}
                     {/* Column 1: Item Cards for List */}
                     <div className="col-span-2 bg-dark-green-lighter rounded-md">
-                        <div className="snap-y h-[32rem] overflow-y-auto p-8 space-y-2">
+                        <div className="snap-y h-[64rem] overflow-y-auto p-8 space-y-2">
+                            <ItemCard />
                             <ItemCard />
                         </div>
                     </div>

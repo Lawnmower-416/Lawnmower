@@ -2,6 +2,7 @@ import { ChevronDownIcon, HandThumbUpIcon, HandThumbDownIcon } from "@heroicons/
 import { HandThumbUpIcon as LikedIcon, HandThumbDownIcon as DislikedIcon, ChevronDoubleUpIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
+import CommentCard from "./CommentCard";
 
 /**
  *  Needs to pass in the following objects:
@@ -72,14 +73,14 @@ export default function ItemCard(props) {
     }
 
     return (
-        <div className="snap-end flex flex-col">
+        <div className="snap-start flex flex-col">
             <div className="flex flex-row p-1 max-w bg-light-grey rounded-t-xl shadow-lg items-center space-x-4">
                 {/* Column 1: Likes/Dislikes */}
                     <div className="order-1 items-center p-2">
                             <div className="align-middle text-center items-center">
-                                { like ? <LikedIcon className="w-12 cursor-pointer" onClick={handleLike} /> : <HandThumbUpIcon className="w-12 cursor-pointer" onClick={handleLike} />}
+                                { like ? <LikedIcon className="w-12 cursor-pointer text-dark-green" onClick={handleLike} /> : <HandThumbUpIcon className="w-12 cursor-pointer" onClick={handleLike} />}
                                 <span className="text-xl">{points}</span>
-                                { dislike ? <DislikedIcon className="w-12 align-middle cursor-pointer" onClick={handleDislike} /> : <HandThumbDownIcon className="w-12 align-middle cursor-pointer" onClick={handleDislike} />}
+                                { dislike ? <DislikedIcon className="w-12 align-middle cursor-pointer text-red" onClick={handleDislike} /> : <HandThumbDownIcon className="w-12 align-middle cursor-pointer" onClick={handleDislike} />}
                             </div>
                     </div>
                 {/* Column 2: Image */}
@@ -102,16 +103,17 @@ export default function ItemCard(props) {
                         <p className="text-xl">Views: {views}</p>
                         <TrashIcon className="w-12 cursor-pointer fill-red" />
                         {/* Comments Part */}
-                        <p className="font-bold relative bottom-0 cursor-pointer">
-                            Show Comments{show ? <ChevronDoubleUpIcon className="w-6" style={{"display": "inline"}} onClick={handleView} /> : <ChevronDownIcon className="w-6" style={{"display": "inline"}} onClick={handleView} />}
+                        <p className="font-bold relative bottom-0 cursor-pointer" onClick={handleView}>
+                            Show Comments{show ? <ChevronDoubleUpIcon className="w-6" style={{"display": "inline"}} /> : <ChevronDownIcon className="w-6" style={{"display": "inline"}} />}
                         </p>
                     </div>
             </div>
-            <div className="flex flex-row p-1 max-w bg-light-grey rounded-b-xl shadow-lg items-center space-x-4">
+            {/* Displaying Comments */}
+            <div className={`flex flex-col p-1 pt-3 ${show ? 'h-[32rem]' : '' } max-w-full ${!show ? 'bg-light-grey' : 'bg-light-green' } overflow-y-auto overflow-x-hidden rounded-b-xl shadow-lg space-y-4`}>
                 {
                     show ?
-                    <p>Comments Go Here</p>
-                    : <p></p>
+                    (<><CommentCard /><CommentCard /><CommentCard /><CommentCard /></>)
+                    : <div></div>
                 }
             </div>
         </div>

@@ -6,6 +6,7 @@ const CommentSchema = new Schema(
     {
         owner: { type: ObjectId, ref: 'User', required: true },
         contentType: { type: String, required: true },
+        nestedCommentOwner: { type: ObjectId, ref: 'User' },
         nestedIndex: { type: Number, required: true },
         deleted: { type: Boolean }
     },
