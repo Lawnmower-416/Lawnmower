@@ -1,7 +1,7 @@
-import Headerbar from "../components/screens/editor/Headerbar";
-import LayerSidebar from "../components/screens/editor/LayerSidebar";
-import MainEditor from "../components/screens/editor/MainEditor";
-import TileSidebar from "../components/screens/editor/TileSidebar";
+import Headerbar from "./editor/Headerbar";
+import LayerSidebar from "./editor/LayerSidebar";
+import MainEditor from "./editor/MainEditor";
+import TileSidebar from "./editor/TileSidebar";
 
 function MapEditor() {
     const layers = [

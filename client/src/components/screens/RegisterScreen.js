@@ -64,12 +64,6 @@ const RegisterScreen = () => {
           {inputs.map((el, i) => (
             <Input {...el} key={i} value={values["size"]} onChange={onChange} />
           ))}
-          <Link
-            to="/change-password"
-            className="text-[#0000EE] font-inter font-bold underline-offset-2 underline tex-lg lg:text-xl"
-          >
-            Forgot Password?
-          </Link>
           <div className="flex justify-center flex-col items-center">
             <button
               type="submit"
