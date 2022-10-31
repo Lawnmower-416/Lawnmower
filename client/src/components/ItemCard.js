@@ -2,6 +2,7 @@ import { ChevronDownIcon, HandThumbUpIcon, HandThumbDownIcon } from "@heroicons/
 import { HandThumbUpIcon as LikedIcon, HandThumbDownIcon as DislikedIcon, ChevronDoubleUpIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import CommentCard from "./CommentCard";
 
 /**
@@ -14,6 +15,7 @@ import CommentCard from "./CommentCard";
 export default function ItemCard(props) {
     const {map} = props;
     const {tileset} = props;
+    const {isMap} = props; //TODO: Remove after Build 2
 
     // console.log(map);
     const [show, setShow] = useState(false);
@@ -97,7 +99,7 @@ export default function ItemCard(props) {
                     </div>
                 {/* Column 3: Map/Tileset Name, Author, Creation Date */}
                     <div className="flex flex-col flex-grow order-3 align-middle p-2">
-                        <p className="text-3xl font-bold">{(map && map.title) || (tileset && tileset.title) || "Title"}</p>
+                        <Link className="text-3xl font-bold" to={(isMap ? "/mapEditor" : "/tilesetEditor")}>{(map && map.title) || (tileset && tileset.title) || "Title"}</Link>
                         <p className="text-xl">By: {(map && map.owner) || (tileset && tileset.owner) || "Author"}</p>
                         <p className="text-xl">Created: {(map && map.creationDate) || (tileset && tileset.creationDate) || "Date"}</p>
                     </div>
