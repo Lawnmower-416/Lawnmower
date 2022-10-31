@@ -8,6 +8,7 @@ import RegisterScreen from './components/screens/RegisterScreen';
 import Faq from './components/screens/Faq';
 import About from './components/screens/About';
 import ContactUs from './components/screens/ContactUs';
+import CommunityScreen from './components/screens/CommunityScreen';
 
 import MapEditor from './Pages/MapEditor';
 
@@ -23,6 +24,7 @@ function App() {
         <Route path="/about" exact element={<About/>} />
         <Route path="/support" exact element={<ContactUs/>} />
         <Route path="/mapEditor" exact element={<MapEditor/>} />
+        <Route path="/community" exact element={<CommunityScreen/>} />
       </Routes>
 
     </BrowserRouter>
