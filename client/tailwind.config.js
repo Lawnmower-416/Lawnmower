@@ -23,7 +23,8 @@ module.exports = {
       "darker-gray": "#5A5A5A",
       "darker-green": "#006400",
       "dark-green-lighter": "#006400",
-      "light-grey": "#D6D6D6"
+      "light-grey": "#D6D6D6",
+      "light-gray": "#d6d6d6",
     },
     extend: {
       fontFamily: {

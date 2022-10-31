@@ -1,13 +1,19 @@
 
 
 import { useState } from "react";
+import EditHistoryModal from "../modals/EditHistoryModal";
+import ExportModal from "../modals/Export";
+import TilesetSettingsModal from "../modals/TilesetSettingsModal";
 import ColorSidebar from "./editor/ColorSidebar";
 import Headerbar from "./editor/Headerbar";
 import TileEditor from "./editor/TileEditor";
-import TilesetSidebar from "./editor/TilesetSidebar";
 import TileSidebar from "./editor/TileSidebar";
 
 function TilesetEditor() {
+    const [settingsOpen, setSettingsOpen] = useState(false);
+    const [historyOpen, setHistoryOpen] = useState(false);
+    const [exportOpen, setExportOpen] = useState(false);
+
     const [currentColor, setCurrentColor] = useState({red: 0, green: 0, blue: 0, alpha: 255});
     const [currentTile, setCurrentTile] = useState(null);
 
@@ -70,7 +76,10 @@ function TilesetEditor() {
 
     return (
         <div>
-            <Headerbar />
+            <TilesetSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen} />
+            <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
+            <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} />
+            <Headerbar setSettingsOpen={setSettingsOpen} setHistoryOpen={setHistoryOpen} setExportOpen={setExportOpen} />
             <div className="flex h-screen">
                 <ColorSidebar colors={colors} currentColor={currentColor} setCurrentColor={setCurrentColor} addColor={addColor} />
                 <TileEditor currentTile={currentTile}/>

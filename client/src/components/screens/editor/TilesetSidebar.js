@@ -1,6 +1,7 @@
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import { useRef, useState, useEffect } from 'react';
-function TilesetSidebar(props) {
+function TilesetSidebar({ tilesets, setImportOpen }) {
 
     return (
         <div className="bg-editor-primary h-screen w-64">
@@ -14,7 +15,7 @@ function TilesetSidebar(props) {
                         <div className="mt-5 flex-1 bg-editor-background">
                             
                         <div>
-                            {props.tilesets.map((tileset) => (
+                            {tilesets.map((tileset) => (
                                 <TilesetContent 
                                     key={tileset.name}
                                     name={tileset.name}
@@ -22,6 +23,9 @@ function TilesetSidebar(props) {
                                     imgUrl={tileset.src}
                                 />
                             ))}
+                        </div>
+                        <div className="flex justify-center">
+                             <PlusCircleIcon className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer" onClick={() => setImportOpen(true)}/>
                         </div>
                         </div>
                     </div>

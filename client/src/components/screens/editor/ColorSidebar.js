@@ -1,4 +1,4 @@
-import { LockClosedIcon, LockOpenIcon, ChevronLeftIcon, EyeSlashIcon, EyeIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
 function ColorSidebar({ colors, currentColor, setCurrentColor, addColor }) {
     return (
