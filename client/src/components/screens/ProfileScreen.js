@@ -4,6 +4,11 @@ import { useState } from "react";
 import { getEmail, getRandomUser } from "../../utils/mockData/ItemCard_MockData";
 import ItemCard from "./../ItemCard";
 import Header from "./Header";
+
+import ModalEight from "../modals/CreateMapModal/CreateMap";
+import CreateTilesetModal from "../modals/CreateTilesetModal";
+import DeleteAccount from "../modals/DeleteAccount";
+
 // import {UserCircleIcon} from "@heroicons/react/24/outline";
 
 export default function Profile() {
@@ -28,6 +33,10 @@ export default function Profile() {
     const [currentTab, setCurrentTab] = useState("Maps"); // Select: Maps, Tilesets, or Comments
     const [userLogo, setUserLogo] = useState([]);
     const [imageURL, setImageURL] = useState("");
+
+    const [modalOpen8, setModalOpen8] = useState(false);
+    const [tilesetModal, setTilesetModal] = useState(false);
+    const [deleteAccountModal, setDeleteAccountModal] = useState(false);
 
     const getUserCommentsFromMapsAndTilesets = () => {
         const comments = [];
@@ -65,6 +74,7 @@ export default function Profile() {
     return (
         <>
             <Header/>
+            {deleteAccountModal ? <DeleteAccount setModalOpen={setDeleteAccountModal} modalOpen={deleteAccountModal} /> : <div></div>}
             <div className="w-auto grid grid-cols-2 grid-rows-profile gap-1 bg-gradient-primary p-8">
                 {/* Row 1 */}
                     {/* Column 1: User Profile Area */}
@@ -110,8 +120,8 @@ export default function Profile() {
 
                     {/* Column 2: Create Map/Tileset Buttons Area */}
                     <div className="col-auto grid grid-cols-2 pt-3 text-2xl gap-12" style={{"color": "white"}}>
-                        <div className="col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer">Create Map</div>
-                        <div className="col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer">Create Tilesets</div>
+                        <div className="col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer" onClick={() => setModalOpen8(!modalOpen8)}>Create Map</div>
+                        <div className="col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer" onClick={() => setTilesetModal(!tilesetModal)}>Create Tilesets</div>
                     </div>
                 {/* Row 3 */}
                     {/* Column 1: Item Cards for List */}
@@ -127,9 +137,11 @@ export default function Profile() {
                 {/* Row 4 */}
                     {/* Column 1: Only for the Delete Account Button */}
                     <div className="col-span-2 items-center text-center p-3">
-                        <button className="bg-dark-green-lighter text-red font-bold rounded-md p-3">Delete Account</button>
+                        <button className="bg-dark-green-lighter text-red font-bold rounded-md p-3" onClick={() => setDeleteAccountModal((prev) => !prev)} >Delete Account</button>
                     </div>
             </div>
+            <ModalEight setModalOpen={setModalOpen8} modalOpen={modalOpen8} />
+            <CreateTilesetModal setModalOpen={setTilesetModal} modalOpen={tilesetModal} />
         </>
     );
 }
