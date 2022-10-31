@@ -22,6 +22,10 @@ const Header = () => {
     navArray = [];
   }
 
+
+  // TODO: implement account checking, where header no longer shows Sign Up/Sign In if user is logged in
+
+
   return (
     <div className="headerWrapper ">
       <div className="flex justify-between items-center max-w-screen-2xl mx-auto py-2 header w-11/12">
