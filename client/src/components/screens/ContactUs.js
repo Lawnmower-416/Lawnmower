@@ -68,7 +68,7 @@ const ContactUs = () => {
           </form>
         </div>
         <div className="order-1 lg:order-2 flex justify-center">
-          <img src="images/contact.png" alt="#" />
+          <img src="./contact.png" alt="#" />
         </div>
       </div>
     </div>

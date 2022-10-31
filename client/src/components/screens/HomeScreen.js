@@ -1,11 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const HeroSection = () => {
-  const buttonClick = () => {
-    console.log("button clicked");
-  };
-
+const HomeScreen = () => {
   return (
     <div>
     <div className="flex flex-col main-background pb-8 shadow-xl">
@@ -69,4 +65,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection;
+export default HomeScreen;
