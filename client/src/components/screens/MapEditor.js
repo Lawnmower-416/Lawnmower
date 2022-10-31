@@ -4,10 +4,14 @@ import MainEditor from "./editor/MainEditor";
 import TilesetSidebar from "./editor/TilesetSidebar";
 import { useState } from "react";
 import MapSettingsModal from "../modals/MapSettingsModal";
+import ExportModal from "../modals/Export";
+import EditHistoryModal from "../modals/EditHistoryModal";
 
 
 function MapEditor() {    
     const [settingsOpen, setSettingsOpen] = useState(false);
+    const [historyOpen, setHistoryOpen] = useState(false);
+    const [exportOpen, setExportOpen] = useState(false);
 
     const layers = [
         { name: 'Layer 1', current: true, isLocked: false, isVisible: true },
@@ -22,7 +26,9 @@ function MapEditor() {
     return (
         <div>
             <MapSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen}/>
-            <Headerbar setSettingsOpen={setSettingsOpen}/>
+            <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
+            <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} />
+            <Headerbar setSettingsOpen={setSettingsOpen} setHistoryOpen={setHistoryOpen} setExportOpen={setExportOpen}/>
             <div className="flex h-screen">
                 <LayerSidebar layers={layers}/>
                 <MainEditor />
