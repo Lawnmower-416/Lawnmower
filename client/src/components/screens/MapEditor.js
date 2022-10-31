@@ -1,7 +1,7 @@
 import Headerbar from "./editor/Headerbar";
 import LayerSidebar from "./editor/LayerSidebar";
 import MainEditor from "./editor/MainEditor";
-import TileSidebar from "./editor/TileSidebar";
+import TilesetSidebar from "./editor/TilesetSidebar";
 
 function MapEditor() {
     const layers = [

@@ -1,10 +1,11 @@
-import Headerbar from "../components/screens/editor/Headerbar";
-import MainEditor from "../components/screens/editor/MainEditor";
-import ColorSidebar from "../components/screens/editor/ColorSidebar";
-import TileSidebar from "../components/screens/editor/TileSidebar";
+
 
 import { useState } from "react";
-import TileEditor from "../components/screens/editor/TileEditor";
+import ColorSidebar from "./editor/ColorSidebar";
+import Headerbar from "./editor/Headerbar";
+import TileEditor from "./editor/TileEditor";
+import TilesetSidebar from "./editor/TilesetSidebar";
+import TileSidebar from "./editor/TileSidebar";
 
 function TilesetEditor() {
     const [currentColor, setCurrentColor] = useState({red: 0, green: 0, blue: 0, alpha: 255});

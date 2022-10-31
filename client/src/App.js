@@ -10,8 +10,8 @@ import About from './components/screens/About';
 import ContactUs from './components/screens/ContactUs';
 import CommunityScreen from './components/screens/CommunityScreen';
 import PasswordChange from './components/screens/PasswordChange';
-import MapEditor from './Pages/MapEditor';
-import TilesetEditor from './Pages/TilesetEditor';
+import MapEditor from './components/screens/MapEditor';
+import TilesetEditor from './components/screens/TilesetEditor';
 
 function App() {
   return (
