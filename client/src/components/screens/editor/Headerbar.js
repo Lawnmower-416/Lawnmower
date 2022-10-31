@@ -1,5 +1,6 @@
 import { HomeIcon, CloudIcon, UserPlusIcon, ArrowDownTrayIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { Disclosure } from '@headlessui/react'
+import { Link } from 'react-router-dom';
 
 function Headerbar({setSettingsOpen, setHistoryOpen, setExportOpen}) {
     return (
@@ -8,12 +9,12 @@ function Headerbar({setSettingsOpen, setHistoryOpen, setExportOpen}) {
                 <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
                     <div className="relative flex h-14 items-center justify-between">
                         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                            <button
-                                type="button"
+                            <Link
                                 className="bg-editor-highlight px-2 py-2 rounded-full"
+                                to="/profile"
                             >
                                 <HomeIcon className="h-10 w-10 text-white"/>
-                            </button>
+                            </Link>
 
                             <h1 className="text-5xl text-white">Title</h1>
                             <div className="flex items-center">
