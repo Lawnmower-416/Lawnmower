@@ -1,6 +1,7 @@
 import { HomeIcon, CloudIcon, UserPlusIcon, ArrowDownTrayIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { Disclosure } from '@headlessui/react'
-function Headerbar(props) {
+
+function Headerbar({setSettingsOpen}) {
     return (
         <Disclosure as="nav" className="bg-editor-primary h-14">
             {() => (
@@ -16,7 +17,7 @@ function Headerbar(props) {
 
                             <h1 className="text-5xl text-white">Title</h1>
                             <div className="flex items-center">
-                                <Cog6ToothIcon className="h-10 w-10 text-white hover:text-editor-highlight"/>
+                                <Cog6ToothIcon className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer" onClick={() => setSettingsOpen(true)}/>
                                 <CloudIcon className="h-10 w-10 text-white hover:text-editor-highlight"/>
                                 <ArrowDownTrayIcon className="h-10 w-10 text-white hover:text-editor-highlight" />
                             </div>

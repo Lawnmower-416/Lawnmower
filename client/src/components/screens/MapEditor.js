@@ -2,8 +2,13 @@ import Headerbar from "./editor/Headerbar";
 import LayerSidebar from "./editor/LayerSidebar";
 import MainEditor from "./editor/MainEditor";
 import TilesetSidebar from "./editor/TilesetSidebar";
+import { useState } from "react";
+import MapSettingsModal from "../modals/MapSettingsModal";
 
-function MapEditor() {
+
+function MapEditor() {    
+    const [settingsOpen, setSettingsOpen] = useState(false);
+
     const layers = [
         { name: 'Layer 1', current: true, isLocked: false, isVisible: true },
         { name: 'Layer 2', current: false, isLocked: true, isVisible: false },
@@ -16,7 +21,8 @@ function MapEditor() {
 
     return (
         <div>
-            <Headerbar />
+            <MapSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen}/>
+            <Headerbar setSettingsOpen={setSettingsOpen}/>
             <div className="flex h-screen">
                 <LayerSidebar layers={layers}/>
                 <MainEditor />
