@@ -10,6 +10,7 @@ import About from './components/screens/About';
 import ContactUs from './components/screens/ContactUs';
 
 import MapEditor from './Pages/MapEditor';
+import TilesetEditor from './Pages/TilesetEditor';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/about" exact element={<About/>} />
         <Route path="/support" exact element={<ContactUs/>} />
         <Route path="/mapEditor" exact element={<MapEditor/>} />
+        <Route path="/tilesetEditor" exact element={<TilesetEditor/>} />
       </Routes>
 
     </BrowserRouter>

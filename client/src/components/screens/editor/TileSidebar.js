@@ -1,6 +1,7 @@
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import { useRef, useState, useEffect } from 'react';
-function TileSidebar(props) {
+function TileSidebar({ tiles, setCurrentTile, addTile }) {
 
     return (
         <div className="bg-editor-primary h-screen w-64">
@@ -13,15 +14,17 @@ function TileSidebar(props) {
                         </div>
                         <div className="mt-5 flex-1 bg-editor-background">
                             
-                        <div>
-                            {props.tilesets.map((tileset) => (
-                                <TilesetContent 
-                                    key={tileset.name}
-                                    name={tileset.name}
-                                    current={tileset.current}
-                                    imgUrl={tileset.src}
+                        <div className="grid grid-cols-3">
+                            {tiles.map((tile) => (
+                                <Tile 
+                                    key={tile._id}
+                                    tile={tile}
+                                    setCurrentTile={setCurrentTile}
                                 />
                             ))}
+                        </div>
+                        <div className="flex justify-center">
+                             <PlusCircleIcon className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer" onClick={() => addTile()}/>
                         </div>
                         </div>
                     </div>
@@ -31,33 +34,25 @@ function TileSidebar(props) {
     )
 }
 
-function TilesetContent(props) {
-    const [open, setOpen] = useState(false);
+function Tile({tile, setCurrentTile }) {
     const ref = useRef(null);
 
     useEffect(() => {
-        if(open && ref) {
+        if(ref) {
+            const data = tile.data;
             const context = ref.current.getContext('2d');
-            const img = new Image();
-            img.src = props.imgUrl;
-            img.onload = () => {
-                context.drawImage(img, 0,0, 200, 200)
+            for(let i = 0; i < data.length; i++) {
+                for(let j = 0; j < data[i].length; j++) {
+                    context.fillStyle = `rgb(${data[i][j][0]}, ${data[i][j][1]}, ${data[i][j][2]})`;
+                    context.fillRect(i*20,j*20, 20, 20)
+                }
             }
+            
         }
     })
 
     return (
-        <div className="text-white">
-            <div className="bg-editor-secondary" onClick={() => setOpen(!open)}>
-                <div className="text-white flex items-center">
-                    {props.name}
-                    {open ? <ChevronDownIcon className="h-6 w-6 text-white"/> : <ChevronRightIcon className="h-6 w-6 text-white"/>}
-                </div>
-            </div>
-            {open && (
-                <canvas width="200" height="200" ref={ref}/>
-            )}       
-        </div>
+        <canvas width="60" height="60" ref={ref} className="m-0" onClick={() => setCurrentTile(tile)}/>
     )
 
 }
