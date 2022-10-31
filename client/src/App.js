@@ -10,7 +10,7 @@ import About from './components/screens/About';
 import ContactUs from './components/screens/ContactUs';
 import CommunityScreen from './components/screens/CommunityScreen';
 
-import MapEditor from './Pages/MapEditor';
+import MapEditor from './components/screens/MapEditor';
 
 function App() {
   return (
