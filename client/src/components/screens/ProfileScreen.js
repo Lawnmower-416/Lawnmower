@@ -9,10 +9,11 @@ export default function Profile() {
     // Get the user...
     const userMaps = mapsForOneRandomUser();
     // const userTilesets = tilesetsForOneRandomUser();
-    // const userComments
+    // const userComments = filterComments();
 
-    const [editing, setEditing] = useState("");
-    const [change, handleChange] = useState("");
+    const [editing, setEditing] = useState(""); // Username, Email
+    const [change, handleChange] = useState(""); // Username, Email
+    const [currentTab, setCurrentTab] = useState("Maps"); // Select: Maps, Tilesets, or Comments
 
     return (
         <>
@@ -23,8 +24,8 @@ export default function Profile() {
                     <div className="col-auto">
                         {/* Left Panel: User Icon and Edit */}
                         <div>
-                            <UserCircleIcon className="fill-blue" display={"block"} style={{"margin": "auto"}} width={"30%"} />
-                            <PencilIcon display={"block"} style={{"margin": "auto"}} width={"10%"}/>
+                            <UserCircleIcon className="text-[blue]" display={"block"} style={{"margin": "auto"}} width={"30%"} />
+                            <PencilIcon className="w-12 hover:text-white" />
                         </div>
                     </div>
 
@@ -32,11 +33,11 @@ export default function Profile() {
                     <div className="col-auto grid grid-rows-4 gap-0 p-5 bg-dark-green-lighter" >
                         <div className="col-auto grid grid-cols-10 items-center text-2xl" style={{"color": "white"}}>
                             <div className="col-span-8 px-2" >xXxFortniteLover1337xXx</div>
-                            <div className="col-span-2 px-1 content-start"><PencilIcon display={"block"} style={{"margin": "auto"}} width={"40%"} /></div>
+                            <div className="col-span-2 px-1 content-start"><PencilIcon className="w-12" /></div>
                         </div>
                         <div className="col-auto grid grid-cols-10 content-center align-middle items-center text-2xl" style={{"color": "white"}} >
                             <div className="col-span-8 px-2" >JonathanDoemitry1926@gmail.com</div>
-                            <div className="col-span-2 px-1 content-start"><PencilIcon display={"block"} style={{"margin": "auto"}} width={"40%"} /></div>
+                            <div className="col-span-2 px-1 content-start"><PencilIcon className="w-12" /></div>
                         </div>
                         <span className="col-auto grid px-2 text-2xl content-center align-middle items-center" style={{"color": "white"}}>Join Date: January 1st, 1970</span>
                         <span className="col-auto grid px-2 text-2xl content-center align-middle items-center" style={{"color": "white"}}>Points: 123,456,789</span>
@@ -45,15 +46,15 @@ export default function Profile() {
                 {/* Row 2 */}
                     {/* Column 1: Tabs Area */}
                     <div className="col-auto grid grid-cols-4 h-min pt-3 text-2xl gap-0" style={{"color": "white"}}>
-                        <div className="col-auto grid text-center bg-dark-green p-2 rounded-md">Maps</div>
-                        <div className="col-auto grid text-center bg-dark-green p-2 rounded-md">Tilesets</div>
-                        <div className="col-auto grid text-center bg-dark-green p-2 rounded-md">Comments</div>
+                        <div className={`col-auto grid text-center ${currentTab === 'Maps' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`} onClick={() => setCurrentTab((prev) => "Maps")}>Maps</div>
+                        <div className={`col-auto grid text-center ${currentTab === 'Tilesets' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`}onClick={() => setCurrentTab((prev) => "Tilesets")}>Tilesets</div>
+                        <div className={`col-auto grid text-center ${currentTab === 'Comments' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`}onClick={() => setCurrentTab((prev) => "Comments")}>Comments</div>
                     </div>
 
                     {/* Column 2: Create Map/Tileset Buttons Area */}
                     <div className="col-auto grid grid-cols-2 pt-3 text-2xl gap-12" style={{"color": "white"}}>
-                        <div className="col-auto grid text-center bg-dark-green-lighter p-2 rounded-md">Create Map</div>
-                        <div className="col-auto grid text-center bg-dark-green-lighter p-2 rounded-md">Create Tilesets</div>
+                        <div className="col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer">Create Map</div>
+                        <div className="col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer">Create Tilesets</div>
                     </div>
                 {/* Row 3 */}
                     {/* Column 1: Item Cards for List */}
