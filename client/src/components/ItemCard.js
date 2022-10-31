@@ -3,6 +3,7 @@ import { HandThumbUpIcon as LikedIcon, HandThumbDownIcon as DislikedIcon, Chevro
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import CommentCard from "./CommentCard";
+import { DeleteMapModal } from "./modals/DeleteMapModal/DeleteMap";
 
 /**
  *  Needs to pass in the following objects:
@@ -24,6 +25,8 @@ export default function ItemCard(props) {
     const [views, setViews] = useState((map && map.views) || (tileset && tileset.views) || 0);
     const [points, setPoints] = useState(likeCount - dislikeCount);
     // console.log(show);
+
+    const [deleteMapModal, setDeleteMapModal] = useState(false);
 
     const handleLike = () => {
         // Handle the case where if the user already disliked...
@@ -77,6 +80,7 @@ export default function ItemCard(props) {
     }
 
     return (
+        <><DeleteMapModal modalOpen={deleteMapModal} setModalOpen={setDeleteMapModal} mapName={(map && map.title) || "Title"} />
         <div className="snap-start flex flex-col">
             <div className="flex flex-row p-1 max-w bg-light-grey rounded-t-xl shadow-lg items-center space-x-4">
                 {/* Column 1: Likes/Dislikes */}
@@ -105,7 +109,7 @@ export default function ItemCard(props) {
                     <div className="flex flex-col order-last text-left space-y-3">
                         <p className="text-xl font-bold">{props.visibility || "Test"}</p>
                         <p className="text-xl">Views: {views}</p>
-                        <TrashIcon className="w-12 cursor-pointer fill-red" />
+                        <TrashIcon className="w-12 cursor-pointer fill-red" onClick={() => setDeleteMapModal((prev) => !prev)} />
                         {/* Comments Part */}
                         <p className="font-bold relative bottom-0 cursor-pointer" onClick={handleView}>
                             Show Comments{show ? <ChevronDoubleUpIcon className="w-6" style={{"display": "inline"}} /> : <ChevronDownIcon className="w-6" style={{"display": "inline"}} />}
@@ -121,5 +125,6 @@ export default function ItemCard(props) {
                 }
             </div>
         </div>
+        </>
     )
 }
