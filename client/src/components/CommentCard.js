@@ -3,12 +3,15 @@ import { HandThumbUpIcon, HandThumbDownIcon } from "@heroicons/react/24/outline"
 import { HandThumbUpIcon as LikedIcon, HandThumbDownIcon as DislikedIcon } from "@heroicons/react/24/solid";
 
 export default function CommentCard(props) {
+    const {comment} = props;
+    const inProfile = props.inProfile || false;
+    // console.log(comment);
     const [like, setLike] = useState(false);
     const [dislike, setDislike] = useState(false);
-    const [likeCount, setLikeCount] = useState(props.likedUsers || 0);
-    const [dislikeCount, setDislikeCount] = useState(props.dislikedUsers || 0);
+    const [likeCount, setLikeCount] = useState((comment && comment.likedComments) || 0);
+    const [dislikeCount, setDislikeCount] = useState((comment && comment.dislikedComments)  || 0);
     const [points, setPoints] = useState(likeCount - dislikeCount);
-    const [nested, setNested] = useState(props.nestedIndex || 0);
+    const [nested, setNested] = useState((comment && comment.nestedIndex) || 0);
     const nestedOptions = [0, 16, 32, 48];
 
     const handleLike = () => {
@@ -68,7 +71,7 @@ export default function CommentCard(props) {
     }
 
     return (
-        <div id="comment-card" className='flex flex-row pr-3 space-x-0'>
+        <div id="comment-card" className={`flex flex-row pr-3 space-x-${nestedOptions[nested]}`}>
             {/* TODO: Check if comment is nested or not with a visual indicator. For now it is tabbed */}
                 <div className="order-1 p-2 align-middle"></div>
             <div className="flex flex-row flex-1 order-2 p-1 max-w-full bg-dark-green rounded-xl shadow-lg space-x-s text-white">
@@ -83,15 +86,15 @@ export default function CommentCard(props) {
             {/* Column 2: Commenter, Content */}
                 <div className="flex flex-col flex-grow order-2 p-2">
                     <div className="order-1 p-2">
-                        <p className="text-3xl font-bold">{props.owner || "Commenter"}</p>
+                        <p className="text-3xl font-bold">{comment.owner || "Commenter"}</p>
                     </div>
                     <div className="flex-grow order-1 p-2">
-                        <p className="text-xl">{props.contentType || "Comment Goes Here"}</p>
+                        <p className="text-xl">{comment.contentType || "Comment Goes Here"}</p>
                     </div>
                 </div>
             {/* Column 3: Reply */}
                 <div className="flex flex-col flex-grow order-last p-2 relative items-end">
-                    <p className="text-lg font-bold cursor-pointer absolute bottom-0" onClick={() => handleReply()}>Reply</p>
+                    {inProfile ? <p></p> : <p className="text-lg font-bold cursor-pointer absolute bottom-0" onClick={() => handleReply()}>Reply</p>}
                 </div>
             </div>
         </div>
