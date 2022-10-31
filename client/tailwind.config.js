@@ -16,7 +16,9 @@ module.exports = {
       'light-green': "#87C56C",
       "dark-green": "#004500",
       "red": "#D51300",
-      'black': '#000000',
+      "white": "#FFFFFF",
+      "black": "#000000",
+      "purple": "#640064",
     },
     extend: {
       fontFamily: {
