@@ -1,6 +1,5 @@
-import { Dialog, Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
-import { Fragment, useState } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { Fragment } from 'react'
 
 function TilesetSettingsModal({isOpen, setIsOpen}) {
   function closeModal() {
