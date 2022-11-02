@@ -7,7 +7,6 @@ import CommentCard from "./CommentCard";
 import { DeleteMapModal } from "./modals/DeleteMapModal/DeleteMap";
 import { Menu } from '@headlessui/react';
 import ModalThree from "./modals/ReportModal/Report";
-import { useLocation } from "react-router-dom";
 
 
 /**
@@ -34,14 +33,6 @@ export default function ItemCard(props) {
 
     const [deleteMapModal, setDeleteMapModal] = useState(false);
     const [modalOpen3, setModalOpen3] = useState(false);
-
-    // this is such a bandaid fix, I'm sorry
-    const location = useLocation();
-    const path = location.pathname;
-    let menuCSS = "absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg w-"
-    if (path === "/profile") {
-        menuCSS = "absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg w-"
-    }
 
     const handleLike = () => {
         // Handle the case where if the user already disliked...
@@ -123,7 +114,7 @@ export default function ItemCard(props) {
                                 <Menu.Button>
                                     <p className="text-xl text-left">By: {(map && map.owner) || (tileset && tileset.owner) || "Author"}</p>
                                 </Menu.Button>
-                                <Menu.Items className={menuCSS}>
+                                <Menu.Items className="absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg w-">
                                     <Menu.Item>
                                             {({ active }) => (
                                                 <Link to="/profile" className="block px-4 py-2 text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray"
