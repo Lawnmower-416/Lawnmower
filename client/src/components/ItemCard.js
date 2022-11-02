@@ -38,9 +38,9 @@ export default function ItemCard(props) {
     // this is such a bandaid fix, I'm sorry
     const location = useLocation();
     const path = location.pathname;
-    let menuCSS = "absolute translate-y-16 translate-x-0 bg-darker-gray rounded-xl shadow-lg w-"
+    let menuCSS = "absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg w-"
     if (path === "/profile") {
-        menuCSS = "absolute translate-y-10 translate-x-0 bg-darker-gray rounded-xl shadow-lg w-"
+        menuCSS = "absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg w-"
     }
 
     const handleLike = () => {
@@ -119,29 +119,28 @@ export default function ItemCard(props) {
                     <div className="flex flex-col flex-grow order-3 align-middle p-2">
 
                         <Link className="text-3xl font-bold" to={(isMap ? "/mapEditor" : "/tilesetEditor")}>{(map && map.title) || (tileset && tileset.title) || "Title"}</Link>
-
-                        <Menu>
-                            <Menu.Button>
-                                <p className="text-xl text-left">By: {(map && map.owner) || (tileset && tileset.owner) || "Author"}</p>
-                            </Menu.Button>
-                            <Menu.Items className={menuCSS}>
-                                <Menu.Item>
-                                        {({ active }) => (
-                                            <Link to="/profile" className="block px-4 py-2 text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray"
-                                            >Profile                                            
-                                            </Link>
-                                        )}
-                                </Menu.Item>
-                                <Menu.Item>
-                                    {/*TODO: this menu is dynamic based on if the user is logged in or not*/}
-                                        {({ active }) => (
-                                            <button className="block px-4 py-2 text-md hover:bg-darker-gray rounded-b-xl w-full"
-                                            onClick={() => setModalOpen3(!modalOpen3)}>Report                                            
-                                            </button>
-                                        )}
-                                </Menu.Item>
-                            </Menu.Items>
-                        </Menu>
+                            <Menu as="div" className="relative">
+                                <Menu.Button>
+                                    <p className="text-xl text-left">By: {(map && map.owner) || (tileset && tileset.owner) || "Author"}</p>
+                                </Menu.Button>
+                                <Menu.Items className={menuCSS}>
+                                    <Menu.Item>
+                                            {({ active }) => (
+                                                <Link to="/profile" className="block px-4 py-2 text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray"
+                                                >Profile                                            
+                                                </Link>
+                                            )}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        {/*TODO: this menu is dynamic based on if the user is logged in or not*/}
+                                            {({ active }) => (
+                                                <button className="block px-4 py-2 text-md hover:bg-darker-gray rounded-b-xl w-full"
+                                                onClick={() => setModalOpen3(!modalOpen3)}>Report                                            
+                                                </button>
+                                            )}
+                                    </Menu.Item>
+                                </Menu.Items>
+                            </Menu>
 
                         <p className="text-xl">Created: {(map && map.creationDate) || (tileset && tileset.creationDate) || "Date"}</p>
                     </div>
