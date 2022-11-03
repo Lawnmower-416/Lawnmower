@@ -2,9 +2,9 @@
     The baseURL should be modified to fit the ec2 backe-end instead of localhost */
 
 import axios from 'axios';
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = false;
 const api = axios.create({
-    baseURL: 'http://localhost:3000'
+    baseURL: 'http://ec2-3-94-193-80.compute-1.amazonaws.com:3000'
 });
 
 // THESE ARE ALL THE REQUESTS WE`LL BE MAKING, ALL REQUESTS HAVE A

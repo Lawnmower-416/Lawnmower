@@ -1,8 +1,8 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 // some functions use useHistory to redirect to a different page
 // check if this is necessary
-import api from '../api';
+import api from './auth-request-api/index';
 
 const AuthContext = createContext();
 
@@ -22,7 +22,8 @@ function AuthContextProvider(props) {
         loggedIn: false
     });
 
-    const history = useHistory();
+    //useHistory hase been replaced with useNavigate
+    const history = useNavigate();
 
     useEffect(() => {
         auth.loggedIn();
@@ -74,6 +75,7 @@ function AuthContextProvider(props) {
 
     auth.loggedIn = async () => {
         const response = await api.loggedIn();
+        console.log("the response is: ", response);
         if (response.status === 200) {
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,
@@ -120,7 +122,8 @@ function AuthContextProvider(props) {
             history.push('/login');
         }
     }
-    // changing password should logout user
+    // changing password should logout user (this can be done on the backend OR just calling logout here)
+    // in the backend, there is a functionality where it re-logins the user. If the feature is changed, then make sure to change that too
     auth.changePassword = async (currentPassword, newPassword) => {
         const response = await api.changePassword(currentPassword, newPassword);
         if (response.status === 200) {
