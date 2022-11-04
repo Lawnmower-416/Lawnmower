@@ -4,7 +4,7 @@
 import axios from 'axios';
 axios.defaults.withCredentials = false;
 const api = axios.create({
-    baseURL: 'httsp://ec2-3-94-193-80.compute-1.amazonaws.com:3000'
+    baseURL: 'https://ec2-3-94-193-80.compute-1.amazonaws.com:3000'
 });
 
 // THESE ARE ALL THE REQUESTS WE`LL BE MAKING, ALL REQUESTS HAVE A
