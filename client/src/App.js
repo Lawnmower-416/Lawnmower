@@ -33,6 +33,7 @@ function App() {
           <Route path="/community" exact element={<CommunityScreen/>} />
           <Route path="/change-password" exact element={<PasswordChange/>} />
         </Routes>
+        
       </AuthContextProvider>
     </BrowserRouter>
   );
