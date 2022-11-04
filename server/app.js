@@ -15,6 +15,9 @@ const app = express();
 const hostname = "0.0.0.0";
 const port = 3000;
 
+const cors = require('cors');
+app.use(cors());
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

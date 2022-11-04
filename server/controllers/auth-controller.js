@@ -5,6 +5,8 @@ const User = require('../models/user-schema');
 const bcrypt = require('bcryptjs');
 
 loggedIn = async (req, res) => {
+    console.log("error here?")
+
     try {
         let userId = auth.verifyUser(req);
         if (!userId) {
@@ -101,8 +103,8 @@ logout = async (req, res) => {
 
 register = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, passwordVerify } = req.body;
-        if (!firstName || !lastName || !email || !password || !passwordVerify) {
+        const { firstName, lastName, username, email, password, passwordVerify } = req.body;
+        if (!firstName || !lastName || !username || !email || !password || !passwordVerify) {
             return res
                 .status(400)
                 .json({ success: false, errorMessage: "Please enter all required fields." });
@@ -173,6 +175,7 @@ register = async (req, res) => {
             }
         });
     } catch (err) {
+        console.log(err)
         return res.status(500).json({ success: false, errorMessage: err });
     }
 }
