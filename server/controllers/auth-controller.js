@@ -22,6 +22,7 @@ loggedIn = async (req, res) => {
             user: {
                 firstName: loggedInUser.firstName,
                 lastName: loggedInUser.lastName,
+                username: loggedInUser.username,
                 email: loggedInUser.email,
                 joinDate: loggedInUser.joinDate
             }
@@ -33,15 +34,15 @@ loggedIn = async (req, res) => {
 
 login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { username, password } = req.body;
 
-        if (!email || !password) {
+        if (!username || !password) {
             return res
                 .status(400)
                 .json({ success: false, errorMessage: "Please enter all required fields." });
         }
 
-        const existingUser = await User.findOne({ email: email });
+        const existingUser = await User.findOne({ username: username });
         if (!existingUser) {
             return res
                 .status(401)
@@ -57,7 +58,7 @@ login = async (req, res) => {
                 .status(401)
                 .json({
                     success: false,
-                    errorMessage: "Wrong email or password provided."
+                    errorMessage: "Wrong username or password provided."
                 })
         }
 
@@ -72,7 +73,8 @@ login = async (req, res) => {
             success: true,
             user: {
                 firstName: existingUser.firstName,
-                lastName: existingUser.lastName,  
+                lastName: existingUser.lastName,
+                username: existingUser.username,
                 email: existingUser.email              
             }
         })
@@ -134,12 +136,23 @@ register = async (req, res) => {
                 })
         }
 
+        const existingUserUsername = await User.findOne({ username: username });
+        
+        if (existingUserUsername) {
+            return res
+                .status(400)
+                .json({
+                    success: false,
+                    errorMessage: "An account with this username address already exists."
+                })
+        }
+
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt); 
 
         const newUser = new User({
-            firstName, lastName, email, passwordHash
+            firstName, lastName, email, username, passwordHash
         });
         const savedUser = await newUser.save();
 
@@ -154,7 +167,8 @@ register = async (req, res) => {
             success: true,
             user: {
                 firstName: savedUser.firstName,
-                lastName: savedUser.lastName,  
+                lastName: savedUser.lastName,
+                username: savedUser.username,
                 email: savedUser.email              
             }
         });
@@ -203,7 +217,7 @@ changePassword = async (req, res) => {
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "An account with this email address does not exist."
+                    errorMessage: "Could not find user to update password."
                 })
         }
 
@@ -250,7 +264,7 @@ deleteAccount = async (req, res) => {
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "An account with this email address does not exist."
+                    errorMessage: "Could not find account to delete."
                 })
         }
 
@@ -266,6 +280,7 @@ deleteAccount = async (req, res) => {
             user: {
                 firstName: deletedUser.firstName,
                 lastName: deletedUser.lastName,
+                username: deletedUser.username,
                 email: deletedUser.email
             }
         })
