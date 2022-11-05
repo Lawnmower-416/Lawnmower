@@ -255,17 +255,18 @@ function GlobalStoreContextProvider(props) {
     store.loadUserMaps = async () => {
         try {
             let userMapIds = auth.user.maps
-            let userMaps = []
+            let mapPromises = [];
             for (let i = 0; i < userMapIds.length; i++) {
-                let map = await api.getMap(userMapIds[i])
-                userMaps.push(map)
+                mapPromises.push(api.getMap(userMapIds[i]));
             }
-            storeReducer({
-                type: GlobalStoreActionType.LOAD_USER_MAPS,
-                payload: {
-                    userMaps: userMaps
-                }
-            })
+
+            Promise.all(mapPromises).then((maps) => {
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_USER_MAPS,
+                    userMaps: maps,
+                });
+            });
+
         } catch (error) {
             console.log("Error loading user maps: ", error)
         }
@@ -274,17 +275,20 @@ function GlobalStoreContextProvider(props) {
     store.loadUserTilesets = async () => {
         try {
             let userTilesetIds = auth.user.tilesets
-            let userTilesets = []
+            let tilesetPromises = [];
+
             for (let i = 0; i < userTilesetIds.length; i++) {
-                let tileset = await api.getTileset(userTilesetIds[i])
-                userTilesets.push(tileset)
+                tilesetPromises.push(api.getTileset(userTilesetIds[i]));
             }
-            storeReducer({
-                type: GlobalStoreActionType.LOAD_USER_TILESETS,
-                payload: {
-                    userTilesets: userTilesets
-                }
-            })
+
+            Promise.all(tilesetPromises).then((tilesets) => {
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_USER_TILESETS,
+                    payload: {
+                        userTilesets: tilesets
+                    }
+                })
+            });
         } catch (error) {
             console.log("Error loading user tilesets: ", error)
         }
@@ -479,7 +483,7 @@ function GlobalStoreContextProvider(props) {
     store.markTilesetForDeletion = async (tilesetId) => {
         try {
             let response = await api.getTilesetById(tilesetId)
-            if (response.data.succes) {
+            if (response.data.success) {
                 storeReducer({
                     type: GlobalStoreActionType.MARK_TILESET_FOR_DELETION,
                     payload: {
