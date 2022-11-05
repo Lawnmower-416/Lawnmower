@@ -40,30 +40,7 @@ export const getRandomUser = () => {
 
 const mapsForUser = (user) => {
     let owner = user;
-    const maps = [];
-    for (let i = 0; i < 5; i++) {
-        maps.push(
-            {
-                owner: owner,
-                title: randomMapTitle(),
-                creationDate: randomCreationDate(),
-                views: Math.round(Math.random() * 3000 + 5000),
-                likedUsers: Math.round(Math.random() * 1000 + 500),
-                dislikedUsers: Math.round(Math.random() * 500),
-                comments: generateRandomComments(),
-                deleted: false,
-                collaborators: [],
-                viewers: [],
-                public: true,
-                tilesets: [],
-                height: 400,
-                width: 400,
-                tileSize: 10,
-                layers: [],
-            }
-        )
-    }
-    return maps;
+    return generateRandomMaps(owner);
 }
 export const generateRandomComments = () => {
     const comments = [];
@@ -83,6 +60,29 @@ export const generateRandomComments = () => {
     return comments;
 }
 
-export const generateRandomMaps = () => {
-    
+export const generateRandomMaps = (owner) => {
+    const maps = [];
+    for (let i = 0; i < 5; i++) {
+        maps.push(
+            {
+                owner: owner || owners[Math.floor(Math.random() * owners.length)],
+                title: randomMapTitle(),
+                creationDate: randomCreationDate(),
+                views: Math.round(Math.random() * 3000 + 5000),
+                likedUsers: Math.round(Math.random() * 1000 + 500),
+                dislikedUsers: Math.round(Math.random() * 500),
+                comments: generateRandomComments(),
+                deleted: false,
+                collaborators: [],
+                viewers: [],
+                public: true,
+                tilesets: [],
+                height: 400,
+                width: 400,
+                tileSize: 10,
+                layers: [],
+            }
+        )
+    }
+    return maps;
 }

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from './Header';
 import { BsFilter } from 'react-icons/bs';
 import { Menu } from '@headlessui/react';
 import ItemCard from '../ItemCard';
 import ModalTwo from '../modals/TagModal/ModalTwo';
+import { generateRandomMaps } from '../../utils/mockData/ItemCard_MockData';
 
 
 export default function CommunityScreen() {
@@ -25,6 +26,10 @@ export default function CommunityScreen() {
 
     // copied directly from website and it worked somehow
     const [modalOpen2, setModalOpen2] = React.useState(false);
+    const [data, setData] = React.useState(generateRandomMaps());
+    useEffect(() => {
+        console.log(data);
+    })
 
     const handleMapToTilesetTab = () => {
         if (!mapTabBool) {
@@ -143,11 +148,12 @@ export default function CommunityScreen() {
                         <div className="flex bg-darker-green w-auto h-5/6 rounded-tr-3xl rounded-b-3xl">
                             <div className="w-full h-auto mx-10 my-4 overflow-y-auto">
                                 <div className='mr-5 space-y-3'>
-                                    <ItemCard />
-                                    <ItemCard />
-                                    <ItemCard />
-                                    <ItemCard />
-                                    <ItemCard />
+                                    {
+                                        data.map((d) => {
+                                            if (d.tilesets) return <ItemCard map={d} />
+                                            else return <ItemCard tileset={d} />
+                                        })
+                                    }
                                 </div>
                             </div>
                         </div>

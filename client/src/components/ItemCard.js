@@ -25,9 +25,9 @@ export default function ItemCard(props) {
     const [show, setShow] = useState(false);
     const [like, setLike] = useState(false);
     const [dislike, setDislike] = useState(false);
-    const [likeCount, setLikeCount] = useState(data && data.likedUsers.length || 0);
-    const [dislikeCount, setDislikeCount] = useState(data && data.dislikedUsers.length || 0);
-    const [views, setViews] = useState(data && data.views || 0);
+    const [likeCount, setLikeCount] = useState((data && data.likedUsers.length) || 0);
+    const [dislikeCount, setDislikeCount] = useState((data && data.dislikedUsers.length) || 0);
+    const [views, setViews] = useState((data && data.views) || 0);
     const [points, setPoints] = useState(likeCount - dislikeCount);
     // console.log(show);
 
@@ -87,7 +87,7 @@ export default function ItemCard(props) {
 
 
     return (
-        <><DeleteMapModal modalOpen={deleteMapModal} setModalOpen={setDeleteMapModal} mapName={data && data.title || "Title"} />
+        <><DeleteMapModal modalOpen={deleteMapModal} setModalOpen={setDeleteMapModal} mapName={(data && data.title) || "Title"} />
         <div className="snap-start flex flex-col">
             <div className="flex flex-row p-1 max-w bg-light-grey rounded-t-xl shadow-lg items-center space-x-4">
                 {/* Column 1: Likes/Dislikes */}
@@ -109,10 +109,10 @@ export default function ItemCard(props) {
                 {/* Column 3: Map/Tileset Name, Author, Creation Date */}
                     <div className="flex flex-col flex-grow order-3 align-middle p-2">
 
-                        <Link className="text-3xl font-bold" to={(data && data.tilesets ? "/mapEditor" : "/tilesetEditor")}>{data && data.title || "Title"}</Link>
+                        <Link className="text-3xl font-bold" to={(data && data.tilesets ? "/mapEditor" : "/tilesetEditor")}>{(data && data.title) || "Title"}</Link>
                             <Menu as="div" className="relative">
                                 <Menu.Button>
-                                    <p className="text-xl text-left">By: {data && data.owner || "Author"}</p>
+                                    <p className="text-xl text-left">By: {(data && data.owner) || "Author"}</p>
                                 </Menu.Button>
                                 <Menu.Items className="absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg w-">
                                     <Menu.Item>
@@ -133,7 +133,7 @@ export default function ItemCard(props) {
                                 </Menu.Items>
                             </Menu>
 
-                        <p className="text-xl">Created: {data && data.creationDate || "Date"}</p>
+                        <p className="text-xl">Created: {(data && data.creationDate) || "Date"}</p>
                     </div>
                 {/* Column 4: Public/Private, Views, Delete, Show Comments */}
                     <div className="flex flex-col order-last text-left space-y-3">
