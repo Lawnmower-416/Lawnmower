@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import api from "./store-request-api";
-import AuthContext from "./AuthContext";
+import AuthContext from "../auth";
 
 
 export const GlobalStoreContext = createContext();
@@ -568,9 +568,9 @@ function GlobalStoreContextProvider(props) {
         
     }
     // create a new map, open map editor
-    store.createNewMap = async (title, mapSize, TileLength) => {
+    store.createNewMap = async (ownwer, title, height, width, tileSize) => {
         try {
-            let response = await api.createMap(title, mapSize, TileLength);
+            let response = await api.createMap(ownwer, title, height, width, tileSize);
             if (response.data.success) {
                 // open map editor with newly created map
                 // handle it differently for now by refreshing user's maps
@@ -581,9 +581,9 @@ function GlobalStoreContextProvider(props) {
         }
     }
     // create new tileset, open tileset editor
-    store.createNewTileset = async () => {
+    store.createNewTileset = async (ownwer, title, tileSize) => {
         try {
-            let response = await api.createTileset(title, TileLength);
+            let response = await api.createTileset(ownwer, title, tileSize);
             if (response.data.success) {
                 // open tileset editor with newly created tileset
                 // handle it differently for now by refreshing user's tilesets
@@ -593,6 +593,13 @@ function GlobalStoreContextProvider(props) {
             console.log("Error creating new tileset: ", error);
         }
     }
+    return (
+        <GlobalStoreContext.Provider value={{
+            store
+        }}>
+            {props.children}
+        </GlobalStoreContext.Provider>
+    )
 }
 
 export default GlobalStoreContext;
