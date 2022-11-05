@@ -14,16 +14,16 @@ const api = axios.create({
 // WE NEED TO PUT THINGS INTO THE DATABASE OR IF WE HAVE SOME
 // CUSTOM FILTERS FOR QUERIES
 
-export const loggedIn = () => api.get(`/loggedIn/`);
+export const loggedIn = () => api.get(`/auth/loggedIn/`);
 export const login = (username, password) => {
-    return api.post(`/login/`, {
+    return api.post(`/auth/login/`, {
         username : username,
         password : password
     })
 }
-export const logout = () => api.get(`/logout/`)
+export const logout = () => api.get(`/auth/logout/`)
 export const register = (firstName, lastName, username, email, password, passwordVerify) => {
-    return api.post(`/register/`, {
+    return api.post(`/auth/register/`, {
         firstName : firstName,
         lastName : lastName,
         username : username,
@@ -33,13 +33,13 @@ export const register = (firstName, lastName, username, email, password, passwor
     })
 }
 export const changePassword = (password, passwordVerify) => {
-    return api.put(`/changePassword/`, {
+    return api.put(`/auth/changePassword/`, {
         password : password,
         passwordVerify : passwordVerify
     })
 }
 // This should be modified to check input username and password before deleting
-export const deleteAccount = () => api.delete(`/deleteAccount/`)
+export const deleteAccount = () => api.delete(`/auth/deleteAccount/`)
 
 /* Modified version. Front end and backend functions should be changed to fit this way
 export const deleteAccount = (username, password) => {
