@@ -128,8 +128,8 @@ export default function Profile() {
                     <div className="col-span-2 bg-dark-green-lighter rounded-md">
                         <div className="snap-y h-[64rem] overflow-y-auto p-8 space-y-2">
                             {
-                                currentTab === "Maps" ? userMaps.map(m => <ItemCard key={m.views} inProfile={true} map={m} isMap={true} />)
-                                : (currentTab === "Tilesets" ? userTilesets.map(t => <ItemCard key={t.views} inProfile={true} tileset={t} isMap={false} />)
+                                currentTab === "Maps" ? userMaps.map(m => <ItemCard key={m.views} inProfile={true} map={m} />)
+                                : (currentTab === "Tilesets" ? userTilesets.map(t => <ItemCard key={t.views} inProfile={true} tileset={t} />)
                                     : getUserCommentsFromMapsAndTilesets())
                             }
                         </div>

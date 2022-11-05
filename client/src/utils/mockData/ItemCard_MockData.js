@@ -82,3 +82,7 @@ export const generateRandomComments = () => {
     }
     return comments;
 }
+
+export const generateRandomMaps = () => {
+    
+}

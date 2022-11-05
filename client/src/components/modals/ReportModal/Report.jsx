@@ -1,5 +1,6 @@
 import React from "react";
 import checkIcon from "./draw-check-mark.png";
+/* Reports User Modal */
 const ModalThree = ({ modalOpen, setModalOpen }) => {
 	return (
 		<>

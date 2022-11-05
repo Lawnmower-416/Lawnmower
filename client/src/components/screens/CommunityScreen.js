@@ -7,8 +7,6 @@ import ModalTwo from '../modals/TagModal/ModalTwo';
 
 
 export default function CommunityScreen() {
-    
-
     // if true, then current Tab is the maps
     // if false, then current Tab is tilesets
     const [mapTabBool, setMapTabBool] = React.useState(true);
@@ -141,20 +139,15 @@ export default function CommunityScreen() {
                             <button onClick={handleMapToTilesetTab}className={tilesetTabCSS}>Tilesets</button>
                         </div>
 
-
-                                    {/*item cards are hard-coded for now*/}
+                        {/*item cards are hard-coded for now*/}
                         <div className="flex bg-darker-green w-auto h-5/6 rounded-tr-3xl rounded-b-3xl">
                             <div className="w-full h-auto mx-10 my-4 overflow-y-auto">
-                                <div className='mr-5'>
-                                    <ItemCard isMap={mapTabBool}/>
-                                    <div className="p-2"/>
-                                    <ItemCard isMap={mapTabBool}/>
-                                    <div className="p-2"/>
-                                    <ItemCard isMap={mapTabBool}/>
-                                    <div className="p-2"/>
-                                    <ItemCard isMap={mapTabBool}/>
-                                    <div className="p-2"/>
-                                    <ItemCard isMap={mapTabBool}/>
+                                <div className='mr-5 space-y-3'>
+                                    <ItemCard />
+                                    <ItemCard />
+                                    <ItemCard />
+                                    <ItemCard />
+                                    <ItemCard />
                                 </div>
                             </div>
                         </div>
