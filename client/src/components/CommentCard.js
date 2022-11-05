@@ -3,9 +3,10 @@ import { HandThumbUpIcon, HandThumbDownIcon } from "@heroicons/react/24/outline"
 import { HandThumbUpIcon as LikedIcon, HandThumbDownIcon as DislikedIcon } from "@heroicons/react/24/solid";
 
 export default function CommentCard(props) {
-    const {comment} = props;
+    // const {comment} = props;
     const inProfile = props.inProfile || false;
     // console.log(comment);
+    const [comment, setComment] = useState(props.comment);
     const [like, setLike] = useState(false);
     const [dislike, setDislike] = useState(false);
     const [likeCount, setLikeCount] = useState((comment && comment.likedComments) || 0);
