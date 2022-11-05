@@ -40,11 +40,32 @@ export const getRandomUser = () => {
 
 const mapsForUser = (user) => {
     let owner = user;
+    return generateRandomMaps(owner);
+}
+export const generateRandomComments = () => {
+    const comments = [];
+    for (let i = 0; i < 3; i++) {
+        comments.push(
+            {
+                owner: randomOwner(),
+                contentType: randomComment(),
+                nestedCommentOwner: owners[Math.floor(Math.random() * owners.length)],
+                nestedIndex: Math.floor(Math.random() * 4),
+                deleted: false,
+                likedComments: Math.round(Math.random() * 100 + 50),
+                dislikedComments: Math.round(Math.random() * 50)
+            }
+        )
+    }
+    return comments;
+}
+
+export const generateRandomMaps = (owner) => {
     const maps = [];
     for (let i = 0; i < 5; i++) {
         maps.push(
             {
-                owner: owner,
+                owner: owner || owners[Math.floor(Math.random() * owners.length)],
                 title: randomMapTitle(),
                 creationDate: randomCreationDate(),
                 views: Math.round(Math.random() * 3000 + 5000),
@@ -64,21 +85,4 @@ const mapsForUser = (user) => {
         )
     }
     return maps;
-}
-export const generateRandomComments = () => {
-    const comments = [];
-    for (let i = 0; i < 3; i++) {
-        comments.push(
-            {
-                owner: randomOwner(),
-                contentType: randomComment(),
-                nestedCommentOwner: owners[Math.floor(Math.random() * owners.length)],
-                nestedIndex: Math.floor(Math.random() * 4),
-                deleted: false,
-                likedComments: Math.round(Math.random() * 100 + 50),
-                dislikedComments: Math.round(Math.random() * 50)
-            }
-        )
-    }
-    return comments;
 }

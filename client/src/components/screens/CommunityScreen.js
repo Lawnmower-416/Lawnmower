@@ -1,14 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from './Header';
 import { BsFilter } from 'react-icons/bs';
 import { Menu } from '@headlessui/react';
 import ItemCard from '../ItemCard';
 import ModalTwo from '../modals/TagModal/ModalTwo';
+import { generateRandomMaps } from '../../utils/mockData/ItemCard_MockData';
 
 
 export default function CommunityScreen() {
-    
-
     // if true, then current Tab is the maps
     // if false, then current Tab is tilesets
     const [mapTabBool, setMapTabBool] = React.useState(true);
@@ -27,6 +26,10 @@ export default function CommunityScreen() {
 
     // copied directly from website and it worked somehow
     const [modalOpen2, setModalOpen2] = React.useState(false);
+    const [data, setData] = React.useState(generateRandomMaps());
+    useEffect(() => {
+        console.log(data);
+    })
 
     const handleMapToTilesetTab = () => {
         if (!mapTabBool) {
@@ -141,20 +144,16 @@ export default function CommunityScreen() {
                             <button onClick={handleMapToTilesetTab}className={tilesetTabCSS}>Tilesets</button>
                         </div>
 
-
-                                    {/*item cards are hard-coded for now*/}
+                        {/*item cards are hard-coded for now*/}
                         <div className="flex bg-darker-green w-auto h-5/6 rounded-tr-3xl rounded-b-3xl">
                             <div className="w-full h-auto mx-10 my-4 overflow-y-auto">
-                                <div className='mr-5'>
-                                    <ItemCard isMap={mapTabBool}/>
-                                    <div className="p-2"/>
-                                    <ItemCard isMap={mapTabBool}/>
-                                    <div className="p-2"/>
-                                    <ItemCard isMap={mapTabBool}/>
-                                    <div className="p-2"/>
-                                    <ItemCard isMap={mapTabBool}/>
-                                    <div className="p-2"/>
-                                    <ItemCard isMap={mapTabBool}/>
+                                <div className='mr-5 space-y-3'>
+                                    {
+                                        data.map((d) => {
+                                            if (d.tilesets) return <ItemCard map={d} />
+                                            else return <ItemCard tileset={d} />
+                                        })
+                                    }
                                 </div>
                             </div>
                         </div>
