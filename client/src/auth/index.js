@@ -27,7 +27,7 @@ export const AuthActionType = {
 function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
-        loggedIn: false,
+        loggedInBool: false,
         errorMessage: null
     });
 
@@ -44,49 +44,49 @@ function AuthContextProvider(props) {
             case AuthActionType.GET_LOGGED_IN: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: payload.loggedIn,
+                    loggedInBool: payload.loggedInBool,
                     errorMessage: null
                 })
             }
             case AuthActionType.LOGIN: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: true,
+                    loggedInBool: true,
                     errorMessage: null
                 })
             }
             case AuthActionType.LOGOUT: {
                 return setAuth({
                     user: null,
-                    loggedIn: false,
+                    loggedInBool: false,
                     errorMessage: null
                 })
             }
             case AuthActionType.REGISTER: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: true,
+                    loggedInBool: true,
                     errorMessage: null
                 })
             }
             case AuthActionType.CHANGE_PASSWORD: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: true,
+                    loggedInBool: true,
                     errorMessage: null
                 })
             }
             case AuthActionType.DELETE_ACCOUNT: {
                 return setAuth({
                     user: null,
-                    loggedIn: false,
+                    loggedInBool: false,
                     errorMessage: null
                 })
             }
             case AuthActionType.ERROR_MESSAGE: {
                 return setAuth({
                     user: null,
-                    loggedIn: false,
+                    loggedInBool: false,
                     errorMessage: payload.errorMessage
                 })
             }
@@ -102,7 +102,7 @@ function AuthContextProvider(props) {
                 type: AuthActionType.GET_LOGGED_IN,
                 payload: {
                     user: response.data.user,
-                    loggedIn: response.data.loggedIn
+                    loggedInBool: response.data.loggedIn
                 }
             });
         }
