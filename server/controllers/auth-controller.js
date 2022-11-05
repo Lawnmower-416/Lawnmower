@@ -5,8 +5,6 @@ const User = require('../models/user-schema');
 const bcrypt = require('bcryptjs');
 
 loggedIn = async (req, res) => {
-    console.log("error here?")
-
     try {
         let userId = auth.verifyUser(req);
         if (!userId) {

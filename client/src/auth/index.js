@@ -11,11 +11,19 @@ export const AuthActionType = {
     LOGIN: 'LOGIN',
     LOGOUT: 'LOGOUT',
     REGISTER: 'REGISTER',
-    CHANGE_PASSWORD_LOGGED_IN: 'CHANGE_PASSWORD_LOGGED_IN',
-    CHANGE_PASSWORD_NOT_LOGGED_IN: 'CHANGE_PASSWORD_NOT_LOGGED_IN',
-    DELETE_ACCOUNT: 'DELETE_ACCOUNT'
+    CHANGE_PASSWORD: 'CHANGE_PASSWORD',
+    DELETE_ACCOUNT: 'DELETE_ACCOUNT',
+    ERROR_MESSAGE: 'ERROR_MESSAGE'
 }
-
+/*
+    errorMessage:
+    0: not all filled in
+    1: invalid login credentials
+    2: password too short
+    3: password not repeated correctly
+    4: email already in use
+    5: username already in use
+*/
 function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
@@ -89,7 +97,6 @@ function AuthContextProvider(props) {
 
     auth.loggedIn = async () => {
         const response = await api.loggedIn();
-        console.log("the response is: ", response);
         if (response.status === 200) {
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,
@@ -111,7 +118,15 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
-            history.push('/');
+            history.push('/profile');
+        }
+        if (response.status === 401) {
+            authReducer({
+                type: AuthActionType.ERROR_MESSAGE,
+                payload: {
+                    errorMessage: response.data.errorMessage
+                }
+            });
         }
     }
     auth.logout = async () => {
@@ -133,8 +148,18 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
-            history.push('/login');
+            // a registered user is automatically logged in
+            history.push('/profile');
         }
+        if (response.status === 401) {
+            authReducer({
+                type: AuthActionType.ERROR_MESSAGE,
+                payload: {
+                    errorMessage: response.data.errorMessage
+                }
+            });
+        }
+
     }
     // changing password should logout user (this can be done on the backend OR just calling logout here)
     // in the backend, there is a functionality where it re-logins the user. If the feature is changed, then make sure to change that too
@@ -162,7 +187,9 @@ function AuthContextProvider(props) {
     }
 
     return (
-        <AuthContext.Provider value={auth}>
+        <AuthContext.Provider value={{
+            auth
+        }}>
             {props.children}
         </AuthContext.Provider>
     );
