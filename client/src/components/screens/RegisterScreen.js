@@ -75,6 +75,12 @@ const RegisterScreen = () => {
           </p>
           <img src="./contactus.png" alt="#" className="w-96 lg:w-full" />
         </div>
+
+        <div>
+          {
+            credentialError
+          }
+
         <div className=" max-w-lg w-full">
           {inputs.map((el, i) => (
             <Input {...el} key={i} value={values["size"]} onChange={onChange} />
@@ -95,6 +101,7 @@ const RegisterScreen = () => {
             </Link>
           </div>
         </div>
+      </div>
       </div>
     </div>
     </div>
