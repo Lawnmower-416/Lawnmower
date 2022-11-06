@@ -36,7 +36,7 @@ function AuthContextProvider(props) {
 
     useEffect(() => {
         auth.loggedIn();
-    }, []);
+    }, [auth]);
 
     const authReducer = (action) => {
         const { type, payload } = action;
