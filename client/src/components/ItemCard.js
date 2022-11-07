@@ -87,7 +87,7 @@ export default function ItemCard(props) {
 
 
     return (
-        <><DeleteMapModal modalOpen={deleteMapModal} setModalOpen={setDeleteMapModal} mapName={(data && data.title) || "Title"} />
+        <><DeleteMapModal modalOpen={deleteMapModal} setModalOpen={setDeleteMapModal} map={(data) || "Title"} />
         <div className="snap-start flex flex-col">
             <div className="flex flex-row p-1 max-w bg-light-grey rounded-t-xl shadow-lg items-center space-x-4">
                 {/* Column 1: Likes/Dislikes */}
