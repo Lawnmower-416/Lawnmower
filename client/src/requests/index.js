@@ -4,5 +4,5 @@
 import axios from 'axios';
 axios.defaults.withCredentials = false;
 export const baseAPI = axios.create({
-    baseURL: 'https://ec2-3-94-193-80.compute-1.amazonaws.com:3000'
+    baseURL: 'http://34.193.24.27:3000'
 });
