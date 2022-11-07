@@ -150,8 +150,8 @@ export default function CommunityScreen() {
                                 <div className='mr-5 space-y-3'>
                                     {
                                         data.map((d) => {
-                                            if (d.tilesets) return <ItemCard map={d} />
-                                            else return <ItemCard tileset={d} />
+                                            if (d.tilesets) return <ItemCard map={d} key={Math.random() * 500} />
+                                            else return <ItemCard key={Math.random() * 500} tileset={d} />
                                         })
                                     }
                                 </div>
