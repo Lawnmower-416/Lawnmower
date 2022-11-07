@@ -406,7 +406,11 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 const map = response.data.map
                 if (map.likes.includes(auth.user._id)) {
+                    console.log("Removing like to map")
                     map.likes.splice(map.likes.indexOf(auth.user._id), 1)
+                } else {
+                    console.log("adding like to map")
+                    map.likes.push(auth.user._id)
                 }
                 const responseGeneral = await api.updateMapGeneral(mapId, map)
                 if (responseGeneral.data.success) {
@@ -426,7 +430,11 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 let map = response.data.map;
                 if (map.dislikes.includes(auth.user._id)) {
+                    console.log("Removing dislike to map")
                     map.dislikes.splice(map.dislikes.indexOf(auth.user._id), 1)
+                } else {
+                    console.log("adding dislike to map")
+                    map.dislikes.push(auth.user._id)
                 }
                 const responseGeneral = await api.updateMapGeneral(mapId, map)
                 if (responseGeneral.data.success) {
@@ -445,7 +453,11 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 const tileset = response.data.tileset
                 if (tileset.likes.includes(auth.user._id)) {
+                    console.log("Removing like to tileset")
                     tileset.likes.splice(tileset.likes.indexOf(auth.user._id), 1)
+                } else {
+                    console.log("adding like to tileset")
+                    tileset.likes.push(auth.user._id)
                 }
                 const responseGeneral = await api.updateTilesetGeneral(tilesetId, tileset)
                 if (responseGeneral.data.success) {
@@ -464,7 +476,11 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 const tileset = response.data.tileset
                 if (tileset.dislikes.includes(auth.user._id)) {
+                    console.log("Removing dislike to tileset")
                     tileset.dislikes.splice(tileset.dislikes.indexOf(auth.user._id), 1)
+                } else {
+                    console.log("adding dislike to tileset")
+                    tileset.dislikes.push(auth.user._id)
                 }
                 const responseGeneral = await api.updateTilesetGeneral(tilesetId, tileset)
                 if (responseGeneral.data.success) {
@@ -501,9 +517,10 @@ function GlobalStoreContextProvider(props) {
         
     }
     // create a new map, open map editor
-    store.createNewMap = async (ownwer, title, height, width, tileSize) => {
+    store.createNewMap = async (title, height, width, tileSize) => {
         try {
-            let response = await api.createMap(ownwer, title, height, width, tileSize);
+            let owner = auth.user
+            let response = await api.createMap(owner, title, height, width, tileSize);
             if (response.data.success) {
                 // open map editor with newly created map
                 // handle it differently for now by refreshing user's maps

@@ -16,7 +16,7 @@ const hostname = "0.0.0.0";
 const port = 3000;
 
 const cors = require('cors');
-app.use(cors({ origin: 'https://production.d3ojarusvycsb5.amplifyapp.com'}));
+app.use(cors());
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -25,7 +25,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
- res.header('Access-Control-Allow-Origin', 'https://production.d3ojarusvycsb5.amplifyapp.com');
+  // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Origin', 'http://34.125.60.125:3000/');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST', 'PUT', 'DELETE', 'OPTIONS');
+  res.setHeader('Access-Control-Allow-Credentials', true);
  next();
 });
 
