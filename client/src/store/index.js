@@ -170,7 +170,7 @@ function GlobalStoreContextProvider(props) {
             let userMapIds = auth.user.maps
             let mapPromises = [];
             for (let i = 0; i < userMapIds.length; i++) {
-                mapPromises.push(api.getMap(userMapIds[i]));
+                mapPromises.push(api.getMapById(userMapIds[i]));
             }
 
             Promise.all(mapPromises).then((maps) => {

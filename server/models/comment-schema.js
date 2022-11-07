@@ -1,18 +1,41 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const ObjectId = Schema.Types.ObjectId;
+const mongoose = require("mongoose")
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
-const CommentSchema = new Schema(
-    {
-        owner: { type: ObjectId, ref: 'User', required: true },
-        contentType: { type: String, required: true },
-        nestedCommentOwner: { type: ObjectId, ref: 'User' },
-        nestedIndex: { type: Number, required: true },
-        deleted: { type: Boolean },
-        likedComments:  { type: ObjectId, ref: 'User' },
-        dislikedComments:  { type: ObjectId, ref: 'User' }
+const commentSchema = mongoose.Schema({   
+    message: {
+        type: String,
+        required: true,
     },
-    { timestamps: true }
-);
+    username: {
+        type: String,
+        required: true
+    },
+    post: {
+        type: ObjectId,
+        ref: 'Post',
+        required: false
+    },
+    parent: {
+        type: ObjectId,
+        ref: 'Comment',
+    },
+    children: [
+        {
+            type: ObjectId,
+            ref: 'Comment'
+        }
+    ],
+    likes: [
+        {
+            type: String,            
+        }
+    ],
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
+}, {
+    timestamps: true
+})
 
-module.exports = mongoose.model('Comment', CommentSchema);
+module.exports =  mongoose.model('Comment', commentSchema)
