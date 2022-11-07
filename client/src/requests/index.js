@@ -4,5 +4,5 @@
 import axios from 'axios';
 axios.defaults.withCredentials = false;
 export const baseAPI = axios.create({
-    baseURL: 'http://34.193.24.27:3000'
+    baseURL: 'http://localhost:4000' //'http://34.193.24.27:3000'
 });

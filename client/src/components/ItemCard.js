@@ -25,7 +25,7 @@ export default function ItemCard(props) {
     const user = auth.user;
     const { store } = useContext(GlobalStoreContext);
 
-    const [data, setData ] = useState(props.map || props.tileset);
+    const [data, setData ] = useState(props.map || props.tileset || []);
     const [show, setShow] = useState(false);
 
     const [views, setViews] = useState((data && data.views) || 0);
@@ -89,7 +89,7 @@ export default function ItemCard(props) {
     }
 */
     // console.log(user);
-    let points = data.likedUsers.length - data.dislikedUsers.length;
+    let points = (data && data.likedUsers && data.dislikedUsers) ? (data.likedUsers.length - data.dislikedUsers.length) : 0;
     let like = user && data.likedUsers.includes(user._id);
     let dislike = user && data.dislikedUsers.includes(user._id);
 

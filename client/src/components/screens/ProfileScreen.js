@@ -16,8 +16,8 @@ import { getMapById } from "../../requests/store-request";
 export default function Profile() {
     // Get the user...
     const { auth } = useContext(AuthContext);
-    // const user = auth.user;
-    const user = getRandomUser();
+    const user = auth.user;
+    // const user = getRandomUser();
     // console.log(user);
     // Get user's stuff
     const userMaps = (user && user.maps) || [];

@@ -16,7 +16,7 @@ export const login = async (username, password) => {
     console.log(result);
     return result;
 }
-export const logout = () => baseAPI.get(`/auth/logout/`);
+export const logout = () => baseAPI.post(`/auth/logout/`);
 export const register = (firstName, lastName, username, email, password, passwordVerify) => {
     return baseAPI.post(`/auth/register/`, {
         firstName : firstName,
