@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // some functions use useHistory to redirect to a different page
 // check if this is necessary
-import api from './auth-request-api/index';
+import api from './../requests/auth-request';
 
 const AuthContext = createContext();
 
