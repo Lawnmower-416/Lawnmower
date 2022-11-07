@@ -32,7 +32,11 @@ const Header = () => {
     navArray = [];
   }
 
-  // TODO: implement account checking, where header no longer shows Sign Up/Sign In if user is logged in
+  const handleLogout = () => {
+    //auth.logout handles rerouting the user back to the home page, all logged out
+    auth.logout();
+  };
+
   let topRightMenu = 
         <div className="hidden md:flex gap-x-6 font-inter font-bold ">
         <Link
@@ -62,6 +66,7 @@ const Header = () => {
           <Link to="/community" className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Community</Link>
         </Menu.Item>
         <Menu.Item>
+
         <button onClick={() => setModalOpen8(!modalOpen8)} 
           className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Create Map</button>
         </Menu.Item>
@@ -124,31 +129,6 @@ const Header = () => {
       <CreateTilesetModal setModalOpen={setTilesetModal} modalOpen={tilesetModal} />
 
 
-      {sidebar && (
-        <div className="header min-h-screen pt-5 items-center flex-col flex md:hidden pb-10">
-          {navArray.map((el, i) => (
-            <Link
-              to={el.to}
-              key={i}
-              className="font-inter font-bold py-2 text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
-            >
-              {el.navItem}
-            </Link>
-          ))}
-          <Link
-            to="/login"
-            className="text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
-          >
-            Sign Up
-          </Link>
-          <Link
-            to="/register"
-            className="text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
-          >
-            Sign In
-          </Link>
-        </div>
-      )}
     </div>
   );
 };

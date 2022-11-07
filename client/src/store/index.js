@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import api from "./store-request-api";
-import AuthContext from "./AuthContext";
+import AuthContext from "../auth";
 
 
 export const GlobalStoreContext = createContext();
@@ -465,7 +465,7 @@ function GlobalStoreContextProvider(props) {
                 storeReducer({
                     type: GlobalStoreActionType.MARK_MAP_FOR_DELETION,
                     payload: {
-                        mapToDelete: response.data.map
+                        mapMarkedForDeletion: response.data.map
                     }
                 })
             }
@@ -476,7 +476,8 @@ function GlobalStoreContextProvider(props) {
     // unmark a map for deletion
     store.unmarkMapForDeletion = function () {
         storeReducer({
-            type: GlobalStoreActionType.UNMARK_MAP_FOR_DELETION
+            type: GlobalStoreActionType.UNMARK_MAP_FOR_DELETION,
+            payload: null
         })
     }
     // mark a tileset for deletion
@@ -487,7 +488,7 @@ function GlobalStoreContextProvider(props) {
                 storeReducer({
                     type: GlobalStoreActionType.MARK_TILESET_FOR_DELETION,
                     payload: {
-                        tilesetToDelete: response.data.tileset
+                        tilesetMarkedForDeletion: response.data.tileset
                     }
                 })
             }
@@ -498,15 +499,20 @@ function GlobalStoreContextProvider(props) {
     // unmark a tileset for deletion
     store.unmarkTilesetForDeletion = function () {
         storeReducer({
-            type: GlobalStoreActionType.UNMARK_TILESET_FOR_DELETION
+            type: GlobalStoreActionType.UNMARK_TILESET_FOR_DELETION,
+            payload: null
         })
     }
     // delete a map
     store.deleteMap = async function (mapId) {
         try {
-            let deletedMap = await api.deleteMap(mapId)
-            // probably have to add some refresh thing here
-            // refresh both profile and community pages
+            let response = await api.deleteMap(mapId)
+            // a user can only delete their maps in their profile page
+            // refresh only the user's maps
+            // community maps will be refreshed the next time the community page is opened
+            if (response.data.success) {
+                store.loadUserMaps()
+            }
         } catch (error) {
             console.log("Error deleting map: ", error)
         }
@@ -514,9 +520,13 @@ function GlobalStoreContextProvider(props) {
     // delete a tileset
     store.deleteTileset = async function (tilesetId) {
         try {
-            let deletedTileset = await api.deleteTileset(tilesetId)
-            // probably have to add some refresh thing here
-            // refresh both profile and community pages
+            let response = await api.deleteTileset(tilesetId)
+            // a user can only delete their tilesets in their profile page
+            // refresh only the user's tilesets
+            // community maps will be refreshed the next time the community page is opened
+            if (response.data.success) {
+                store.loadUserTilesets()
+            }
         } catch (error) {
             console.log("Error deleting tileset: ", error)
         }
@@ -559,15 +569,42 @@ function GlobalStoreContextProvider(props) {
     }
     // this content is set to be public
     store.setContentPublic = async () => {
-
+        
     }
     // create a new map, open map editor
-    store.createNewMap = async () => {
-    
+    store.createNewMap = async (ownwer, title, height, width, tileSize) => {
+        try {
+            let response = await api.createMap(ownwer, title, height, width, tileSize);
+            if (response.data.success) {
+                // open map editor with newly created map
+                // handle it differently for now by refreshing user's maps
+                store.loadUserMaps();
+            }
+        } catch (error) {
+            console.log("Error creating new map: ", error);
+        }
     }
     // create new tileset, open tileset editor
-    store.createNewTileset = async () => {
-
+    store.createNewTileset = async (ownwer, title, tileSize) => {
+        try {
+            let response = await api.createTileset(ownwer, title, tileSize);
+            if (response.data.success) {
+                // open tileset editor with newly created tileset
+                // handle it differently for now by refreshing user's tilesets
+                store.loadUserTilesets();
+            }
+        } catch (error) {
+            console.log("Error creating new tileset: ", error);
+        }
     }
+    return (
+        <GlobalStoreContext.Provider value={{
+            store
+        }}>
+            {props.children}
+        </GlobalStoreContext.Provider>
+    )
 }
 
+export default GlobalStoreContext;
+export { GlobalStoreContextProvider };
