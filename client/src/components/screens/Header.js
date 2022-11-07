@@ -4,12 +4,19 @@ import { Link } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import { useLocation } from "react-router-dom";
-import AuthContext from "../../auth";
 import { Menu } from '@headlessui/react';
+import ModalEight from "../modals/CreateMapModal/CreateMap";
+import CreateTilesetModal from "../modals/CreateTilesetModal";
+
+import AuthContext from "../../auth";
+import GlobalStoreContext from "../../store";
 
 
 const Header = () => {
   const { auth } = useContext(AuthContext);
+  const { store } = useContext(GlobalStoreContext);
+  const [modalOpen8, setModalOpen8] = useState(false);
+  const [tilesetModal, setTilesetModal] = useState(false);
   const [sidebar, setSidebar] = useState(false);
   let navArray = [
     { navItem: "FAQ", to: "/faq" },
@@ -25,8 +32,11 @@ const Header = () => {
     navArray = [];
   }
 
+  const handleLogout = () => {
+    //auth.logout handles rerouting the user back to the home page, all logged out
+    auth.logout();
+  };
 
-  // TODO: implement account checking, where header no longer shows Sign Up/Sign In if user is logged in
   let topRightMenu = 
         <div className="hidden md:flex gap-x-6 font-inter font-bold ">
         <Link
@@ -42,8 +52,7 @@ const Header = () => {
           Sign In
         </Link>
       </div>;
-  if (auth.loggedInBool) {
-    console.log("logged in", auth.loggedIn);
+  if (true) {
     topRightMenu = 
     <Menu as="div" className="relative">
       <Menu.Button>
@@ -51,10 +60,19 @@ const Header = () => {
       </Menu.Button>
       <Menu.Items className="absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg">
         <Menu.Item>
-          <Link to="/profile" className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Profile</Link>
+          <Link to="/profile" className="block px-4 py-2 text-white text-md text-center hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Profile</Link>
         </Menu.Item>
         <Menu.Item>
           <Link to="/community" className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Community</Link>
+        </Menu.Item>
+        <Menu.Item>
+
+        <button onClick={() => setModalOpen8(!modalOpen8)} 
+          className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Create Map</button>
+        </Menu.Item>
+        <Menu.Item>
+        <button onClick={() => setTilesetModal(!tilesetModal)}
+          className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Create Tileset</button>
         </Menu.Item>
         <Menu.Item>
           <button onClick={auth.logout} className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-b-xl w-full">Logout</button>
@@ -107,32 +125,10 @@ const Header = () => {
       }
       
       </div>
+      <ModalEight setModalOpen={setModalOpen8} modalOpen={modalOpen8} />
+      <CreateTilesetModal setModalOpen={setTilesetModal} modalOpen={tilesetModal} />
 
-      {sidebar && (
-        <div className="header min-h-screen pt-5 items-center flex-col flex md:hidden pb-10">
-          {navArray.map((el, i) => (
-            <Link
-              to={el.to}
-              key={i}
-              className="font-inter font-bold py-2 text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
-            >
-              {el.navItem}
-            </Link>
-          ))}
-          <Link
-            to="/login"
-            className="text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
-          >
-            Sign Up
-          </Link>
-          <Link
-            to="/register"
-            className="text-lg md:text-lg lg:text-2xl 2xl:text-4xl"
-          >
-            Sign In
-          </Link>
-        </div>
-      )}
+
     </div>
   );
 };

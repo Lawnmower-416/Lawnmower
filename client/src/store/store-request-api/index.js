@@ -7,11 +7,13 @@ const api = axios.create({
     baseURL: 'https://ec2-3-94-193-80.compute-1.amazonaws.com:3000'
 });
 
-export const createMap = (title, mapSize, TileLength) => {
+export const createMap = (owner, title, height, width, tileSize) => {
     return api.post(`/map/`, {
-        title : title,
-        mapSize : mapSize,
-        TileLength : TileLength
+        ownwer: owner,
+        title: title,
+        height: height,
+        width: width,
+        tileSize: tileSize
     })
 }
 export const deleteMap = (mapId) => {
@@ -24,6 +26,7 @@ export const getMaps = () => {
     return api.get(`/map/`)
 }
 
+
 export const updateMapGeneral = (mapId, map) => {
     return api.put(`/map/${mapId}/general`, {
         map: map
@@ -35,6 +38,7 @@ export const createTileset = (owner, title, tileSize) => {
         owner : owner,
         title : title,
         tileSize : tileSize
+
     })
 }
 export const deleteTileset = (tilesetId) => {
