@@ -18,8 +18,8 @@ export default function Profile() {
     // Get the user...
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
-    // const user = auth.user;
-    const user = getRandomUser();
+    const user = auth.user;
+    //const user = getRandomUser();
     // console.log(user);
     // Get user's stuff
     const [userMaps, setUserMaps] = useState([])
