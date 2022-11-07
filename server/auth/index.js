@@ -6,6 +6,7 @@ function authManager() {
     verify = (req, res, next) => {
         try {
             const token = req.cookies.token;
+            console.log(req.cookies);
             if (!token) {
                 return res.status(401).json({
                     loggedIn: false,
@@ -30,6 +31,7 @@ function authManager() {
 
     verifyUser = (req) => {
         try {
+            console.log(req.cookies);
             const token = req.cookies.token;
             if (!token) {
                 return null;

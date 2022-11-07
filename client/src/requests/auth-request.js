@@ -7,14 +7,16 @@ import { baseAPI } from ".";
 // WE NEED TO PUT THINGS INTO THE DATABASE OR IF WE HAVE SOME
 // CUSTOM FILTERS FOR QUERIES
 
-export const loggedIn = () => baseAPI.get(`/auth/loggedIn/`);
-export const login = (username, password) => {
-    return baseAPI.post(`/auth/login/`, {
+export const loggedIn = () => baseAPI.get(`/auth/loggedIn/`, {withCredentials: true});
+export const login = async (username, password) => {
+    const result = await baseAPI.post(`/auth/login/`, {
         username : username,
         password : password
-    })
+    });
+    console.log(result);
+    return result;
 }
-export const logout = () => baseAPI.get(`/auth/logout/`)
+export const logout = () => baseAPI.get(`/auth/logout/`);
 export const register = (firstName, lastName, username, email, password, passwordVerify) => {
     return baseAPI.post(`/auth/register/`, {
         firstName : firstName,

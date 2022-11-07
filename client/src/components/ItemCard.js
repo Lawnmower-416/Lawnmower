@@ -1,12 +1,14 @@
 import { ChevronDownIcon, HandThumbUpIcon, HandThumbDownIcon } from "@heroicons/react/24/outline";
 import { HandThumbUpIcon as LikedIcon, HandThumbDownIcon as DislikedIcon, ChevronDoubleUpIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
 import { TrashIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import CommentCard from "./CommentCard";
 import { DeleteMapModal } from "./modals/DeleteMapModal/DeleteMap";
 import { Menu } from '@headlessui/react';
 import ModalThree from "./modals/ReportModal/Report";
+import AuthContext from "../auth";
+import GlobalStoreContext from "../store";
 
 
 /**
@@ -17,23 +19,29 @@ import ModalThree from "./modals/ReportModal/Report";
  * @returns render
  */
 export default function ItemCard(props) {
-    // const {map} = props;
-    // const {tileset} = props;
-    // const {isMap} = props; //TODO: Remove after Build 2
+    // console.log(props);
+
+    const { auth } = useContext(AuthContext);
+    const user = auth.user;
+    const { store } = useContext(GlobalStoreContext);
 
     const [data, setData ] = useState(props.map || props.tileset);
     const [show, setShow] = useState(false);
-    const [like, setLike] = useState(false);
-    const [dislike, setDislike] = useState(false);
-    const [likeCount, setLikeCount] = useState((data && data.likedUsers.length) || 0);
-    const [dislikeCount, setDislikeCount] = useState((data && data.dislikedUsers.length) || 0);
+
     const [views, setViews] = useState((data && data.views) || 0);
-    const [points, setPoints] = useState(likeCount - dislikeCount);
     // console.log(show);
+    // console.log(data);
 
     const [deleteMapModal, setDeleteMapModal] = useState(false);
     const [modalOpen3, setModalOpen3] = useState(false);
 
+/*
+
+    const [like, setLike] = useState(data.likes.includes(user._id));
+    const [dislike, setDislike] = useState(data.likes.includes(user._id));
+    const [likeCount, setLikeCount] = useState((data.likedUsers && data.likedUsers.length) || 0);
+    const [dislikeCount, setDislikeCount] = useState((data.dislikedUsers && data.dislikedUsers.length) || 0);
+    const [points, setPoints] = useState(likeCount - dislikeCount);
     const handleLike = () => {
         // Handle the case where if the user already disliked...
         setDislike((prev) => {
@@ -78,6 +86,26 @@ export default function ItemCard(props) {
             }
             return !prev;
         });
+    }
+*/
+    // console.log(user);
+    let points = data.likedUsers.length - data.dislikedUsers.length;
+    let like = user && data.likedUsers.includes(user._id);
+    let dislike = user && data.dislikedUsers.includes(user._id);
+
+    const handleLike = () => {
+        if (data && data.tilesets) {
+            store.updateMapLikes(data._id);
+        } else {
+            store.updateTilesetLikes(data._id);
+        }
+    }
+    const handleDislike = () => {
+        if (data && data.tilesets) {
+            store.updateMapDislikes(data._id);
+        } else {
+            store.updateTilesetDislikes(data._id);
+        }
     }
 
     const handleView = () => {

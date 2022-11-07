@@ -31,6 +31,11 @@ function AuthContextProvider(props) {
         errorMessage: null
     });
 
+    useEffect(() => {
+        auth.loggedIn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     //useHistory hase been replaced with useNavigate
     const history = useNavigate();
 
@@ -108,13 +113,14 @@ function AuthContextProvider(props) {
     auth.login = async (username, password) => {
         const response = await api.login(username, password);
         if (response.status === 200) {
+            console.log("response", response);
             authReducer({
                 type: AuthActionType.LOGIN,
                 payload: {
                     user: response.data.user
                 }
             });
-            history.push('/profile');
+            history('/profile');
         }
         if (response.status === 401) {
             authReducer({
@@ -132,11 +138,11 @@ function AuthContextProvider(props) {
                 type: AuthActionType.LOGOUT,
                 payload: null
             });
-            history.push('/');
+            history('/');
         }
     }
-    auth.register = async (firstName, lastName, username, password, passwordVerify) => {
-        const response = await api.register(firstName, lastName, username, password, passwordVerify);
+    auth.register = async (firstName, lastName, username, email, password, passwordVerify) => {
+        const response = await api.register(firstName, lastName, username, email, password, passwordVerify);
         if (response.status === 200) {
             authReducer({
                 type: AuthActionType.REGISTER,
@@ -145,7 +151,7 @@ function AuthContextProvider(props) {
                 }
             });
             // a registered user is automatically logged in
-            history.push('/profile');
+            history('/profile');
         }
         if (response.status === 401) {
             authReducer({
@@ -168,7 +174,7 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
-            history.push('/');
+            history('/');
         }
     }
     auth.deleteAccount = async (password) => {
@@ -178,7 +184,7 @@ function AuthContextProvider(props) {
                 type: AuthActionType.DELETE_ACCOUNT,
                 payload: null
             });
-            history.push('/');
+            history('/');
         }
     }
 

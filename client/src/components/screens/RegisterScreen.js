@@ -38,12 +38,12 @@ const RegisterScreen = () => {
 
     {
       label: "Password",
-      type: "text",
+      type: "password",
       name: "password",
     },
     {
       label: "Verify Password",
-      type: "text",
+      type: "password",
       name: "verifypassword",
     },
   ];

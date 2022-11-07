@@ -18,7 +18,7 @@ const LoginScreen = () => {
     },
     {
       label: "Password",
-      type: "text",
+      type: "password",
       name: "password",
     },
   ];

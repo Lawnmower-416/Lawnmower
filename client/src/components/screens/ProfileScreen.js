@@ -1,31 +1,33 @@
 import { DocumentCheckIcon } from "@heroicons/react/24/outline";
 import {PencilIcon, UserCircleIcon} from "@heroicons/react/24/solid";
-import { useState } from "react";
-import { getEmail, getRandomUser } from "../../utils/mockData/ItemCard_MockData";
+import { useState, useContext } from "react";
+import { generateRandomMaps, getEmail, getRandomUser } from "../../utils/mockData/ItemCard_MockData";
 import ItemCard from "./../ItemCard";
 import Header from "./Header";
+import AuthContext from "../../auth";
 
 import ModalEight from "../modals/CreateMapModal/CreateMap";
 import CreateTilesetModal from "../modals/CreateTilesetModal";
 import DeleteAccount from "../modals/DeleteAccount";
+import { getMapById } from "../../requests/store-request";
 
 // import {UserCircleIcon} from "@heroicons/react/24/outline";
 
 export default function Profile() {
     // Get the user...
+    const { auth } = useContext(AuthContext);
+    // const user = auth.user;
     const user = getRandomUser();
-
+    // console.log(user);
     // Get user's stuff
-    const userMaps = user.maps;
+    const userMaps = (user && user.maps) || [];
     // console.log(userMaps);
-    const userTilesets = user.tilesets;
-    const userComments = user.comments;
+    const userTilesets = (user && user.tilesets) || [];
+    const userComments = (user && user.comments) || [];
 
-    const owner = user.username;
-
-    const [username, setUsername] = useState(owner);
-    const [email, setEmail] = useState(getEmail(owner));
-    const [joinDate, setJoinDate] = useState(user.joinDate);
+    const [username, setUsername] = useState(user.username);
+    const [email, setEmail] = useState(user.email);
+    const [joinDate, setJoinDate] = useState(new Date(user.joinDate).toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'}));
     const [points, setPoints] = useState(user.points || 0);
 
     const [editing, setEditing] = useState(""); // Username, Email

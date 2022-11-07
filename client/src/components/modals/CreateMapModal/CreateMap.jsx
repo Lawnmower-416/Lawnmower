@@ -3,13 +3,14 @@ import GlobalStoreContext from "../../../store";
 
 const ModalEight = ({ modalOpen, setModalOpen }) => {
 	const { store } = useContext(GlobalStoreContext);
+	const [title, setTitle] = useState("Untitled");
 	const [size, setSize] = useState("128");
 	const [sizeW, setSizeW] = useState("256");
 	const [sizeT, setSizeT] = useState("8");
 
 	const handleCreateMap = () => {
 		setModalOpen(!modalOpen)
-		store.createNewMap(size, sizeW, sizeT);
+		store.createNewMap(title, size, sizeW, sizeT);
 	}
 
 	return (
@@ -26,9 +27,12 @@ const ModalEight = ({ modalOpen, setModalOpen }) => {
 				<div className="modal-content duration-500 rounded-2xl bg-gradient-green p-6 sm:p-10 w-full max-w-lg relative z-10 sm:pt-5 sm:pb-6">
 					<div className="mb-6 flex flex-wrap items-center gap-2">
 						<h4 className="text-[20px] font-bold">Title</h4>
-						<h3 className="rounded-lg py-1 px-6 text-white cursor-pointer bg-dark-green text-[20px] font-semibold sm:px-16">
-							Untitled Map
-						</h3>
+						<input
+								type="text"
+								value={title}
+								onChange={(e) => setTitle(e.target.value)}
+								className="rounded-lg py-1 px-6 text-white cursor-pointer bg-dark-green text-[20px] font-semibold sm:px-16"
+							/>
 					</div>
 					<div className="flex flex-wrap items-center gap-4">
 						<h4 className="text-[20px] font-bold">Map Size</h4>
