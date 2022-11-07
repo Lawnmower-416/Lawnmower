@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import GlobalStoreContext from "../../store";
 
 const CreateTilesetModal = ({ modalOpen, setModalOpen }) => {
+	const { store } = useContext(GlobalStoreContext);
     const [title, setTitle] = useState("");
 	const [size, setSize] = useState("8");
+
+	const handleCreateTileset = () => {
+		setModalOpen(!modalOpen)
+		store.createNewTileset(title, size)
+	}
 
 	return (
 		<div
@@ -32,7 +39,7 @@ const CreateTilesetModal = ({ modalOpen, setModalOpen }) => {
 					<div className="flex justify-evenly gap-4 mt-5">
 						<button
 							className="rounded-lg py-[8px] px-6  cursor-pointer duration-300 bg-purple text-white text-[16px] font-bold max-w-[200px]"
-							onClick={() => setModalOpen(!modalOpen)}
+							onClick={handleCreateTileset}
 						>
 							Create
 						</button>

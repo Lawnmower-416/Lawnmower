@@ -7,11 +7,13 @@ const api = axios.create({
     baseURL: 'https://ec2-3-94-193-80.compute-1.amazonaws.com:3000'
 });
 
-export const createMap = (title, mapSize, TileLength) => {
+export const createMap = (owner, title, height, width, tileSize) => {
     return api.post(`/map/`, {
-        title : title,
-        mapSize : mapSize,
-        TileLength : TileLength
+        ownwer: owner,
+        title: title,
+        height: height,
+        width: width,
+        tileSize: tileSize
     })
 }
 export const deleteMap = (mapId) => {
@@ -24,10 +26,19 @@ export const getMaps = () => {
     return api.get(`/map/`)
 }
 
-export const createTileset = (title, TileLength) => {
+
+export const updateMapGeneral = (mapId, map) => {
+    return api.put(`/map/${mapId}/general`, {
+        map: map
+    })
+}
+
+export const createTileset = (owner, title, tileSize) => {
     return api.post(`/tileset/`, {
+        owner : owner,
         title : title,
-        TileLength : TileLength
+        tileSize : tileSize
+
     })
 }
 export const deleteTileset = (tilesetId) => {
@@ -39,16 +50,23 @@ export const getTilesetById = (tilesetId) => {
 export const getTilesets = () => {
     return api.get(`/tileset/`)
 }
+export const updateTilesetGeneral = (tilesetId, tileset) => {
+    return api.put(`/tileset/${tilesetId}/general`, {
+        tileset: tileset
+    })
+}
 
 const apis = {
     createMap,
     deleteMap,
     getMapById,
     getMaps,
+    updateMapGeneral,
     createTileset,
     deleteTileset,
     getTilesetById,
-    getTilesets
+    getTilesets,
+    updateTilesetGeneral
 }
 
 export default apis;

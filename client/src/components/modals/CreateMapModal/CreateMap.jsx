@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import GlobalStoreContext from "../../../store";
 
 const ModalEight = ({ modalOpen, setModalOpen }) => {
+	const { store } = useContext(GlobalStoreContext);
 	const [size, setSize] = useState("128");
 	const [sizeW, setSizeW] = useState("256");
 	const [sizeT, setSizeT] = useState("8");
+
+	const handleCreateMap = () => {
+		setModalOpen(!modalOpen)
+		store.createNewMap(size, sizeW, sizeT);
+	}
 
 	return (
 		<div
@@ -20,7 +27,7 @@ const ModalEight = ({ modalOpen, setModalOpen }) => {
 					<div className="mb-6 flex flex-wrap items-center gap-2">
 						<h4 className="text-[20px] font-bold">Title</h4>
 						<h3 className="rounded-lg py-1 px-6 text-white cursor-pointer bg-dark-green text-[20px] font-semibold sm:px-16">
-							My First App
+							Untitled Map
 						</h3>
 					</div>
 					<div className="flex flex-wrap items-center gap-4">
@@ -59,7 +66,7 @@ const ModalEight = ({ modalOpen, setModalOpen }) => {
 					<div className="flex justify-evenly gap-4 mt-5">
 						<button
 							className="rounded-lg py-[8px] px-6  cursor-pointer duration-300 bg-purple text-white text-[16px] font-bold max-w-[200px]"
-							onClick={() => setModalOpen(!modalOpen)}
+							onClick={handleCreateMap}
 						>
 							Create
 						</button>
