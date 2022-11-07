@@ -52,7 +52,7 @@ const Header = () => {
           Sign In
         </Link>
       </div>;
-  if (true) {
+  if (auth.loggedIn) {
     topRightMenu = 
     <Menu as="div" className="relative">
       <Menu.Button>
@@ -75,7 +75,7 @@ const Header = () => {
           className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Create Tileset</button>
         </Menu.Item>
         <Menu.Item>
-          <button onClick={auth.logout} className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-b-xl w-full">Logout</button>
+          <button onClick={() => handleLogout} className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-b-xl w-full">Logout</button>
         </Menu.Item>
       </Menu.Items>
     </Menu>
