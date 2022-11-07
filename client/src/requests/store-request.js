@@ -18,7 +18,7 @@ export const getMapById = (mapId) => {
 return api.get(`/map/${mapId}`, {withCredentials: true});
 }
 export const getMaps = () => {
-return api.get(`/map/`);
+    return api.get(`/maps`);
 }
 
 
@@ -42,7 +42,7 @@ export const getTilesetById = (tilesetId) => {
 return api.get(`/tileset/${tilesetId}`)
 }
 export const getTilesets = () => {
-return api.get(`/tileset/`);
+return api.get(`/tilesets`);
 }
 export const updateTilesetGeneral = (tilesetId, tileset) => {
 return api.put(`/tileset/${tilesetId}/general`, {
