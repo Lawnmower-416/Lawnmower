@@ -52,6 +52,10 @@ getMaps = async () => {
     return await Map.find({ public: true });
 }
 
+updateMapGeneral = async (updatedMap) => {
+    return await Map.findOneAndUpdate({ _id: updatedMap._id}, updatedMap, {returnOriginal: false});
+}
+
 createTileset = async (body, userId) => {
     let newTileset = new Tileset(body);
     if (newTileset) {
@@ -94,13 +98,19 @@ getTilesets = async () => {
     return await Tileset.find({ public: true });
 }
 
+updateTilesetGeneral = async (updatedTileset) => {
+    return await Tileset.findOneAndUpdate({ _id: updatedTileset._id}, updatedTileset, {returnOriginal: false});
+}
+
 module.exports = {
     createMap,
     deleteMap,
     getMapById,
     getMaps,
+    updateMapGeneral,
     createTileset,
     deleteTileset,
     getTilesetById,
-    getTilesets
+    getTilesets,
+    updateTilesetGeneral
 }
