@@ -523,21 +523,82 @@ function GlobalStoreContextProvider(props) {
     }
     // increment or decrement the number of likes by removing user_id from likes array
     store.updateMapLikes = async (mapId) => {
+        try {
+            let response = await api.getMapById(mapId)
+            if (response.data.success) {
+                let map = response.data.map
+                if (map.likes.includes(auth.user._id)) {
+                    map.likes.splice(map.likes.indexOf(auth.user._id), 1)
+                }
+                let response = await api.updateMapGeneral(mapId, map)
+                if (response.data.success) {
+                    store.loadUserMaps()
+                    store.loadPublicMaps()
+                }
+            }
+        } catch (error) {
+            console.log("Error updating map likes: ", error)
+        }
         
     }
     // increment or decrement the number of dislikes by removing user_id from likes array
     store.updateMapDislikes = async () => {
-
+        try {
+            let response = await api.getMapById(mapId)
+            if (response.data.success) {
+                let map = response.data.map
+                if (map.dislikes.includes(auth.user._id)) {
+                    map.dislikes.splice(map.dislikes.indexOf(auth.user._id), 1)
+                }
+                let response = await api.updateMapGeneral(mapId, map)
+                if (response.data.success) {
+                    store.loadUserMaps()
+                    store.loadPublicMaps()
+                }
+            }
+        } catch (error) {
+            console.log("Error updating map dislikes: ", error)
+        }
     }
     // increment or decrement the number of likes by removing user_id from likes array
     store.updateTilesetLikes = async (tilesetId) => {
-
+        try {
+            let response = await api.getTilesetById(tilesetId)
+            if (response.data.success) {
+                let tileset = response.data.tileset
+                if (tileset.likes.includes(auth.user._id)) {
+                    tileset.likes.splice(tileset.likes.indexOf(auth.user._id), 1)
+                }
+                let response = await api.updateTilesetGeneral(tilesetId, tileset)
+                if (response.data.success) {
+                    store.loadUserTilesets()
+                    store.loadPublicTilesets()
+                }
+            }
+        } catch (error) {
+            console.log("Error updating tileset likes: ", error)
+        }
     }
     // increment or decrement the number of dislikes by removing user_id from likes array
     store.updateTilesetDislikes = async (tilesetId) => {
-
+        try {
+            let response = await api.getTilesetById(tilesetId)
+            if (response.data.success) {
+                let tileset = response.data.tileset
+                if (tileset.dislikes.includes(auth.user._id)) {
+                    tileset.dislikes.splice(tileset.dislikes.indexOf(auth.user._id), 1)
+                }
+                let response = await api.updateTilesetGeneral(tilesetId, tileset)
+                if (response.data.success) {
+                    store.loadUserTilesets()
+                    store.loadPublicTilesets()
+                }
+            }
+        } catch (error) {
+            console.log("Error updating tileset dislikes: ", error)
+        }
     }
-    // add a comment to a piece of content
+    // add a comment to a piece of content TODO BUILD 4
     store.addComment = async () => {
 
     }

@@ -24,10 +24,17 @@ export const getMaps = () => {
     return api.get(`/map/`)
 }
 
-export const createTileset = (title, TileLength) => {
+export const updateMapGeneral = (mapId, map) => {
+    return api.put(`/map/${mapId}/general`, {
+        map: map
+    })
+}
+
+export const createTileset = (owner, title, tileSize) => {
     return api.post(`/tileset/`, {
+        owner : owner,
         title : title,
-        TileLength : TileLength
+        tileSize : tileSize
     })
 }
 export const deleteTileset = (tilesetId) => {
@@ -39,16 +46,23 @@ export const getTilesetById = (tilesetId) => {
 export const getTilesets = () => {
     return api.get(`/tileset/`)
 }
+export const updateTilesetGeneral = (tilesetId, tileset) => {
+    return api.put(`/tileset/${tilesetId}/general`, {
+        tileset: tileset
+    })
+}
 
 const apis = {
     createMap,
     deleteMap,
     getMapById,
     getMaps,
+    updateMapGeneral,
     createTileset,
     deleteTileset,
     getTilesetById,
-    getTilesets
+    getTilesets,
+    updateTilesetGeneral
 }
 
 export default apis;

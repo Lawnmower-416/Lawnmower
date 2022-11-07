@@ -28,7 +28,7 @@ function createMap(req, res) {
 }
 
 function deleteMap(req, res) {
-    databaseManager.deleteMap(req.params.mapId, req.userId).then((deletedMap) => {;
+    databaseManager.deleteMap(req.params.mapId, req.userId).then((deletedMap) => {
         if (deletedMap) {
             return res.status(200).json({
                 successMessage: 'Map deleted',
@@ -60,6 +60,7 @@ function getMapById(req, res) {
     });
 }
 
+
 // only get public maps for community page viewing
 function getMaps(req, res) {
     databaseManager.getMaps().then((maps) => {;
@@ -73,6 +74,23 @@ function getMaps(req, res) {
             success: false,
             errorMessage: 'Maps not found'
         });
+    });
+}
+
+function updateMapGeneral(req, res) {
+    const newMap = req.body;
+    databaseManager.updateMapGeneral(newMap).then((updatedMap) => {
+        if (updatedMap) {
+            return res.status(200).json({
+                success: true,
+                map: updatedMap
+            });
+        } else {
+            return res.status(400).json({
+                success: false,
+                errorMessage: 'Unable to update map'
+            });
+        }
     });
 }
 
@@ -147,13 +165,32 @@ function getTilesets(req, res) {
     });
 }
 
+function updateTilesetGeneral(req, res) {
+    const newTileset = req.body;
+    databaseManager.updateTilesetGeneral(newTileset).then((updatedTileset) => {
+        if (updatedTileset) {
+            return res.status(200).json({
+                success: true,
+                tileset: updatedTileset
+            });
+        } else {
+            return res.status(400).json({
+                success: false,
+                errorMessage: 'Unable to update tileset'
+            });
+        }
+    });
+}
+
 module.exports = {
     createMap,
     deleteMap,
     getMapById,
     getMaps,
+    updateMapGeneral,
     createTileset,
     deleteTileset,
     getTilesetById,
-    getTilesets
+    getTilesets,
+    updateTilesetGeneral
 };
