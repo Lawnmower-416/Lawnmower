@@ -1,6 +1,6 @@
 import { DocumentCheckIcon } from "@heroicons/react/24/outline";
 import {PencilIcon, UserCircleIcon} from "@heroicons/react/24/solid";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { generateRandomMaps, getEmail, getRandomUser } from "../../utils/mockData/ItemCard_MockData";
 import ItemCard from "./../ItemCard";
 import Header from "./Header";
@@ -10,17 +10,19 @@ import ModalEight from "../modals/CreateMapModal/CreateMap";
 import CreateTilesetModal from "../modals/CreateTilesetModal";
 import DeleteAccount from "../modals/DeleteAccount";
 import { getMapById } from "../../requests/store-request";
+import GlobalStoreContext from "../../store";
 
 // import {UserCircleIcon} from "@heroicons/react/24/outline";
 
 export default function Profile() {
     // Get the user...
     const { auth } = useContext(AuthContext);
-    const user = auth.user;
-    // const user = getRandomUser();
+    const { store } = useContext(GlobalStoreContext);
+    // const user = auth.user;
+    const user = getRandomUser();
     // console.log(user);
     // Get user's stuff
-    const userMaps = (user && user.maps) || [];
+    const [userMaps, setUserMaps] = useState([])
     // console.log(userMaps);
     const userTilesets = (user && user.tilesets) || [];
     const userComments = (user && user.comments) || [];
@@ -39,6 +41,16 @@ export default function Profile() {
     const [modalOpen8, setModalOpen8] = useState(false);
     const [tilesetModal, setTilesetModal] = useState(false);
     const [deleteAccountModal, setDeleteAccountModal] = useState(false);
+
+    useEffect(() => {
+        async function fetchData() {
+            if (user) {
+                await store.loadUserMaps();
+                setUserMaps(store.userMaps);
+            }
+        }
+        fetchData();
+    }, []);
 
     const getUserCommentsFromMapsAndTilesets = () => {
         const comments = [];
