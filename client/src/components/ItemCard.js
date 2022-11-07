@@ -145,7 +145,7 @@ export default function ItemCard(props) {
                                 <Menu.Items className="absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg w-">
                                     <Menu.Item>
                                             {({ active }) => (
-                                                <Link to="/profile" className="block px-4 py-2 text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray"
+                                                <Link to="/profile" className="block px-4 py-2 text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray" state={{contentBefore: data}}
                                                 >Profile                                            
                                                 </Link>
                                             )}
@@ -165,9 +165,9 @@ export default function ItemCard(props) {
                     </div>
                 {/* Column 4: Public/Private, Views, Delete, Show Comments */}
                     <div className="flex flex-col order-last text-left space-y-3">
-                        <p className="text-xl font-bold">{props.visibility || "Test"}</p>
+                        <p className="text-xl font-bold">{data.public ? "Public" : "Test"}</p>
                         <p className="text-xl">Views: {views}</p>
-                        <TrashIcon className="w-12 cursor-pointer fill-red" onClick={() => setDeleteMapModal((prev) => !prev)} />
+                        <TrashIcon className={`w-12 cursor-pointer fill-red ${user !== data.owner ? "hidden" : ""}`} onClick={() => setDeleteMapModal((prev) => !prev)} />
                         {/* Comments Part */}
                         <p className="font-bold relative bottom-0 cursor-pointer" onClick={handleView}>
                             Show Comments{show ? <ChevronDoubleUpIcon className="w-6" style={{"display": "inline"}} /> : <ChevronDownIcon className="w-6" style={{"display": "inline"}} />}

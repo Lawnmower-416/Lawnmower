@@ -5,28 +5,38 @@ import { generateRandomMaps, getEmail, getRandomUser } from "../../utils/mockDat
 import ItemCard from "./../ItemCard";
 import Header from "./Header";
 import AuthContext from "../../auth";
+import { useLocation } from "react-router-dom";
 
 import ModalEight from "../modals/CreateMapModal/CreateMap";
 import CreateTilesetModal from "../modals/CreateTilesetModal";
 import DeleteAccount from "../modals/DeleteAccount";
 import { getMapById } from "../../requests/store-request";
+import GlobalStoreContext from "../../store";
 
 // import {UserCircleIcon} from "@heroicons/react/24/outline";
 
 export default function Profile() {
+    const location = useLocation();
+    const {contentBefore} = location.state;
     // Get the user...
     const { auth } = useContext(AuthContext);
-    const user = auth.user;
+    // console.log(contentBefore);
+    let user;
+    if (contentBefore) {
+        console.log("EXISTS ", contentBefore);
+        user = {username: contentBefore.owner};
+    }
+    else user = auth.user;
     // const user = getRandomUser();
     // console.log(user);
     // Get user's stuff
-    const userMaps = (user && user.maps) || [];
+    const userMaps = (contentBefore ? [contentBefore] : (user && user.maps)) || [];
     // console.log(userMaps);
-    const userTilesets = (user && user.tilesets) || [];
-    const userComments = (user && user.comments) || [];
+    const userTilesets = (contentBefore ? [contentBefore] : (user && user.tilesets)) || [];
+    const userComments = (contentBefore ? [contentBefore] : (user && user.comments)) || [];
 
     const [username, setUsername] = useState(user.username);
-    const [email, setEmail] = useState(user.email);
+    const [email, setEmail] = useState(user.email || "");
     const [joinDate, setJoinDate] = useState(new Date(user.joinDate).toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'}));
     const [points, setPoints] = useState(user.points || 0);
 
@@ -98,13 +108,13 @@ export default function Profile() {
                     <div className="col-auto grid grid-rows-4 gap-0 p-5 bg-dark-green-lighter" >
                         <div className={`col-auto grid grid-cols-10 items-center text-2xl text-white`}>
                             <div className="col-span-8 px-2" >{editing === "username" ? <input className="px-1 text-black" type={"text"} placeholder={username} onChange={handleChange} onKeyDown={handleKeyDown}></input> : username}</div>
-                            <div className="col-span-2 px-1 content-start">
+                            <div className={`col-span-2 px-1 content-start ${contentBefore ? "hidden" : ""}`}>
                                 {editing === "username" ? <DocumentCheckIcon className="w-12 cursor-pointer" onClick={() => setEditing(prev => "")} /> : <PencilIcon className={`w-12 cursor-pointer text-black hover:text-white ${editing !== "username"} ? 'disabled disabled:opacity-60' : ""`} onClick={() => setEditing((prev) => {return prev === "" ? "username" : prev})} />}
                             </div>
                         </div>
                         <div className="col-auto grid grid-cols-10 content-center align-middle items-center text-2xl text-white" >
                             <div className="col-span-8 px-2" >{editing === "email" ? <input className="px-1 text-black" type={"text"} placeholder={email} onChange={handleChange} onKeyDown={handleKeyDown}></input> : email}</div>
-                            <div className="col-span-2 px-1 content-start">
+                            <div className={`col-span-2 px-1 content-start ${contentBefore ? "hidden" : ""}`}>
                                 {editing === "email" ? <DocumentCheckIcon className="w-12 cursor-pointer" onClick={() => setEditing(prev => "")} /> : <PencilIcon className={`w-12 cursor-pointer text-black hover:text-white ${editing !== "email"} ? 'disabled disabled:opacity-60' : ""`} onClick={() => setEditing((prev) => {return prev === "" ? "email" : prev})} />}
                             </div>
                         </div>
@@ -138,7 +148,7 @@ export default function Profile() {
                     </div>
                 {/* Row 4 */}
                     {/* Column 1: Only for the Delete Account Button */}
-                    <div className="col-span-2 items-center text-center p-3">
+                    <div className={`col-span-2 items-center text-center p-3 ${contentBefore ? "hidden" : ""}`}>
                         <button className="bg-dark-green-lighter text-red font-bold rounded-md p-3" onClick={() => setDeleteAccountModal((prev) => !prev)} >Delete Account</button>
                     </div>
             </div>
