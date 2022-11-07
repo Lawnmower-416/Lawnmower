@@ -140,7 +140,7 @@ function AuthContextProvider(props) {
         }
     }
     auth.register = async (firstName, lastName, username, password, passwordVerify) => {
-        const response = await api.register(firstName, lastName, username, passwordVerify);
+        const response = await api.register(firstName, lastName, username, password, passwordVerify);
         if (response.status === 200) {
             authReducer({
                 type: AuthActionType.REGISTER,
