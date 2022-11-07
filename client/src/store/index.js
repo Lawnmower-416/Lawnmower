@@ -14,10 +14,6 @@ export const GlobalStoreActionType = {
     LOAD_COMMENTS: "LOAD_COMMENTS",
     SORT_PUBLIC_MAPS: "SORT_PUBLIC_MAPS",
     SORT_PUBLIC_TILESETS: "SORT_PUBLIC_TILESETS",
-    MARK_MAP_FOR_DELETION: "MARK_MAP_FOR_DELETION",
-    UNMARK_MAP_FOR_DELETION: "UNMARK_MAP_FOR_DELETION",
-    MARK_TILESET_FOR_DELETION: "MARK_TILESET_FOR_DELETION",
-    UNMARK_TILESET_FOR_DELETION: "UNMARK_TILESET_FOR_DELETION",
     EDIT_VIEW_CONTENT: "EDIT_VIEW_CONTENT",
     EXPANDED_CONTENT: "EXPANDED_CONTENT",
 }
@@ -34,8 +30,6 @@ function GlobalStoreContextProvider(props) {
         shownPublicTilesets: [],
         currentContentEditView: null,
         currentContentCommentsExpanded: null,
-        mapMarkedForDeletion: null,
-        tilesetMarkedForDeletion: null,
     });
     const { auth } = useContext(AuthContext);
 
@@ -54,8 +48,6 @@ function GlobalStoreContextProvider(props) {
                     shownPublicTilesets: store.shownPublicTilesets,
                     currentContentEditView: store.currentContentEditView,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: store.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: store.tilesetMarkedForDeletion,
                 })
             }
             case GlobalStoreActionType.LOAD_USER_TILESETS: {
@@ -70,8 +62,6 @@ function GlobalStoreContextProvider(props) {
                     shownPublicTilesets: store.shownPublicTilesets,
                     currentContentEditView: store.currentContentEditView,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: store.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: store.tilesetMarkedForDeletion,
                 })
             }
             case GlobalStoreActionType.LOAD_PUBLIC_MAPS: {
@@ -86,8 +76,6 @@ function GlobalStoreContextProvider(props) {
                     shownPublicTilesets: store.shownPublicTilesets,
                     currentContentEditView: store.currentContentEditView,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: store.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: store.tilesetMarkedForDeletion,
                 });
             }
             case GlobalStoreActionType.LOAD_PUBLIC_TILESETS: {
@@ -102,8 +90,6 @@ function GlobalStoreContextProvider(props) {
                     shownPublicTilesets: payload.publicTilesets,
                     currentContentEditView: store.currentContentEditView,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: store.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: store.tilesetMarkedForDeletion,
                 });
             }
             case GlobalStoreActionType.LOAD_COMMENTS: {
@@ -118,8 +104,6 @@ function GlobalStoreContextProvider(props) {
                     shownPublicTilesets: store.shownPublicTilesets,
                     currentContentEditView: store.currentContentEditView,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: store.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: store.tilesetMarkedForDeletion,
                 });
             }
             case GlobalStoreActionType.SORT_PUBLIC_MAPS: {
@@ -134,8 +118,6 @@ function GlobalStoreContextProvider(props) {
                     shownPublicTilesets: store.shownPublicTilesets,
                     currentContentEditView: store.currentContentEditView,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: store.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: store.tilesetMarkedForDeletion,
                 });
             }
             case GlobalStoreActionType.SORT_PUBLIC_TILESETS: {
@@ -150,72 +132,6 @@ function GlobalStoreContextProvider(props) {
                     shownPublicTilesets: payload.shownPublicTilesets,
                     currentContentEditView: store.currentContentEditView,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: store.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: store.tilesetMarkedForDeletion,
-                });
-            }
-            case GlobalStoreActionType.MARK_MAP_FOR_DELETION: {
-                return setStore({
-                    userMaps: store.userMaps,
-                    userTilesets: store.userTilesets,
-                    userComments: store.userComments,
-                    publicMaps: store.publicMaps,
-                    publicTilesets: store.publicTilesets,
-                    comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
-                    currentContentEditView: store.currentContentEditView,
-                    currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: payload.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: store.tilesetMarkedForDeletion,
-                });
-            }
-            case GlobalStoreActionType.MARK_TILESET_FOR_DELETION: {
-                return setStore({
-                    userMaps: store.userMaps,
-                    userTilesets: store.userTilesets,
-                    userComments: store.userComments,
-                    publicMaps: store.publicMaps,
-                    publicTilesets: store.publicTilesets,
-                    comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
-                    currentContentEditView: store.currentContentEditView,
-                    currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: store.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: payload.tilesetMarkedForDeletion,
-                });
-            }
-            case GlobalStoreActionType.UNMARK_MAP_FOR_DELETION: {
-                return setStore({
-                    userMaps: store.userMaps,
-                    userTilesets: store.userTilesets,
-                    userComments: store.userComments,
-                    publicMaps: store.publicMaps,
-                    publicTilesets: store.publicTilesets,
-                    comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
-                    currentContentEditView: store.currentContentEditView,
-                    currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: null,
-                    tilesetMarkedForDeletion: store.tilesetMarkedForDeletion,
-                });
-            }
-            case GlobalStoreActionType.UNMARK_TILESET_FOR_DELETION: {
-                return setStore({
-                    userMaps: store.userMaps,
-                    userTilesets: store.userTilesets,
-                    userComments: store.userComments,
-                    publicMaps: store.publicMaps,
-                    publicTilesets: store.publicTilesets,
-                    comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
-                    currentContentEditView: store.currentContentEditView,
-                    currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: store.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: null,
                 });
             }
             case GlobalStoreActionType.EDIT_VIEW_CONTENT: {
@@ -230,8 +146,6 @@ function GlobalStoreContextProvider(props) {
                     shownPublicTilesets: store.shownPublicTilesets,
                     currentContentEditView: payload.currentContentEditView,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: store.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: store.tilesetMarkedForDeletion,
                 });
             }
             case GlobalStoreActionType.EXPANDED_CONTENT: {
@@ -246,8 +160,6 @@ function GlobalStoreContextProvider(props) {
                     shownPublicTilesets: store.shownPublicTilesets,
                     currentContentEditView: store.currentContentEditView,
                     currentContentCommentsExpanded: payload.currentContentCommentsExpanded,
-                    mapMarkedForDeletion: store.mapMarkedForDeletion,
-                    tilesetMarkedForDeletion: store.tilesetMarkedForDeletion,
                 });
             }
         }
@@ -458,52 +370,7 @@ function GlobalStoreContextProvider(props) {
             }
         })
     }
-    // mark a map for deletion
-    store.markMapForDeletion = async (mapId) => {
-        try {
-            let response = await api.getMapById(mapId)
-            if (response.data.succes) {
-                storeReducer({
-                    type: GlobalStoreActionType.MARK_MAP_FOR_DELETION,
-                    payload: {
-                        mapMarkedForDeletion: response.data.map
-                    }
-                })
-            }
-        } catch (error) {
-            console.log("Error marking map for deletion: ", error)
-        }
-    }
-    // unmark a map for deletion
-    store.unmarkMapForDeletion = function () {
-        storeReducer({
-            type: GlobalStoreActionType.UNMARK_MAP_FOR_DELETION,
-            payload: null
-        })
-    }
-    // mark a tileset for deletion
-    store.markTilesetForDeletion = async (tilesetId) => {
-        try {
-            let response = await api.getTilesetById(tilesetId)
-            if (response.data.success) {
-                storeReducer({
-                    type: GlobalStoreActionType.MARK_TILESET_FOR_DELETION,
-                    payload: {
-                        tilesetMarkedForDeletion: response.data.tileset
-                    }
-                })
-            }
-        } catch (error) {
-            console.log("Error marking tileset for deletion: ", error)
-        }
-    }
-    // unmark a tileset for deletion
-    store.unmarkTilesetForDeletion = function () {
-        storeReducer({
-            type: GlobalStoreActionType.UNMARK_TILESET_FOR_DELETION,
-            payload: null
-        })
-    }
+
     // delete a map
     store.deleteMap = async function (mapId) {
         try {
