@@ -47,7 +47,7 @@ export const DeleteMapModal = ({ modalOpen, setModalOpen, map }) => {
 								className="rounded-lg py-[5px] px-6  cursor-pointer duration-300 bg-dark-green text-red text-[16px] font-bold flex-grow max-w-[200px]"
 								onClick={handleDeleteMap}
 							>
-								Delete Map
+								Delete
 							</button>
 							<button
 								className="rounded-lg py-[5px] px-6 text-white cursor-pointer duration-300 bg-dark-green text-[16px] font-bold flex-grow max-w-[200px]"
