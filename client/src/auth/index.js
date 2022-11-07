@@ -34,10 +34,6 @@ function AuthContextProvider(props) {
     //useHistory hase been replaced with useNavigate
     const history = useNavigate();
 
-    useEffect(() => {
-        auth.loggedIn();
-    }, [auth]);
-
     const authReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
