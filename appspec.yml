@@ -1,0 +1,10 @@
+version: 0.0
+os: linux
+files:
+ - source: .
+   destination: /home/ubuntu/Lawnmower
+hooks:
+  ApplicationStart:
+   - location: client
+     timeout: 300
+     runas: root
