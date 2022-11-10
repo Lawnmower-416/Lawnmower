@@ -41,7 +41,7 @@ jobs:
       
       - name: Upload Artifact to s3
         working-directory: client
-        run: aws s3 cp --recursive build s3://${{ secrets.S3_BUCKET }}/
+        run: aws s3 cp --recursive build s3://${{ secrets.S3_BUCKET }}/frontend
 
   deploy:
     runs-on: ubuntu-latest
