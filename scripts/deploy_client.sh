@@ -1,3 +1,3 @@
 #!/bin/bash
-cd /home/ubuntu/frontend
-npm run build
+cd /home/ubuntu/
+serve -s frontend -l 4000
