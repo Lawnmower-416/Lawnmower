@@ -5,6 +5,6 @@ files:
    destination: /home/ubuntu/Lawnmower
 hooks:
   ApplicationStart:
-   - location: deploy_client
+   - location: scripts/deploy_client
      timeout: 300
      runas: root
