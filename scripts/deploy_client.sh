@@ -1,3 +1,3 @@
 #!/bin/bash
-cd /home/ubuntu/build
+cd /home/ubuntu/frontend
 npm run build
