@@ -55,7 +55,7 @@ jobs:
         id: deploy
         run: |
           aws deploy create-deployment \
-            --application-name Lawnmower \
-            --deployment-group-name AppDeploymentGroupName \
+            --application-name LawnmowerDeploy \
+            --deployment-group-name LawnmowerDeploy \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
