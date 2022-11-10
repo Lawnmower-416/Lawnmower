@@ -1,3 +1,3 @@
 #!/bin/bash
-cd /home/ubuntu/Lawnmower/client
+cd /home/ubuntu/build
 npm run build

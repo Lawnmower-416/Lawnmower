@@ -5,10 +5,14 @@ files:
    destination: /home/ubuntu/Lawnmower
    file_exists_behavior: OVERWRITE
 hooks:
-  AfterInstall:
-    - location: scripts/install_dependencies_client.sh
+  BeforeInstall:
+    - location: scripts/before_install.sh
       timeout: 300
       runas: root
+  #AfterInstall:
+  #  - location: scripts/install_dependencies_client.sh
+  #    timeout: 300
+  #    runas: root
   ApplicationStart:
     - location: scripts/deploy_client.sh
       timeout: 300
