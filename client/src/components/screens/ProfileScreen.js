@@ -4,8 +4,8 @@ import { useState, useContext, useEffect } from "react";
 import { generateRandomMaps, getEmail, getRandomUser } from "../../utils/mockData/ItemCard_MockData";
 import ItemCard from "./../ItemCard";
 import Header from "./Header";
-import AuthContext from "../../auth";
 import { useLocation } from "react-router-dom";
+import AuthContext from "../../auth";
 
 import ModalEight from "../modals/CreateMapModal/CreateMap";
 import CreateTilesetModal from "../modals/CreateTilesetModal";
@@ -18,6 +18,7 @@ import GlobalStoreContext from "../../store";
 export default function Profile() {
     const location = useLocation();
     const {contentBefore} = location.state;
+    const { store } = useContext(GlobalStoreContext);
     // Get the user...
     const { auth } = useContext(AuthContext);
     // console.log(contentBefore);
@@ -54,7 +55,7 @@ export default function Profile() {
         async function fetchData() {
             if (user) {
                 await store.loadUserMaps();
-                setUserMaps(store.userMaps);
+                store.setUserMaps(store.userMaps);
             }
         }
         fetchData();

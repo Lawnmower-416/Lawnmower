@@ -1,7 +1,8 @@
 import { createContext, useContext, useState } from 'react';
-import mapApi from "../requests/map-editor-api"
-import tilesetApi from "../requests/tileset-api"
+//import mapApi from "../requests/map-editor-api"
+//import tilesetApi from "../requests/tileset-api"
 import { useAuth } from "../auth"
+import AuthContext from '../auth';
 
 export const EditorContext = createContext();
 
