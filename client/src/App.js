@@ -3,7 +3,7 @@ import { React } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthContextProvider } from './auth';
 import { GlobalStoreContextProvider } from './store';
-import { EditorStoreContextProvider } from './editor';
+import { EditorContextProvider } from './editor';
 
 import HomeWrapper from './components/screens/HomeWrapper';
 import LoginScreen from './components/screens/LoginScreen';
@@ -22,7 +22,7 @@ function App() {
     <BrowserRouter>
       <AuthContextProvider>
         <GlobalStoreContextProvider>
-          <EditorStoreContextProvider>
+          <EditorContextProvider>
 
             <Routes>
               <Route path="/" exact element={<HomeWrapper/>} />
@@ -38,7 +38,7 @@ function App() {
               <Route path="/change-password" exact element={<PasswordChange/>} />
             </Routes>
 
-          </EditorStoreContextProvider>
+          </EditorContextProvider>
         </GlobalStoreContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
