@@ -8,4 +8,4 @@ hooks:
   ApplicationStart:
    - location: scripts/deploy_client.sh
      timeout: 300
-     runas: root
+     runas: ubuntu
