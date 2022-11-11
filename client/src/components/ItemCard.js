@@ -119,6 +119,7 @@ export default function ItemCard(props) {
         if (!show) setViews((prevCount) => prevCount + 1);
     }
 
+    //console.log("DATA:" , data)
 
     return (
         <><DeleteMapModal modalOpen={deleteMapModal} setModalOpen={setDeleteMapModal} map={(data) || "Title"} />
@@ -143,7 +144,7 @@ export default function ItemCard(props) {
                 {/* Column 3: Map/Tileset Name, Author, Creation Date */}
                     <div className="flex flex-col flex-grow order-3 align-middle p-2">
 
-                        <Link className="text-3xl font-bold" to={(data && data.tilesets ? "/mapEditor" : "/tilesetEditor")}>{(data && data.title) || "Title"}</Link>
+                        <Link className="text-3xl font-bold" to={(data && data.tilesets ? "/mapEditor/" + data._id : "/tilesetEditor/" + data._id)}>{(data && data.title) || "Title"}</Link>
                             <Menu as="div" className="relative">
                                 <Menu.Button>
                                     <p className="text-xl text-left">By: {(data && data.owner) || "Author"}</p>

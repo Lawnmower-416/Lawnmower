@@ -39,7 +39,7 @@ export const deleteTileset = (tilesetId) => {
 return api.delete(`/tileset/${tilesetId}`)
 }
 export const getTilesetById = (tilesetId) => {
-return api.get(`/tileset/${tilesetId}`)
+return api.get(`/tileset/${tilesetId}`, {withCredentials: true});
 }
 export const getTilesets = () => {
 return api.get(`/tilesets`);

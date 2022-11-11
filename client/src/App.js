@@ -33,7 +33,7 @@ function App() {
               <Route path="/support" exact element={<ContactUs/>} />
               <Route path="/profile" exact element={<ProfileScreen/>} />
               <Route path="/mapEditor" exact element={<MapEditor/>} />
-              <Route path="/tilesetEditor" exact element={<TilesetEditor/>} />
+              <Route path="/tilesetEditor/:tilesetId" exact element={<TilesetEditor/>} />
               <Route path="/community" exact element={<CommunityScreen/>} />
               <Route path="/change-password" exact element={<PasswordChange/>} />
             </Routes>

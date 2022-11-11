@@ -175,8 +175,13 @@ function GlobalStoreContextProvider(props) {
             }
 
             if(mapPromises.length > 0) {
-                Promise.all(mapPromises).then((maps) => {
-                    console.log(maps)
+                Promise.all(mapPromises).then((responses) => {
+                    let maps = [];
+                    for (let i = 0; i < responses.length; i++) {
+                        if(responses[i].status === 200) {
+                            maps.push(responses[i].data.map);
+                        }
+                    }
                     storeReducer({
                         type: GlobalStoreActionType.LOAD_USER_MAPS,
                         payload: {
@@ -203,10 +208,16 @@ function GlobalStoreContextProvider(props) {
             let tilesetPromises = [];
 
             for (let i = 0; i < userTilesetIds.length; i++) {
-                tilesetPromises.push(api.getTileset(userTilesetIds[i]));
+                tilesetPromises.push(api.getTilesetById(userTilesetIds[i]));
             }
 
-            Promise.all(tilesetPromises).then((tilesets) => {
+            Promise.all(tilesetPromises).then((responses) => {
+                let tilesets = [];
+                for (let i = 0; i < responses.length; i++) {
+                    if(responses[i].status === 200) {
+                        tilesets.push(responses[i].data.tileset);
+                    }
+                }
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_USER_TILESETS,
                     payload: {

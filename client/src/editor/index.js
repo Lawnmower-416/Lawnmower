@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from 'react';
 //import tilesetApi from "../requests/tileset-api"
 import { useAuth } from "../auth"
 import AuthContext from '../auth';
+import {getTilesetById} from "../requests/store-request";
 
 export const EditorContext = createContext();
 
@@ -28,6 +29,7 @@ export const EditorActionType = {
     CHANGE_SETTINGS: "CHANGE_SETTINGS",
     DOWNLOAD_OLD_VERSION: "DOWNLOAD_OLD_VERSION",
     IMPORT_TILESET: "IMPORT_TILESET",
+    SET_TILESET: "SET_TILESET",
 }
 
 function EditorContextProvider(props) {
@@ -38,7 +40,6 @@ function EditorContextProvider(props) {
         layers: [],
 
         tileset: null,
-        tiles: [],
 
         currentTool: "SELECT_TOOL",
         currentItem: null,
@@ -50,7 +51,11 @@ function EditorContextProvider(props) {
     const storeReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
-        
+            case EditorActionType.SET_TILESET:
+                setStore({
+                    ...store,
+                    tileset: payload.tileset
+                })
         }
     }
 
@@ -154,6 +159,21 @@ function EditorContextProvider(props) {
     store.importTileset = async (tilesetId) => {
 
     }
+
+    store.setTileset = async (tilesetId) => {
+        const res = await getTilesetById(tilesetId);
+
+        if (res.status === 200) {
+            const {tileset} = res.data;
+            console.log(tileset)
+            storeReducer({
+                type: EditorActionType.SET_TILESET,
+                payload: {
+                    tileset: tileset
+                }
+            })
+        }
+    }
     return (
         <EditorContext.Provider value={{ 
             store 
@@ -161,7 +181,6 @@ function EditorContextProvider(props) {
             {props.children}
         </EditorContext.Provider>
     )
-    
 }
 
 export default EditorContext;

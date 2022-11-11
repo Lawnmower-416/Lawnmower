@@ -31,9 +31,9 @@ export default function Profile() {
     // const user = getRandomUser();
     // console.log(user);
     // Get user's stuff
-    const userMaps = (contentBefore ? [contentBefore] : (user && user.maps)) || [];
+    const userMaps = (contentBefore ? [contentBefore] : (store.userMaps)) || [];
     // console.log(userMaps);
-    const userTilesets = (contentBefore ? [contentBefore] : (user && user.tilesets)) || [];
+    const userTilesets = (contentBefore ? [contentBefore] : (store.userTilesets)) || [];
     const userComments = (contentBefore ? [contentBefore] : (user && user.comments)) || [];
 
     const [username, setUsername] = useState(user ? user.username : "");
@@ -66,7 +66,10 @@ export default function Profile() {
                 setPoints(user.points);
 
                 await store.loadUserMaps();
+                await store.loadUserTilesets();
+
                 console.log("USER MAPS: ", store.userMaps);
+                console.log("USER TILESETS: ", store.userTilesets);
             }
         }
         fetchData();
@@ -104,6 +107,8 @@ export default function Profile() {
             setEditing((prev) => "");
         }
     };
+
+    console.log(userMaps)
 
     return (
         <>
@@ -148,8 +153,8 @@ export default function Profile() {
                     {/* Column 1: Tabs Area */}
                     <div className="col-auto grid grid-cols-4 h-min pt-3 text-2xl gap-0" style={{"color": "white"}}>
                         <div className={`col-auto grid text-center ${currentTab === 'Maps' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`} onClick={() => setCurrentTab((prev) => "Maps")}>Maps</div>
-                        <div className={`col-auto grid text-center ${currentTab === 'Tilesets' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`}onClick={() => setCurrentTab((prev) => "Tilesets")}>Tilesets</div>
-                        <div className={`col-auto grid text-center ${currentTab === 'Comments' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`}onClick={() => setCurrentTab((prev) => "Comments")}>Comments</div>
+                        <div className={`col-auto grid text-center ${currentTab === 'Tilesets' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`} onClick={() => setCurrentTab((prev) => "Tilesets")}>Tilesets</div>
+                        <div className={`col-auto grid text-center ${currentTab === 'Comments' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`} onClick={() => setCurrentTab((prev) => "Comments")}>Comments</div>
                     </div>
 
                     {/* Column 2: Create Map/Tileset Buttons Area */}
