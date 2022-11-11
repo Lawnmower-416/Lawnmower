@@ -543,9 +543,9 @@ function GlobalStoreContextProvider(props) {
         }
     }
     // create new tileset, open tileset editor
-    store.createNewTileset = async (ownwer, title, tileSize) => {
+    store.createNewTileset = async (title, tileSize) => {
         try {
-            let response = await api.createTileset(ownwer, title, tileSize);
+            let response = await api.createTileset(auth.user._id, title, tileSize);
             if (response.data.success) {
                 // open tileset editor with newly created tileset
                 // handle it differently for now by refreshing user's tilesets

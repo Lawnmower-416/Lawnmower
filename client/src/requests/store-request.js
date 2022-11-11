@@ -33,7 +33,7 @@ return api.post(`/tileset/`, {
     owner : owner,
     title : title,
     tileSize : tileSize
-})
+}, {withCredentials: true});
 }
 export const deleteTileset = (tilesetId) => {
 return api.delete(`/tileset/${tilesetId}`)

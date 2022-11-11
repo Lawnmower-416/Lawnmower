@@ -68,7 +68,7 @@ createTileset = async (body, userId) => {
         if (!user) {
             return null;
         }
-        const updatedTileset = await newTileset.save().catch(err => { console.log(err); return null;});
+        const updatedTileset = await newTileset.save().catch(err => { console.log("HERE",err); return null;});
         user.tilesets.push(updatedTileset._id);
         await user.save().catch(err => {return null;});
         return updatedTileset;

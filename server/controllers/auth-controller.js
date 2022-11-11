@@ -27,7 +27,8 @@ loggedIn = async (req, res) => {
                 joinDate: loggedInUser.joinDate,
                 maps: loggedInUser.maps,
                 tilesets: loggedInUser.tilesets,
-                comments: loggedInUser.comments
+                comments: loggedInUser.comments,
+                _id: loggedInUser._id
             }
         })
     } catch (err) {
