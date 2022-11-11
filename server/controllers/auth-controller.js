@@ -11,7 +11,7 @@ loggedIn = async (req, res) => {
             return res.status(200).json({
                 loggedIn: false,
                 user: null,
-                errorMessage: "?"
+                errorMessage: ""
             })
         }
 
@@ -19,12 +19,16 @@ loggedIn = async (req, res) => {
 
         return res.status(200).json({
             loggedIn: true,
-            user: {
+            user: { //send all back except password hash
                 firstName: loggedInUser.firstName,
                 lastName: loggedInUser.lastName,
                 username: loggedInUser.username,
                 email: loggedInUser.email,
-                joinDate: loggedInUser.joinDate
+                joinDate: loggedInUser.joinDate,
+                maps: loggedInUser.maps,
+                tilesets: loggedInUser.tilesets,
+                comments: loggedInUser.comments,
+                _id: loggedInUser._id
             }
         })
     } catch (err) {
@@ -43,6 +47,7 @@ login = async (req, res) => {
         }
 
         const existingUser = await User.findOne({ username: username });
+
         if (!existingUser) {
             return res
                 .status(401)
@@ -66,8 +71,8 @@ login = async (req, res) => {
         const token = auth.signToken(existingUser._id);
         await res.cookie("token", token, {
             httpOnly: false,
-            secure: true,
-            samesite: "none"
+            secure: false,
+            samesite: "lax"
         }).status(200).json({
             success: true,
             user: existingUser
@@ -84,8 +89,8 @@ logout = async (req, res, next) => {
         await res.cookie("token", "", {
             httpOnly: false,
             expires: new Date(0),
-            secure: true,
-            samesite: "none"
+            secure: false,
+            samesite: "lax"
         }).json({ success: true, message: "Logged Out" });
         next();
     } catch (err) {
@@ -121,7 +126,7 @@ register = async (req, res, next) => {
         }
         
         const existingUser = await User.findOne({ email: email });
-        
+
         if (existingUser) {
             return res
                 .status(400)
@@ -132,13 +137,13 @@ register = async (req, res, next) => {
         }
 
         const existingUserUsername = await User.findOne({ username: username });
-        
+
         if (existingUserUsername) {
             return res
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "An account with this username address already exists."
+                    errorMessage: "An account with this username already exists."
                 })
         }
 
@@ -156,8 +161,8 @@ register = async (req, res, next) => {
 
         await res.cookie("token", token, {
             httpOnly: false,
-            secure: true,
-            samesite: "none"
+            secure: false,
+            samesite: "lax"
         }).status(200).json({
             success: true,
             user: savedUser
@@ -224,8 +229,8 @@ changePassword = async (req, res, next) => {
         
         await res.cookie("token", token, {
             httpOnly: false,
-            secure: true,
-            samesite: "none"
+            secure: false,
+            samesite: "lax"
         }).status(200).json({
             success: true,
             user: updatedUser
@@ -262,8 +267,8 @@ deleteAccount = async (req, res, next) => {
         await res.cookie("token", "", {
             httpOnly: false,
             expires: new Date(0),
-            secure: true,
-            samesite: "none"
+            secure: false,
+            samesite: "lax"
         }).status(200).json({
             success: true,
             user: deletedUser

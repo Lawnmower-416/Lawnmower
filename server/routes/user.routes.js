@@ -1,4 +1,4 @@
-const userController = require('../controllers/user.controller')
+const userController = require('../controllers/user-controller')
 
 const userRoutes = async(app) => {
   

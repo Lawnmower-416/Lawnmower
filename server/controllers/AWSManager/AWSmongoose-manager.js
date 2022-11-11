@@ -17,7 +17,12 @@ createMap = async (body, userId) => {
             return null;
         }
 
+        newMap.owner = user._id;
+
         const updatedMap = await newMap.save().catch(err => {return null;});
+
+        if(!updatedMap) return null;
+
         user.maps.push(updatedMap._id);
         await user.save().catch(err => {return null;});
         return updatedMap;
@@ -63,7 +68,7 @@ createTileset = async (body, userId) => {
         if (!user) {
             return null;
         }
-        const updatedTileset = await newTileset.save().catch(err => { console.log(err); return null;});
+        const updatedTileset = await newTileset.save().catch(err => { console.log("HERE",err); return null;});
         user.tilesets.push(updatedTileset._id);
         await user.save().catch(err => {return null;});
         return updatedTileset;

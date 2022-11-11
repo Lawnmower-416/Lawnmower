@@ -111,7 +111,15 @@ function AuthContextProvider(props) {
     // setting to username, password. Requires changes in backend
     // as backend is expecting email, password
     auth.login = async (username, password) => {
-        const response = await api.login(username, password);
+        const response = await api.login(username, password).catch((error) => {
+            authReducer({
+                type: AuthActionType.ERROR_MESSAGE,
+                payload: {
+                    errorMessage: error.response.data.errorMessage
+                }
+            }
+        )});
+
         if (response.status === 200) {
             console.log("response", response);
             authReducer({
@@ -121,14 +129,6 @@ function AuthContextProvider(props) {
                 }
             });
             history('/profile');
-        }
-        if (response.status === 401) {
-            authReducer({
-                type: AuthActionType.ERROR_MESSAGE,
-                payload: {
-                    errorMessage: response.data.errorMessage
-                }
-            });
         }
     }
     auth.logout = async () => {
@@ -142,7 +142,15 @@ function AuthContextProvider(props) {
         }
     }
     auth.register = async (firstName, lastName, username, email, password, passwordVerify) => {
-        const response = await api.register(firstName, lastName, username, email, password, passwordVerify);
+        const response = await api.register(firstName, lastName, username, email, password, passwordVerify).catch((error) => {
+            authReducer({
+                type: AuthActionType.ERROR_MESSAGE,
+                payload: {
+                    errorMessage: error.response.data.errorMessage
+                }
+            }
+        )});
+
         if (response.status === 200) {
             authReducer({
                 type: AuthActionType.REGISTER,
@@ -153,15 +161,6 @@ function AuthContextProvider(props) {
             // a registered user is automatically logged in
             history('/profile');
         }
-        if (response.status === 401) {
-            authReducer({
-                type: AuthActionType.ERROR_MESSAGE,
-                payload: {
-                    errorMessage: response.data.errorMessage
-                }
-            });
-        }
-
     }
     // changing password should logout user (this can be done on the backend OR just calling logout here)
     // in the backend, there is a functionality where it re-logins the user. If the feature is changed, then make sure to change that too
@@ -186,6 +185,14 @@ function AuthContextProvider(props) {
             });
             history('/');
         }
+    }
+    auth.setErrorMessage = (errorMessage) => {
+        authReducer({
+            type: AuthActionType.ERROR_MESSAGE,
+            payload: {
+                errorMessage: errorMessage
+            }
+        });
     }
 
     return (

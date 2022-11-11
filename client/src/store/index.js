@@ -167,19 +167,31 @@ function GlobalStoreContextProvider(props) {
     // load the user's maps in their profile
     store.loadUserMaps = async () => {
         try {
-            let userMapIds = auth.user.maps
+            console.log(auth.user)
+            let userMapIds = auth.user.maps || [];
             let mapPromises = [];
             for (let i = 0; i < userMapIds.length; i++) {
                 mapPromises.push(api.getMapById(userMapIds[i]));
             }
 
-            Promise.all(mapPromises).then((maps) => {
+            if(mapPromises.length > 0) {
+                Promise.all(mapPromises).then((maps) => {
+                    console.log(maps)
+                    storeReducer({
+                        type: GlobalStoreActionType.LOAD_USER_MAPS,
+                        payload: {
+                            userMaps: maps,
+                        }
+                    });
+                });
+            } else {
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_USER_MAPS,
-                    userMaps: maps,
+                    payload: {
+                        userMaps: []
+                    }
                 });
-            });
-
+            }
         } catch (error) {
             console.log("Error loading user maps: ", error)
         }
@@ -531,9 +543,9 @@ function GlobalStoreContextProvider(props) {
         }
     }
     // create new tileset, open tileset editor
-    store.createNewTileset = async (ownwer, title, tileSize) => {
+    store.createNewTileset = async (title, tileSize) => {
         try {
-            let response = await api.createTileset(ownwer, title, tileSize);
+            let response = await api.createTileset(auth.user._id, title, tileSize);
             if (response.data.success) {
                 // open tileset editor with newly created tileset
                 // handle it differently for now by refreshing user's tilesets
