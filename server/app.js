@@ -30,6 +30,10 @@ app.use('/', contentRouter);
 app.use('/editor/', mapTileRouter);
 app.use('/test', testRouter);
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://34.193.24.27');
+});
+
 // INITIALIZE OUR DATABASE OBJECT
 const db = require('./db');
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
