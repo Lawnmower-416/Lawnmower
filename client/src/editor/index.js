@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from 'react';
 //import tilesetApi from "../requests/tileset-api"
 import { useAuth } from "../auth"
 import AuthContext from '../auth';
+import {getTilesetById} from "../requests/store-request";
 
 export const EditorContext = createContext();
 
@@ -28,6 +29,8 @@ export const EditorActionType = {
     CHANGE_SETTINGS: "CHANGE_SETTINGS",
     DOWNLOAD_OLD_VERSION: "DOWNLOAD_OLD_VERSION",
     IMPORT_TILESET: "IMPORT_TILESET",
+    GET_TILESET: "GET_TILESET",
+    GET_MAP: "GET_MAP",
 }
 
 function EditorContextProvider(props) {
@@ -154,6 +157,24 @@ function EditorContextProvider(props) {
     store.importTileset = async (tilesetId) => {
 
     }
+
+    store.getTileset = async (tilesetId) => {
+        const tileset = await getTilesetById(tilesetId).catch((error) => {
+            console.log(error);
+            return null;
+        });
+
+        if (tileset) {
+            store.tileset = tileset;
+            store.tiles = tileset.tiles;
+        }
+    }
+
+    store.getMap = async (mapId) => {
+
+    }
+
+
     return (
         <EditorContext.Provider value={{ 
             store 

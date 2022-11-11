@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import EditHistoryModal from "../modals/EditHistoryModal";
 import ExportModal from "../modals/Export";
 import ModalOne from "../modals/ShareModal/Share";
@@ -7,8 +7,19 @@ import ColorSidebar from "./editor/ColorSidebar";
 import Headerbar from "./editor/Headerbar";
 import TileEditor from "./editor/TileEditor";
 import TileSidebar from "./editor/TileSidebar";
+import {useParams} from "react-router-dom";
+import EditorContext from "../../editor";
 
 function TilesetEditor() {
+    const { tilesetId } = useParams();
+
+    const { editor } = useContext(EditorContext);
+
+
+    useEffect(() => {
+        editor.getTileset(tilesetId);
+    }, []);
+
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [historyOpen, setHistoryOpen] = useState(false);
     const [exportOpen, setExportOpen] = useState(false);
