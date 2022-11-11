@@ -89,9 +89,15 @@ export default function ItemCard(props) {
     }
 */
     // console.log(user);
-    let points = (data && data.likedUsers && data.dislikedUsers) ? (data.likedUsers.length - data.dislikedUsers.length) : 0;
-    let like = user && data.likedUsers.includes(user._id);
-    let dislike = user && data.dislikedUsers.includes(user._id);
+    let points = 0;
+    let like = 0;
+    let dislike = 0;
+
+    if(data && data.likedUsers && data.dislikedUsers) {
+        points = data.likedUsers.length - data.dislikedUsers.length;
+        like = user && data.likedUsers.includes(user._id);
+        dislike = user && data.dislikedUsers.includes(user._id);
+    }
 
     const handleLike = () => {
         if (data && data.tilesets) {

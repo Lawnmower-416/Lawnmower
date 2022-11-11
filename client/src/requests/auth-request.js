@@ -12,11 +12,10 @@ export const login = async (username, password) => {
     const result = await baseAPI.post(`/auth/login/`, {
         username : username,
         password : password
-    });
-    console.log(result);
+    }, {withCredentials: true});
     return result;
 }
-export const logout = () => baseAPI.post(`/auth/logout/`);
+export const logout = () => baseAPI.post(`/auth/logout/`, {}, {withCredentials: true});
 export const register = (firstName, lastName, username, email, password, passwordVerify) => {
     return baseAPI.post(`/auth/register/`, {
         firstName : firstName,
@@ -25,7 +24,7 @@ export const register = (firstName, lastName, username, email, password, passwor
         email : email,
         password : password,
         passwordVerify : passwordVerify
-    })
+    }, {withCredentials: true});
 }
 export const changePassword = (password, passwordVerify) => {
     return baseAPI.put(`/auth/changePassword/`, {

@@ -17,7 +17,7 @@ import GlobalStoreContext from "../../store";
 
 export default function Profile() {
     const location = useLocation();
-    const {contentBefore} = location.state;
+    const contentBefore = location.state ? location.state.contentBefore : null;
     const { store } = useContext(GlobalStoreContext);
     // Get the user...
     const { auth } = useContext(AuthContext);
@@ -36,10 +36,13 @@ export default function Profile() {
     const userTilesets = (contentBefore ? [contentBefore] : (user && user.tilesets)) || [];
     const userComments = (contentBefore ? [contentBefore] : (user && user.comments)) || [];
 
-    const [username, setUsername] = useState(user.username);
-    const [email, setEmail] = useState(user.email || "");
-    const [joinDate, setJoinDate] = useState(new Date(user.joinDate).toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'}));
-    const [points, setPoints] = useState(user.points || 0);
+    const [username, setUsername] = useState(user ? user.username : "");
+    const [email, setEmail] = useState(user ? user.email : "");
+    const [joinDate, setJoinDate] = useState(user ?
+        new Date(user.joinDate).toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'}) :
+        "");
+
+    const [points, setPoints] = useState(user ? user.points : 0);
 
     const [editing, setEditing] = useState(""); // Username, Email
     const [change, setChange] = useState(""); // Username, Email
@@ -54,12 +57,20 @@ export default function Profile() {
     useEffect(() => {
         async function fetchData() {
             if (user) {
+                setUsername(user.username);
+                setEmail(user.email);
+                setJoinDate(
+                    new Date(user.joinDate)
+                        .toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'})
+                );
+                setPoints(user.points);
+
                 await store.loadUserMaps();
-                store.setUserMaps(store.userMaps);
+                console.log("USER MAPS: ", store.userMaps);
             }
         }
         fetchData();
-    }, []);
+    }, [auth.user]);
 
     const getUserCommentsFromMapsAndTilesets = () => {
         const comments = [];
@@ -130,7 +141,7 @@ export default function Profile() {
                             </div>
                         </div>
                         <span className="col-auto grid px-2 text-2xl content-center align-middle items-center text-white">Join Date: {joinDate}</span>
-                        <span className="col-auto grid px-2 text-2xl content-center align-middle items-center text-white">Points: {user.points || 0}</span>
+                        <span className="col-auto grid px-2 text-2xl content-center align-middle items-center text-white">Points: {user ? user.points : 0}</span>
                     </div>
                 
                 {/* Row 2 */}

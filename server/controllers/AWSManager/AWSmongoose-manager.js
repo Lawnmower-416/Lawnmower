@@ -17,7 +17,12 @@ createMap = async (body, userId) => {
             return null;
         }
 
+        newMap.owner = user._id;
+
         const updatedMap = await newMap.save().catch(err => {return null;});
+
+        if(!updatedMap) return null;
+
         user.maps.push(updatedMap._id);
         await user.save().catch(err => {return null;});
         return updatedMap;
