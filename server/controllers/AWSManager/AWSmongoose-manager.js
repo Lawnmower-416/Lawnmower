@@ -59,7 +59,7 @@ getMaps = async () => {
 }
 
 updateMapGeneral = async (updatedMap) => {
-    return await Map.findOneAndUpdate({ _id: updatedMap._id}, updatedMap, {returnOriginal: false});
+    return await Map.findOneAndUpdate({ _id: updatedMap.map._id}, updatedMap.map, {new: true});
 }
 
 createTileset = async (body, userId) => {
@@ -121,7 +121,7 @@ getTilesets = async () => {
 }
 
 updateTilesetGeneral = async (updatedTileset) => {
-    return await Tileset.findOneAndUpdate({ _id: updatedTileset._id}, updatedTileset, {returnOriginal: false});
+    return await Tileset.findOneAndUpdate({ _id: updatedTileset.tileset._id}, updatedTileset.tileset, {new: true});
 }
 
 module.exports = {

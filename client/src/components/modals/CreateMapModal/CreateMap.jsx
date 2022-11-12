@@ -31,7 +31,7 @@ const ModalEight = ({ modalOpen, setModalOpen }) => {
 								type="text"
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
-								className="rounded-lg py-1 px-6 text-white cursor-pointer bg-dark-green text-[20px] font-semibold sm:px-16"
+								className="rounded-lg py-1 px-6 text-white cursor-pointer text-center bg-dark-green text-[20px] font-semibold sm:pl-4 ml-2"
 							/>
 					</div>
 					<div className="flex flex-wrap items-center gap-4">

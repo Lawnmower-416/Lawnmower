@@ -37,6 +37,8 @@ const Header = () => {
     auth.logout();
   };
 
+  let profileReroute = "/"
+
   let topRightMenu = 
         <div className="hidden md:flex gap-x-6 font-inter font-bold ">
         <Link
@@ -53,6 +55,7 @@ const Header = () => {
         </Link>
       </div>;
   if (auth.loggedInBool) {
+    profileReroute = "/profile"
     topRightMenu = 
     <Menu as="div" className="relative -translate-x-16">
       <Menu.Button>
@@ -85,7 +88,7 @@ const Header = () => {
   return (
     <div className="headerWrapper">
       <div className="flex justify-between items-center max-w-screen-2xl header">
-        <Link to="/" className="flex items-center gap-1 sm:gap-3">
+        <Link to={profileReroute} className="flex items-center gap-1 sm:gap-3">
           <img
             src="./logo.png"
             alt="logo"

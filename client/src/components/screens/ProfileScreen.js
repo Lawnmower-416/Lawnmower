@@ -10,7 +10,6 @@ import AuthContext from "../../auth";
 import ModalEight from "../modals/CreateMapModal/CreateMap";
 import CreateTilesetModal from "../modals/CreateTilesetModal";
 import DeleteAccount from "../modals/DeleteAccount";
-import { getMapById } from "../../requests/store-request";
 import GlobalStoreContext from "../../store";
 
 // import {UserCircleIcon} from "@heroicons/react/24/outline";
@@ -31,9 +30,18 @@ export default function Profile() {
     // const user = getRandomUser();
     // console.log(user);
     // Get user's stuff
+<<<<<<< Updated upstream
     const userMaps = (contentBefore ? [contentBefore] : (store.userMaps)) || [];
     // console.log(userMaps);
     const userTilesets = (contentBefore ? [contentBefore] : (store.userTilesets)) || [];
+=======
+    // const userMaps = (contentBefore ? [contentBefore] : (user && user.maps)) || [];
+
+    //store.loadUserMaps();
+    let userMaps = store.userMaps;
+
+    const userTilesets = (contentBefore ? [contentBefore] : (user && user.tilesets)) || [];
+>>>>>>> Stashed changes
     const userComments = (contentBefore ? [contentBefore] : (user && user.comments)) || [];
 
     const [username, setUsername] = useState(user ? user.username : "");
@@ -66,10 +74,14 @@ export default function Profile() {
                 setPoints(user.points);
 
                 await store.loadUserMaps();
+<<<<<<< Updated upstream
                 await store.loadUserTilesets();
 
                 console.log("USER MAPS: ", store.userMaps);
                 console.log("USER TILESETS: ", store.userTilesets);
+=======
+                userMaps = store.userMaps;
+>>>>>>> Stashed changes
             }
         }
         fetchData();
@@ -167,7 +179,7 @@ export default function Profile() {
                     <div className="col-span-2 bg-dark-green-lighter rounded-md">
                         <div className="snap-y h-[64rem] overflow-y-auto p-8 space-y-2">
                             {
-                                currentTab === "Maps" ? userMaps.map(m => <ItemCard key={m.views} inProfile={true} map={m} />)
+                                currentTab === "Maps" ? userMaps.map((m, i) => <ItemCard key={i} inProfile={true} map={m} />)
                                 : (currentTab === "Tilesets" ? userTilesets.map(t => <ItemCard key={t.views} inProfile={true} tileset={t} />)
                                     : getUserCommentsFromMapsAndTilesets())
                             }
