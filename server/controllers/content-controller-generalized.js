@@ -15,7 +15,7 @@ function createMap(req, res) {
     {
         newMap = map;
         if (newMap) {
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 map: newMap
             });
@@ -108,7 +108,7 @@ function createTileset(req, res) {
     }
     databaseManager.createTileset(body, req.userId).then((tileset) => {
         if (tileset) {
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 tileset: tileset
             });

@@ -106,7 +106,7 @@ function TilesetEditor() {
             <div className="flex h-screen">
                 <ColorSidebar colors={colors} currentColor={currentColor} setCurrentColor={setCurrentColor} addColor={addColor} />
                 <TileEditor currentTile={currentTile}/>
-                <TileSidebar tiles={tiles} setCurrentTile={setCurrentTile} addTile={addTile}/>
+                <TileSidebar tiles={[]} setCurrentTile={setCurrentTile} addTile={addTile}/>
             </div>
         </div>
         
