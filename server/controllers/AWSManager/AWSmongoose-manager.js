@@ -24,8 +24,10 @@ createMap = async (body, userId) => {
 
         if(!updatedMap) return null;
 
+
         user.maps.push(updatedMap._id);
         await user.save().catch(err => {return null;});
+
         return updatedMap;
     }
 }
@@ -37,6 +39,14 @@ deleteMap = async (mapId, userId) => {
     }
     if (map.owner == userId) {
         const deletedMap = await Map.findOneAndDelete({ _id: mapId });
+
+        let user = await User.findById({ _id: userId }).catch(err => {return null;});
+        if (!user) {
+            return null;
+        }
+        user.maps = user.maps.filter(map => map != mapId);
+        await user.save().catch(err => {return null;});
+
         return (deletedMap === {} ? null : deletedMap);
     }
     return null;

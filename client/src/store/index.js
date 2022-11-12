@@ -2,6 +2,7 @@
 import { createContext, useContext, useState } from "react";
 import api from "./../requests/store-request";
 import AuthContext from "../auth";
+import { useNavigate } from "react-router-dom";
 
 
 export const GlobalStoreContext = createContext();
@@ -14,7 +15,10 @@ export const GlobalStoreActionType = {
     LOAD_COMMENTS: "LOAD_COMMENTS",
     SORT_PUBLIC_MAPS: "SORT_PUBLIC_MAPS",
     SORT_PUBLIC_TILESETS: "SORT_PUBLIC_TILESETS",
-    EDIT_VIEW_CONTENT: "EDIT_VIEW_CONTENT",
+    CREATE_NEW_MAP: "CREATE_NEW_MAP",
+    CREATE_NEW_TILESET: "CREATE_NEW",
+    EDITING_MAP: "EDITING_MAP",
+    EDITING_TILESET: "EDITING_TILESET",
     EXPANDED_CONTENT: "EXPANDED_CONTENT",
 }
 
@@ -28,10 +32,13 @@ function GlobalStoreContextProvider(props) {
         comments: [],
         shownPublicMaps: [],
         shownPublicTilesets: [],
-        currentContentEditView: null,
+        currentMapEditing: null,
+        currentTilesetEditing: null,
         currentContentCommentsExpanded: null,
     });
     const { auth } = useContext(AuthContext);
+
+    const history = useNavigate();
 
     const storeReducer = (action) => {
         console.log("reducer called", action.type);
@@ -49,7 +56,8 @@ function GlobalStoreContextProvider(props) {
                     comments: store.comments,
                     shownPublicMaps: store.shownPublicMaps,
                     shownPublicTilesets: store.shownPublicTilesets,
-                    currentContentEditView: store.currentContentEditView,
+                    currentMapEditing: store.currentMapEditing,
+                    currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
                 })
             }
@@ -63,7 +71,8 @@ function GlobalStoreContextProvider(props) {
                     comments: store.comments,
                     shownPublicMaps: store.shownPublicMaps,
                     shownPublicTilesets: store.shownPublicTilesets,
-                    currentContentEditView: store.currentContentEditView,
+                    currentMapEditing: store.currentMapEditing,
+                    currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
                 })
             }
@@ -77,7 +86,8 @@ function GlobalStoreContextProvider(props) {
                     comments: store.comments,
                     shownPublicMaps: payload.publicMaps,
                     shownPublicTilesets: store.shownPublicTilesets,
-                    currentContentEditView: store.currentContentEditView,
+                    currentMapEditing: store.currentMapEditing,
+                    currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
                 });
             }
@@ -91,7 +101,8 @@ function GlobalStoreContextProvider(props) {
                     comments: store.comments,
                     shownPublicMaps: store.shownPublicMaps,
                     shownPublicTilesets: payload.publicTilesets,
-                    currentContentEditView: store.currentContentEditView,
+                    currentMapEditing: store.currentMapEditing,
+                    currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
                 });
             }
@@ -105,7 +116,8 @@ function GlobalStoreContextProvider(props) {
                     comments: payload.comments,
                     shownPublicMaps: store.shownPublicMaps,
                     shownPublicTilesets: store.shownPublicTilesets,
-                    currentContentEditView: store.currentContentEditView,
+                    currentMapEditing: store.currentMapEditing,
+                    currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
                 });
             }
@@ -119,7 +131,8 @@ function GlobalStoreContextProvider(props) {
                     comments: store.comments,
                     shownPublicMaps: payload.shownPublicMaps,
                     shownPublicTilesets: store.shownPublicTilesets,
-                    currentContentEditView: store.currentContentEditView,
+                    currentMapEditing: store.currentMapEditing,
+                    currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
                 });
             }
@@ -133,11 +146,12 @@ function GlobalStoreContextProvider(props) {
                     comments: store.comments,
                     shownPublicMaps: store.shownPublicMaps,
                     shownPublicTilesets: payload.shownPublicTilesets,
-                    currentContentEditView: store.currentContentEditView,
+                    currentMapEditing: store.currentMapEditing,
+                    currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
                 });
             }
-            case GlobalStoreActionType.EDIT_VIEW_CONTENT: {
+            case GlobalStoreActionType.EDITING_MAP: {
                 return setStore({
                     userMaps: store.userMaps,
                     userTilesets: store.userTilesets,
@@ -147,7 +161,23 @@ function GlobalStoreContextProvider(props) {
                     comments: store.comments,
                     shownPublicMaps: store.shownPublicMaps,
                     shownPublicTilesets: store.shownPublicTilesets,
-                    currentContentEditView: payload.currentContentEditView,
+                    currentMapEditing: payload.editingMap,
+                    currentTilesetEditing: store.currentTilesetEditing,
+                    currentContentCommentsExpanded: store.currentContentCommentsExpanded,
+                });
+            }
+            case GlobalStoreActionType.EDITING_TILESET: {
+                return setStore({
+                    userMaps: store.userMaps,
+                    userTilesets: store.userTilesets,
+                    userComments: store.userComments,
+                    publicMaps: store.publicMaps,
+                    publicTilesets: store.publicTilesets,
+                    comments: store.comments,
+                    shownPublicMaps: store.shownPublicMaps,
+                    shownPublicTilesets: store.shownPublicTilesets,
+                    currentMapEditing: store.currentMapEditing,
+                    currentTilesetEditing: payload.editingTileset,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
                 });
             }
@@ -160,9 +190,40 @@ function GlobalStoreContextProvider(props) {
                     publicTilesets: store.publicTilesets,
                     comments: store.comments,
                     shownPublicMaps: store.shownPublicMaps,
+                    shownPublicTilesets: payload.shownPublicTilesets,
+                    currentMapEditing: store.currentMapEditing,
+                    currentTilesetEditing: store.currentTilesetEditing,
+                    currentContentCommentsExpanded: store.currentContentCommentsExpanded,
+                });
+            }
+            case GlobalStoreActionType.CREATE_NEW_MAP: {
+                return setStore({
+                    userMaps: payload.userMaps,
+                    userTilesets: store.userTilesets,
+                    userComments: store.userComments,
+                    publicMaps: store.publicMaps,
+                    publicTilesets: store.publicTilesets,
+                    comments: store.comments,
+                    shownPublicMaps: store.shownPublicMaps,
                     shownPublicTilesets: store.shownPublicTilesets,
-                    currentContentEditView: store.currentContentEditView,
-                    currentContentCommentsExpanded: payload.currentContentCommentsExpanded,
+                    currentMapEditing: payload.currentMapEditing,
+                    currentTilesetEditing: store.currentTilesetEditing,
+                    currentContentCommentsExpanded: store.currentContentCommentsExpanded
+                });
+            }
+            case GlobalStoreActionType.CREATE_NEW_TILESET: {
+                return setStore({
+                    userMaps: store.userMaps,
+                    userTilesets: payload.userTilesets,
+                    userComments: store.userComments,
+                    publicMaps: store.publicMaps,
+                    publicTilesets: store.publicTilesets,
+                    comments: store.comments,
+                    shownPublicMaps: store.shownPublicMaps,
+                    shownPublicTilesets: store.shownPublicTilesets,
+                    currentMapEditing: store.currentMapEditing,
+                    currentTilesetEditing: payload.currentTilesetEditing,
+                    currentContentCommentsExpanded: store.currentContentCommentsExpanded
                 });
             }
         }
@@ -177,22 +238,12 @@ function GlobalStoreContextProvider(props) {
                 mapPromises.push((api.getMapById(userMapIds[i])));
             }
 
-<<<<<<< Updated upstream
-            if(mapPromises.length > 0) {
-                Promise.all(mapPromises).then((responses) => {
-                    let maps = [];
-                    for (let i = 0; i < responses.length; i++) {
-                        if(responses[i].status === 200) {
-                            maps.push(responses[i].data.map);
-                        }
-=======
             if (mapPromises.length > 0) {
                 Promise.all(mapPromises).then((maps) => {
                     let returnMaps = new Array();
 
                     for (let i = 0; i < maps.length; i++) {
                         returnMaps.push(maps[i].data.map);
->>>>>>> Stashed changes
                     }
                     storeReducer({
                         type: GlobalStoreActionType.LOAD_USER_MAPS,
@@ -408,13 +459,20 @@ function GlobalStoreContextProvider(props) {
 
     // delete a map
     store.deleteMap = async function (mapId) {
+        console.log("INSIDE STORE FUNCTION")
         try {
             let response = await api.deleteMap(mapId)
             // a user can only delete their maps in their profile page
             // refresh only the user's maps
             // community maps will be refreshed the next time the community page is opened
             if (response.data.success) {
-                store.loadUserMaps()
+                let newUserMaps = store.userMaps.filter(map => map._id !== mapId)
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_USER_MAPS,
+                    payload: {
+                        userMaps: newUserMaps
+                    }
+                })
             }
         } catch (error) {
             console.log("Error deleting map: ", error)
@@ -573,7 +631,15 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 // open map editor with newly created map
                 // handle it differently for now by refreshing user's maps
-                store.loadUserMaps();
+                storeReducer({
+                    type: GlobalStoreActionType.CREATE_NEW_MAP,
+                    payload: {
+                        userMaps: response.data.maps,
+                        currentMapEditing: response.data.map
+                    }
+                })
+                history("/mapEditor/" + response.data.map._id)
+                
             }
         } catch (error) {
             console.log("Error creating new map: ", error);
@@ -586,7 +652,12 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 // open tileset editor with newly created tileset
                 // handle it differently for now by refreshing user's tilesets
-                store.loadUserTilesets();
+                storeReducer({
+                    type: GlobalStoreActionType.EDITING_TILESET,
+                    payload: {
+                        editingTileset: response.data.tileset
+                    }
+                })
             }
         } catch (error) {
             console.log("Error creating new tileset: ", error);

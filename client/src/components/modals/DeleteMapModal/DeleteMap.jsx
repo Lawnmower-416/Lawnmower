@@ -5,10 +5,6 @@ import GlobalStoreContext from "../../../store";
 
 
 export const DeleteMapModal = ({ modalOpen, setModalOpen, map }) => {
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 	const { store } = useContext(GlobalStoreContext);
 
 	const handleDeleteMap = () => {

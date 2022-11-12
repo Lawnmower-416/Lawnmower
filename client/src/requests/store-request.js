@@ -12,7 +12,7 @@ return api.post(`/map/`, {
 })
 }
 export const deleteMap = (mapId) => {
-return api.delete(`/map/${mapId}`);
+return api.delete(`/map/${mapId}`, {withCredentials: true});
 }
 export const getMapById = (mapId) => {
 return api.get(`/map/${mapId}`, {withCredentials: true});
