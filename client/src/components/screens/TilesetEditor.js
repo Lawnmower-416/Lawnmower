@@ -17,6 +17,7 @@ function TilesetEditor() {
 
     useEffect(() => {
         store.setTileset(tilesetId);
+
     }, [tilesetId]);
 
     const tileset = store.tileset;

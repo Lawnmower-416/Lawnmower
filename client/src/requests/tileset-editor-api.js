@@ -1,24 +1,24 @@
-import axios from 'axios';
-    axios.defaults.withCredentials = false;
-    const api = axios.create({
-        baseURL: 'https://ec2-3-94-193-80.compute-1.amazonaws.com:3000'
-    });
+import {baseAPI} from "./index";
 
 export const getTileset = (tilesetId) => {
-    return api.get(`/tileset/${tilesetId}`)
+    return baseAPI.get(`/editor/tileset/${tilesetId}`)
 }
 
 export const placeColor = (tilesetId, color, positions) => {
-        return api.put(`/color/tileset/${tilesetId}/place`, positions)
-    }
+        return baseAPI.put(`/editor/color/tileset/${tilesetId}/place`, positions)
+}
 
 export const changeSettings = (tilesetId, title, length, width) => {
-        return api.put(`/tileset/${tilesetId}/settings`, {title, length, width})
-    }
+        return baseAPI.put(`/editor/tileset/${tilesetId}/settings`, {title, length, width})
+}
 
 export const exportVersion = (tilesetId, versionId) => {
-        return api.get(`/tileset/${tilesetId}/version/${versionId}`)
-    }
+        return baseAPI.get(`/editor/tileset/${tilesetId}/version/${versionId}`)
+}
+
+export const getTilesetImage = (tilesetId) => {
+    return baseAPI.get(`/editor/tileset/${tilesetId}/image`, {withCredentials: true})
+}
 
 const apis = {
     getTileset,

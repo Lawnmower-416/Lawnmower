@@ -2,7 +2,7 @@ const Map =require('../../models/map-schema');
 const Tileset = require('../../models/tileset-schema');
 const User = require('../../models/user-schema');
 const { createCanvas } = require('canvas');
-const { uploadTileset } = require('./AWS-S3-manager');
+const { uploadData } = require('./AWS-S3-manager');
 // content-controller-generalized.js is a generalization of database interactions
 // content-controller-generalized.js handles json req, res and calls mongoose-manager.js
 // this file, mongoose-manager.js, is a specialization of those interactions for mongoose
@@ -84,7 +84,7 @@ createTileset = async (body, userId) => {
 
         updatedTileset.imageHeight = tileSize;
         updatedTileset.imageWidth = tileSize;
-        await uploadTileset(tile, userId, updatedTileset._id, false);
+        await uploadData(tile, userId, updatedTileset._id, false);
 
         return await updatedTileset.save().catch(err => {
             return null;

@@ -40,5 +40,7 @@ router.delete('/tag/:tagId', TagsController.deleteTag);
 // router.put('/tileset/:tilesetId/place', AuthController.TilesetVerify, TilesetEditorController.placeTiles) TODO: LATER
 router.put('/tileset/:tilesetId', AuthController.TilesetVerify, TilesetEditorController.updateTileset);
 // router.get('/tileset/:tilesetId/export/:versionId', AuthController.TilesetVerify, TilesetEditorController.export) TODO: LATER
+router.get('/tileset/:tilesetId/image', AuthController.TilesetVerify, TilesetEditorController.getTilesetImage);
+
 
 module.exports = router;

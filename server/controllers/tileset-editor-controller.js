@@ -44,9 +44,25 @@ function updateTileset(req, res) {
         });
     });
     
-};
+}
+
+function getTilesetImage(req, res) {
+    databaseManager.getTilesetImage(req.params.tilesetId).then((tilesetImage) => {
+        if (tilesetImage) {
+            return res.status(200).json({
+                success: true,
+                tilesetImage: tilesetImage,
+            });
+        }
+        return res.status(404).json({
+            success: false,
+            error: 'Tileset image not found'
+        });
+    });
+}
 
 module.exports = {
     getTilesetsForMapById,
-    updateTileset
+    updateTileset,
+    getTilesetImage
 }

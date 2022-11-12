@@ -4,6 +4,7 @@ import { createContext, useContext, useState } from 'react';
 import { useAuth } from "../auth"
 import AuthContext from '../auth';
 import {getTilesetById} from "../requests/store-request";
+import {getTilesetImage} from "../requests/tileset-editor-api";
 
 export const EditorContext = createContext();
 
@@ -40,6 +41,7 @@ function EditorContextProvider(props) {
         layers: [],
 
         tileset: null,
+        tilesetImage: null,
 
         currentTool: "SELECT_TOOL",
         currentItem: null,
@@ -54,7 +56,8 @@ function EditorContextProvider(props) {
             case EditorActionType.SET_TILESET:
                 setStore({
                     ...store,
-                    tileset: payload.tileset
+                    tileset: payload.tileset,
+                    tilesetImage: payload.tilesetImage,
                 })
         }
     }
@@ -165,11 +168,13 @@ function EditorContextProvider(props) {
 
         if (res.status === 200) {
             const {tileset} = res.data;
-            console.log(tileset)
+
+            const image = await getTilesetImage(tilesetId);
             storeReducer({
                 type: EditorActionType.SET_TILESET,
                 payload: {
-                    tileset: tileset
+                    tileset: tileset,
+                    tilesetImage: image,
                 }
             })
         }
