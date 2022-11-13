@@ -57,9 +57,10 @@ getMapById = async (mapId, userId) => {
     if (!map) {
         return null;
     }
-    if (map.owner == userId || map.collaborators.includes(userId)) {
-        return map;
-    }
+    // if (map.owner == userId || map.collaborators.includes(userId)) {
+    //     return map;
+    // }
+    return map;
     return null;
 }
 
@@ -109,6 +110,14 @@ deleteTileset = async (tilesetId, userId) => {
     }
     if (tileset.owner == userId) {
         const deletedTileset = await Tileset.findOneAndDelete({ _id: tilesetId });
+
+        let user = await User.findById({ _id: userId }).catch(err => {return null;});
+        if (!user) {
+            return null;
+        }
+        user.tilesets = user.tilesets.filter(tileset => tileset != tilesetId);
+        await user.save().catch(err => {return null;});
+        
         return (deletedTileset === {} ? null : deletedTileset);
     }
     return null;
@@ -119,9 +128,10 @@ getTilesetById = async (tilesetId, userId) => {
     if (!tileset) {
         return null;
     }
-    if (tileset.owner == userId || tileset.collaborators.includes(userId)) {
-        return tileset;
-    }
+    // if (tileset.owner == userId || tileset.collaborators.includes(userId)) {
+    //     return tileset;
+    // }
+    return tileset;
     return null;
 }
 

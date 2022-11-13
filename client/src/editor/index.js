@@ -161,8 +161,9 @@ function EditorContextProvider(props) {
     store.importTileset = async (tilesetId) => {
 
     }
-/*
+
     store.setTileset = async (tilesetId) => {
+        /*
         const res = await getTilesetById(tilesetId);
 
         if (res.status === 200) {
@@ -177,7 +178,9 @@ function EditorContextProvider(props) {
                 }
             })
         }
-    }*/
+        */
+    }
+
     return (
         <EditorContext.Provider value={{ 
             store 

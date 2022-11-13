@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 
 const HomeScreen = () => {
 
+  const handleGuestMode = () => {
+    console.log("Guest mode");
+  };
+
   return (
     <div>
     <div className="flex flex-col main-background pb-8 shadow-xl">
@@ -32,7 +36,11 @@ const HomeScreen = () => {
                 Existing User?
               </Link>
               <Link to='/community'className="font-inter hover:underline text-white font-bold text-md sm:text-lg lg:text-xl xl:text-2xl 2xl:text-4xl">
+                <button
+                  onClick={handleGuestMode}
+                >
                 Enter as a guest
+                </button>
               </Link>
             </div>
           </div>
