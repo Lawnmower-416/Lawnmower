@@ -61,8 +61,32 @@ function getTilesetImage(req, res) {
     });
 }
 
+function uploadTilesetImage(req, res) {
+    const body = req.body;
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: 'Improperly formatted request'
+        });
+    }
+
+    databaseManager.updateTilesetImage(req.params.tilesetId, req.body.tilesetImage).then((tilesetImage) => {
+        if (tilesetImage) {
+            return res.status(200).json({
+                success: true,
+                tilesetImage: tilesetImage,
+            });
+        }
+        return res.status(400).json({
+            success: false,
+            error: 'Unable to upload tileset image'
+        });
+    });
+}
+
 module.exports = {
     getTilesetsForMapById,
     updateTileset,
-    getTilesetImage
+    getTilesetImage,
+    uploadTilesetImage
 }

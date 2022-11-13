@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from 'react';
+import {createContext, useContext, useEffect, useState} from 'react';
 import mapApi from "../../src/requests/map-editor-api";
-import tilesetApi, {getTilesetImage} from "../../src/requests/tileset-editor-api";
+import tilesetApi, {getTilesetImage, uploadTilesetImage} from "../../src/requests/tileset-editor-api";
 import { useAuth } from "../auth"
 import AuthContext from '../auth';
 import {getTilesetById} from "../requests/store-request";
@@ -10,9 +10,7 @@ export const EditorContext = createContext();
 
 export const EditorActionType = {
     GET_CAN_EDIT: "GET_CAN_EDIT",
-    GET_CURRENT_TOOL: "GET_CURRENT_TOOL",
     SET_CURRENT_TOOL: "SET_CURRENT_TOOL",
-    GET_CURRENT_ITEM: "GET_CURRENT_ITEM",
     SET_CURRENT_ITEM: "SET_CURRENT_ITEM",
     ADD_TRANSACTION: "ADD_TRANSACTION",
     PROCESS_UNDO: "PROCESS_UNDO",
@@ -34,6 +32,18 @@ export const EditorActionType = {
     SET_COLOR: "SET_COLOR",
     LOAD_COLORS: "LOAD_COLORS",
     ADD_COLOR: "ADD_COLOR",
+    SELECT_PIXEL: "SELECT_PIXEL",
+    ADD_SELECTED_PIXEL: "ADD_SELECTED_PIXEL",
+    EDIT_TILE: "EDIT_TILE",
+    SAVE_TILESET: "SAVE_TILESET",
+}
+
+export const EditorTool = {
+    SELECT: "SELECT",
+    PAINT: "PAINT",
+    FILL: "FILL",
+    PICKER: "PICKER", //TODO: Implement
+    REGION: "REGION",
 }
 
 function EditorContextProvider(props) {
@@ -48,43 +58,86 @@ function EditorContextProvider(props) {
         currentColor: {red: 0, green: 0, blue: 0, alpha: 255},
         colors: [],
 
-        currentTool: "SELECT_TOOL",
+        currentTool: EditorTool.SELECT,
         currentItem: null,
         transactionStack: [],
         selectedTiles: [],
+        selectedPixels: [],
     });
     const { auth } = useContext(AuthContext);
+
+    useEffect(() => {
+        store.loadColors();
+    }, []);
+
+    useEffect(() => {
+        store.saveColors();
+    }, [store.colors]);
 
     const storeReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
+            case EditorActionType.SET_CURRENT_TOOL:
+                setStore({
+                    ...store,
+                    currentTool: payload.tool,
+                    selectedPixels: payload.selectedPixels ? payload.selectedPixels : [],
+                });
+                break;
+
             case EditorActionType.SET_TILESET:
                 setStore({
                     ...store,
                     tileset: payload.tileset,
                     tilesetImage: payload.tilesetImage,
-                })
+                });
                 break;
 
             case EditorActionType.SET_COLOR:
                 setStore({
                     ...store,
                     currentColor: payload.color,
-                })
+                });
                 break;
 
             case EditorActionType.LOAD_COLORS:
                 setStore({
                     ...store,
                     colors: payload.colors,
-                })
+                });
                 break;
 
             case EditorActionType.ADD_COLOR:
                 setStore({
                     ...store,
                     colors: [...store.colors, payload.color],
-                })
+                });
+                break;
+
+            case EditorActionType.SELECT_PIXEL:
+                setStore({
+                    ...store,
+                    selectedPixels: [payload.pixel],
+                });
+                break;
+
+            case EditorActionType.ADD_SELECTED_PIXEL:
+                setStore({
+                    ...store,
+                    selectedPixels: [...store.selectedPixels, payload.pixel],
+                });
+                break;
+
+            case EditorActionType.EDIT_TILE:
+                setStore({
+                    ...store,
+                    tileset: payload.tileset,
+                    tilesetImage: payload.tilesetImage,
+                });
+                break;
+
+            default:
+                console.error("Unknown action type: " + type);
                 break;
         }
     }
@@ -99,7 +152,26 @@ function EditorContextProvider(props) {
     }
     // sets the current tool
     store.setCurrentTool = (tool) => {
-    
+        let selectedPixels = null;
+
+        switch (tool) {
+            case EditorTool.PAINT:
+                selectedPixels = store.selectedPixels;
+                break;
+            case EditorTool.FILL:
+                selectedPixels = store.selectedPixels;
+                break;
+            default:
+                selectedPixels = [];
+        }
+
+        storeReducer({
+            type: EditorActionType.SET_CURRENT_TOOL,
+            payload: {
+                tool: tool,
+                selectedPixels: selectedPixels,
+            }
+        });
     }
     // returns the currently chosen tile/color
     store.getCurrentItem = () => {
@@ -240,7 +312,122 @@ function EditorContextProvider(props) {
             payload: {
                 color: color,
             },
+        });
+    }
+
+    store.editTile = (tileIndex, x, y, color) => {
+        const tile = store.tilesetImage.tiles[tileIndex];
+        const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
+        const greenIndex = redIndex + 1;
+        const blueIndex = redIndex + 2;
+        const alphaIndex = redIndex + 3;
+
+        tile[redIndex] = color.red;
+        tile[greenIndex] = color.green;
+        tile[blueIndex] = color.blue;
+        tile[alphaIndex] = color.alpha;
+
+        storeReducer({
+            type: EditorActionType.EDIT_TILE,
+            payload: {
+                tileIndex: tileIndex,
+                tile: tile,
+            }
         })
+    }
+
+    //fast flood fill algorithm
+    store.floodFill = (tileIndex, x, y, color) => {
+        const tile = store.tilesetImage.tiles[tileIndex];
+        const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
+        const greenIndex = redIndex + 1;
+        const blueIndex = redIndex + 2;
+        const alphaIndex = redIndex + 3;
+
+        const oldColor = {
+            red: tile[redIndex],
+            green: tile[greenIndex],
+            blue: tile[blueIndex],
+            alpha: tile[alphaIndex],
+        }
+
+        const stack = [[x, y]];
+
+        while (stack.length > 0) {
+            const [x, y] = stack.pop();
+
+            const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
+            const greenIndex = redIndex + 1;
+            const blueIndex = redIndex + 2;
+            const alphaIndex = redIndex + 3;
+
+            const currentColor = {
+                red: tile[redIndex],
+                green: tile[greenIndex],
+                blue: tile[blueIndex],
+                alpha: tile[alphaIndex],
+            }
+
+            if (currentColor.red === oldColor.red &&
+                currentColor.green === oldColor.green &&
+                currentColor.blue === oldColor.blue &&
+                currentColor.alpha === oldColor.alpha) {
+                tile[redIndex] = color.red;
+                tile[greenIndex] = color.green;
+                tile[blueIndex] = color.blue;
+                tile[alphaIndex] = color.alpha;
+
+                if (x > 0) {
+                    stack.push([x - 1, y]);
+                }
+                if (x < store.tileset.tileSize - 1) {
+                    stack.push([x + 1, y]);
+                }
+                if (y > 0) {
+                    stack.push([x, y - 1]);
+                }
+                if (y < store.tileset.tileSize - 1) {
+                    stack.push([x, y + 1]);
+                }
+            }
+        }
+
+        storeReducer({
+            type: EditorActionType.EDIT_TILE,
+            payload: {
+                tileIndex: tileIndex,
+                tile: tile,
+            }
+        })
+    }
+
+    store.selectPixel = (pixel) => {
+        storeReducer({
+            type: EditorActionType.SELECT_PIXEL,
+            payload: {
+                pixel: pixel,
+            },
+        })
+    }
+
+    store.addSelectedPixel = (pixel) => {
+        storeReducer({
+            type: EditorActionType.ADD_SELECTED_PIXEL,
+            payload: {
+                pixel: pixel,
+            },
+        })
+    }
+
+    store.saveTileset = async () => {
+        const stringImage = JSON.stringify(store.tilesetImage);
+        const res = await uploadTilesetImage(store.tileset._id, stringImage);
+
+        if (res.status === 200) {
+            console.log('Tileset saved');
+        } else {
+            console.log('Error saving tileset');
+        }
     }
 
     return (

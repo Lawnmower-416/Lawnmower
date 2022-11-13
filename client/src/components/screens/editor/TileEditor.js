@@ -1,10 +1,12 @@
 import Toolbar from './Toolbar';
 import {useRef, useEffect, useContext} from 'react';
-import EditorContext from "../../../editor";
+import EditorContext, {EditorTool} from "../../../editor";
 function TileEditor({currentTile}) {
     const { store } = useContext(EditorContext);
 
     const ref = useRef(null);
+
+    const pixelSize = 100;
 
     useEffect(() => {
         if(ref && currentTile) {
@@ -27,13 +29,20 @@ function TileEditor({currentTile}) {
         // }
         // context.putImageData(imageData, 0, 0);
         const data = colorData;
-        const pixelSize = 100;
-        let y = pixelSize
         for(let y = 0; y < tileSize; y++) {
             for(let x = 0; x < tileSize; x++) {
                 const index = (y * tileSize + x) * 4;
                 context.fillStyle = `rgba(${data[index]}, ${data[index+1]}, ${data[index+2]}, ${data[index+3]})`;
                 context.fillRect(x*pixelSize, y*pixelSize, pixelSize, pixelSize);
+            }
+        }
+
+        const selectedPixels = store.selectedPixels;
+        if(selectedPixels) {
+            for(let i = 0; i < selectedPixels.length; i++) {
+                const pixel = selectedPixels[i];
+                context.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                context.fillRect(pixel.x*pixelSize, pixel.y*pixelSize, pixelSize, pixelSize);
             }
         }
     }
@@ -42,10 +51,52 @@ function TileEditor({currentTile}) {
         drawTile();
         const context = ref.current.getContext('2d');
         const rect = ref.current.getBoundingClientRect();
-        const x = Math.floor((e.clientX - rect.left) / 100);
-        const y = Math.floor((e.clientY - rect.top) / 100);
+        const x = Math.floor((e.clientX - rect.left) / pixelSize);
+        const y = Math.floor((e.clientY - rect.top) / pixelSize);
         context.fillStyle = 'rgba(255, 255, 255, 0.5)';
-        context.fillRect(x*100, y*100, 100, 100);
+        context.fillRect(x*pixelSize, y*pixelSize, pixelSize, pixelSize);
+    }
+
+    const handleClick = (e) => {
+        const context = ref.current.getContext('2d');
+        const rect = ref.current.getBoundingClientRect();
+        const x = Math.floor((e.clientX - rect.left) / pixelSize);
+        const y = Math.floor((e.clientY - rect.top) / pixelSize);
+
+        switch (store.currentTool) {
+            case EditorTool.SELECT:
+                store.selectPixel({x, y});
+                drawTile();
+                context.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                context.fillRect(x*pixelSize, y*pixelSize, pixelSize, pixelSize);
+                break;
+
+            case EditorTool.REGION:
+                store.addSelectedPixel({x, y});
+                break;
+
+            case EditorTool.PAINT:
+                changePixel(e);
+                break;
+        }
+    }
+
+    const changePixel = (e) => {
+        if(store.currentTool !== EditorTool.PAINT) return;
+        const rect = ref.current.getBoundingClientRect();
+        const x = Math.floor((e.clientX - rect.left) / pixelSize);
+        const y = Math.floor((e.clientY - rect.top) / pixelSize);
+        const color = store.currentColor;
+        const index = (y * store.tileset.tileSize + x) * 4;
+        const data = currentTile.data;
+        data[index] = color.red;
+        data[index+1] = color.green;
+        data[index+2] = color.blue;
+        data[index+3] = color.alpha;
+        drawTile();
+
+        const context = ref.current.getContext('2d');
+
     }
     
     return (
@@ -58,6 +109,7 @@ function TileEditor({currentTile}) {
                         width="600"
                         height="600"
                         onMouseMove={(e) => highlightPixel(e)}
+                        onClick={handleClick}
                     />
                 }
             </div>

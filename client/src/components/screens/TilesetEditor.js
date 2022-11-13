@@ -28,14 +28,10 @@ function TilesetEditor() {
     const [exportOpen, setExportOpen] = useState(false);
     const [shareOpen, setShareOpen] = useState(false);
 
-    const [currentTile, setCurrentTile] = useState(null);
-
     //TODO: Loading Icon
     if(!tileset) {
         return <div>Loading...</div>
     }
-
-    console.log(tilesetImage)
 
     return (
         <div>
@@ -52,9 +48,9 @@ function TilesetEditor() {
                 setShareOpen={setShareOpen}
             />
             <div className="flex h-screen">
-                <ColorSidebar />
-                <TileEditor currentTile={tilesetImage.tiles[0]}/>
-                <TileSidebar tiles={[]} setCurrentTile={setCurrentTile} />
+                <ColorSidebar/>
+                <TileEditor currentTile={tilesetImage.tiles[0]} />
+                <TileSidebar tiles={tilesetImage.tiles} />
             </div>
         </div>
         

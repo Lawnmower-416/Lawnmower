@@ -1,6 +1,7 @@
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
-import { useRef, useEffect } from 'react';
+import {useRef, useEffect, useContext} from 'react';
+import EditorContext from "../../../editor";
 function TileSidebar({ tiles, setCurrentTile, addTile }) {
 
     return (
@@ -17,7 +18,7 @@ function TileSidebar({ tiles, setCurrentTile, addTile }) {
                         <div className="grid grid-cols-3">
                             {tiles.map((tile) => (
                                 <Tile 
-                                    key={tile._id}
+                                    key={tile}
                                     tile={tile}
                                     setCurrentTile={setCurrentTile}
                                 />
@@ -37,14 +38,19 @@ function TileSidebar({ tiles, setCurrentTile, addTile }) {
 function Tile({tile, setCurrentTile }) {
     const ref = useRef(null);
 
+    const { store } = useContext(EditorContext);
+
     useEffect(() => {
         if(ref) {
             const data = tile.data;
+            const tileSize = store.tileset.tileSize;
             const context = ref.current.getContext('2d');
-            for(let i = 0; i < data.length; i++) {
-                for(let j = 0; j < data[i].length; j++) {
-                    context.fillStyle = `rgb(${data[i][j][0]}, ${data[i][j][1]}, ${data[i][j][2]})`;
-                    context.fillRect(i*20,j*20, 20, 20)
+            const pixelSize = 20;
+            for(let y = 0; y < tileSize; y++) {
+                for (let x = 0; x < tileSize; x++) {
+                    const index = (y * tileSize + x) * 4;
+                    context.fillStyle = `rgba(${data[index]}, ${data[index + 1]}, ${data[index + 2]}, ${data[index + 3]})`;
+                    context.fillRect(x*pixelSize, y*pixelSize, pixelSize, pixelSize);
                 }
             }
             
