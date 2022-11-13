@@ -72,8 +72,8 @@ function AuthContextProvider(props) {
             }
             case AuthActionType.CHANGE_PASSWORD: {
                 return setAuth({
-                    user: payload.user,
-                    loggedInBool: true,
+                    user: null,
+                    loggedInBool: false,
                     errorMessage: null
                 })
             }
@@ -164,14 +164,12 @@ function AuthContextProvider(props) {
     }
     // changing password should logout user (this can be done on the backend OR just calling logout here)
     // in the backend, there is a functionality where it re-logins the user. If the feature is changed, then make sure to change that too
-    auth.changePassword = async (currentPassword, newPassword) => {
-        const response = await api.changePassword(currentPassword, newPassword);
+    auth.changePassword = async (email, newPassword, newPasswordVerify) => {
+        const response = await api.changePassword(email, newPassword, newPasswordVerify);
         if (response.status === 200) {
             authReducer({
                 type: AuthActionType.CHANGE_PASSWORD,
-                payload: {
-                    user: response.data.user
-                }
+                payload: { }
             });
             history('/');
         }

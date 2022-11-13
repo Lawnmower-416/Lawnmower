@@ -4,7 +4,8 @@
   "private": true,
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "clean": "rm -rf node_modules && npm install"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.209.0",
@@ -19,6 +20,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.6",
     "morgan": "~1.9.1",
+    "nodemailer": "^6.8.0",
     "nodemon": "^2.0.20"
   }
 }
