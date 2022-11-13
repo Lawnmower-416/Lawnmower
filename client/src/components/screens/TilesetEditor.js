@@ -21,13 +21,13 @@ function TilesetEditor() {
     }, [tilesetId]);
 
     const tileset = store.tileset;
+    const tilesetImage = store.tilesetImage;
 
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [historyOpen, setHistoryOpen] = useState(false);
     const [exportOpen, setExportOpen] = useState(false);
     const [shareOpen, setShareOpen] = useState(false);
 
-    const [currentColor, setCurrentColor] = useState({red: 0, green: 0, blue: 0, alpha: 255});
     const [currentTile, setCurrentTile] = useState(null);
 
     function addColor({red, blue, green}) {
@@ -90,6 +90,8 @@ function TilesetEditor() {
         return <div>Loading...</div>
     }
 
+    console.log(tilesetImage)
+
     return (
         <div>
             <TilesetSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen} />
@@ -105,8 +107,8 @@ function TilesetEditor() {
                 setShareOpen={setShareOpen}
             />
             <div className="flex h-screen">
-                <ColorSidebar colors={colors} currentColor={currentColor} setCurrentColor={setCurrentColor} addColor={addColor} />
-                <TileEditor currentTile={currentTile}/>
+                <ColorSidebar colors={colors} addColor={addColor} />
+                <TileEditor currentTile={tilesetImage.tiles[0]}/>
                 <TileSidebar tiles={[]} setCurrentTile={setCurrentTile} addTile={addTile}/>
             </div>
         </div>

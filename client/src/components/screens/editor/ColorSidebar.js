@@ -1,6 +1,29 @@
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
-function ColorSidebar({ colors, currentColor, setCurrentColor, addColor }) {
+import {useContext, useEffect} from "react";
+import EditorContext from "../../../editor";
+function ColorSidebar() {
+
+    const { store } = useContext(EditorContext);
+
+    const currentColor = store.currentColor;
+    const colors = store.colors;
+
+    useEffect(() => {
+        store.loadColors();
+    }, []);
+
+    const setCurrentColor = (color) => {
+        console.log(color.red, color.green, color.blue);
+        store.setColor(color);
+    }
+
+    const addColor = (color) => {
+        store.addColor(color);
+        store.saveColors();
+    }
+
+
     return (
         <div className="bg-editor-primary h-screen w-64">
             <div className="flex flex-col h-full">
@@ -15,7 +38,7 @@ function ColorSidebar({ colors, currentColor, setCurrentColor, addColor }) {
                                 {colors.map((item) => (
                                     <div 
                                         className="h-12 hover:cursor-pointer" 
-                                        style={{backgroundColor: `rgba(${item.red}, ${item.blue}, ${item.green}, ${item.alpha})`}}
+                                        style={{backgroundColor: `rgba(${item.red}, ${item.green}, ${item.blue}, ${item.alpha})`}}
                                         onClick={() => setCurrentColor(item)}/>
                                 ))}
                             </div>
@@ -37,7 +60,7 @@ function ColorSidebar({ colors, currentColor, setCurrentColor, addColor }) {
                                     <input min="0" max="255" className="w-10" value={currentColor.green} onChange={(e) => setCurrentColor({...currentColor, green: e.target.value})}/>
                                     <input min="0" max="255" className="w-10" value={currentColor.blue} onChange={(e) => setCurrentColor({...currentColor, blue: e.target.value})}/>
                                 </span>
-                                <div className="p-20 mt-5" style={{backgroundColor: `rgba(${currentColor.red}, ${currentColor.blue}, ${currentColor.green}, ${currentColor.alpha})`}}></div>
+                                <div className="p-20 mt-5" style={{backgroundColor: `rgba(${currentColor.red}, ${currentColor.green}, ${currentColor.blue}, ${currentColor.alpha})`}}></div>
                             </div>
                             
                         </div>

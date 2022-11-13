@@ -1,8 +1,9 @@
 import { createContext, useContext, useState } from 'react';
 import mapApi from "../../src/requests/map-editor-api";
-import tilesetApi from "../../src/requests/tileset-editor-api";
+import tilesetApi, {getTilesetImage} from "../../src/requests/tileset-editor-api";
 import { useAuth } from "../auth"
 import AuthContext from '../auth';
+import {getTilesetById} from "../requests/store-request";
 
 
 export const EditorContext = createContext();
@@ -30,6 +31,9 @@ export const EditorActionType = {
     DOWNLOAD_OLD_VERSION: "DOWNLOAD_OLD_VERSION",
     IMPORT_TILESET: "IMPORT_TILESET",
     SET_TILESET: "SET_TILESET",
+    SET_COLOR: "SET_COLOR",
+    LOAD_COLORS: "LOAD_COLORS",
+    ADD_COLOR: "ADD_COLOR",
 }
 
 function EditorContextProvider(props) {
@@ -41,6 +45,8 @@ function EditorContextProvider(props) {
 
         tileset: null,
         tilesetImage: null,
+        currentColor: {red: 0, green: 0, blue: 0, alpha: 255},
+        colors: [],
 
         currentTool: "SELECT_TOOL",
         currentItem: null,
@@ -58,6 +64,28 @@ function EditorContextProvider(props) {
                     tileset: payload.tileset,
                     tilesetImage: payload.tilesetImage,
                 })
+                break;
+
+            case EditorActionType.SET_COLOR:
+                setStore({
+                    ...store,
+                    currentColor: payload.color,
+                })
+                break;
+
+            case EditorActionType.LOAD_COLORS:
+                setStore({
+                    ...store,
+                    colors: payload.colors,
+                })
+                break;
+
+            case EditorActionType.ADD_COLOR:
+                setStore({
+                    ...store,
+                    colors: [...store.colors, payload.color],
+                })
+                break;
         }
     }
 
@@ -161,23 +189,60 @@ function EditorContextProvider(props) {
     store.importTileset = async (tilesetId) => {
 
     }
-/*
+
     store.setTileset = async (tilesetId) => {
         const res = await getTilesetById(tilesetId);
 
         if (res.status === 200) {
             const {tileset} = res.data;
 
+            //TODO: Error handling
             const image = await getTilesetImage(tilesetId);
+            const imageData = image.data.tilesetImage
             storeReducer({
                 type: EditorActionType.SET_TILESET,
                 payload: {
                     tileset: tileset,
-                    tilesetImage: image,
+                    tilesetImage: imageData,
                 }
             })
         }
-    }*/
+    }
+
+    store.setColor = (color) => {
+        storeReducer({
+            type: EditorActionType.SET_COLOR,
+            payload: {
+                color: color,
+            },
+        })
+    }
+
+    store.saveColors = () => {
+        localStorage.setItem('colors', JSON.stringify(store.colors));
+    }
+
+    store.loadColors = () => {
+        const colors = JSON.parse(localStorage.getItem('colors'));
+        if (colors) {
+            storeReducer({
+                type: EditorActionType.LOAD_COLORS,
+                payload: {
+                    colors: colors,
+                },
+            })
+        }
+    }
+
+    store.addColor = (color) => {
+        storeReducer({
+            type: EditorActionType.ADD_COLOR,
+            payload: {
+                color: color,
+            },
+        })
+    }
+
     return (
         <EditorContext.Provider value={{ 
             store 
