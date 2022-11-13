@@ -2,7 +2,7 @@ import { ChevronDownIcon, HandThumbUpIcon, HandThumbDownIcon } from "@heroicons/
 import { HandThumbUpIcon as LikedIcon, HandThumbDownIcon as DislikedIcon, ChevronDoubleUpIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import CommentCard from "./CommentCard";
 import { DeleteMapModal } from "./modals/DeleteMapModal/DeleteMap";
 import { Menu } from '@headlessui/react';
@@ -25,6 +25,9 @@ export default function ItemCard(props) {
     const [deleteMapModal, setDeleteMapModal] = useState(false);
     const [modalOpen3, setModalOpen3] = useState(false);
     const [expandComments , setExpandComments] = useState(false);
+
+    const location = useLocation();
+    const path = location.pathname;
 
     // props.map is defined if the item card is being used for maps
     // props.tileset is defined if the item card is being used for tilesets
@@ -74,6 +77,33 @@ export default function ItemCard(props) {
         }
     }
 
+    let likeButton
+    let dislikeButton
+
+    if (!user || auth.guestMode) {
+        likeButton = <LikedIcon className="w-12 cursor-pointer text-black text-opacity-50" /> 
+        dislikeButton = <DislikedIcon className="w-12 align-middle cursor-pointer text-black text-opacity-50" />
+    } else {
+        if (currentData.likedUsers && currentData.likedUsers.includes(user._id)) {
+            likeButton = <LikedIcon className="w-12 cursor-pointer text-dark-green" onClick={handleLike} />
+        } else {
+            likeButton = <HandThumbUpIcon className="w-12 cursor-pointer" onClick={handleLike}/>
+        }
+        if (currentData.dislikedUsers && currentData.dislikedUsers.includes(user._id)) {
+            dislikeButton = <DislikedIcon className="w-12 align-middle cursor-pointer text-red" onClick={handleDislike} /> 
+        } else {
+            dislikeButton = <HandThumbDownIcon className="w-12 align-middle cursor-pointer" onClick={handleDislike}/>
+        }
+    }
+
+    let trashCanIcon
+    if (path === "/profile") {
+        trashCanIcon = <TrashIcon className={`w-12 cursor-pointer fill-red ${(auth.user && user._id !== owner) ? "hidden" : ""}`} 
+        onClick={() => setDeleteMapModal((prev) => !prev)} 
+        />
+    }
+
+
     return (
         <><DeleteMapModal modalOpen={deleteMapModal} setModalOpen={setDeleteMapModal} content={currentData} />
         <div className="snap-start flex flex-col">
@@ -81,16 +111,13 @@ export default function ItemCard(props) {
                 {/* Column 1: Likes/Dislikes */}
                     <div className="order-1 items-center p-2 ml-2">
                             <div className="align-middle text-center items-center">
-                                { 
-                                    (currentData.likedUsers && currentData.likedUsers.includes(user._id))
-                                    ? <LikedIcon className="w-12 cursor-pointer text-dark-green" onClick={handleLike} /> 
-                                    : <HandThumbUpIcon className="w-12 cursor-pointer" onClick={handleLike}/>
+                                {
+                                    likeButton
                                 }
                                 <span className="text-xl">{numLikes - numDislikes}</span>
                                 {
-                                    (currentData.dislikedUsers && currentData.dislikedUsers.includes(user._id))
-                                    ? <DislikedIcon className="w-12 align-middle cursor-pointer text-red" onClick={handleDislike} /> 
-                                    : <HandThumbDownIcon className="w-12 align-middle cursor-pointer" onClick={handleDislike}/>}
+                                    dislikeButton
+                                }
                             </div>
                     </div>
                 {/* Column 2: Image */}
@@ -145,9 +172,10 @@ export default function ItemCard(props) {
                             }
                         </p>
                         <p className="text-xl">Views: {numViews}</p>
-                        <TrashIcon className={`w-12 cursor-pointer fill-red ${user._id !== owner ? "hidden" : ""}`} 
-                                onClick={() => setDeleteMapModal((prev) => !prev)} 
-                        />
+
+                        {
+                            trashCanIcon}
+
                         {/* Comments Part */}
                         <p className="font-bold relative bottom-0 cursor-pointer" onClick={handleView}>
                             Show Comments

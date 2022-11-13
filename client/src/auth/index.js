@@ -13,7 +13,8 @@ export const AuthActionType = {
     REGISTER: 'REGISTER',
     CHANGE_PASSWORD: 'CHANGE_PASSWORD',
     DELETE_ACCOUNT: 'DELETE_ACCOUNT',
-    ERROR_MESSAGE: 'ERROR_MESSAGE'
+    ERROR_MESSAGE: 'ERROR_MESSAGE',
+    GUEST_MODE: 'GUEST_MODE',
 }
 /*
     errorMessage:
@@ -28,7 +29,8 @@ function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
         loggedInBool: false,
-        errorMessage: null
+        errorMessage: null,
+        guestMode: false
     });
 
     useEffect(() => {
@@ -46,49 +48,64 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: payload.user,
                     loggedInBool: payload.loggedInBool,
-                    errorMessage: null
+                    errorMessage: null,
+                    guestMode: auth.guestMode
                 })
             }
             case AuthActionType.LOGIN: {
                 return setAuth({
                     user: payload.user,
                     loggedInBool: true,
-                    errorMessage: null
+                    errorMessage: null,
+                    guestMode: false
                 })
             }
             case AuthActionType.LOGOUT: {
                 return setAuth({
                     user: null,
                     loggedInBool: false,
-                    errorMessage: null
+                    errorMessage: null,
+                    guestMode: auth.guestMode
                 })
             }
             case AuthActionType.REGISTER: {
                 return setAuth({
                     user: payload.user,
                     loggedInBool: true,
-                    errorMessage: null
+                    errorMessage: null,
+                    guestMode: auth.guestMode
                 })
             }
             case AuthActionType.CHANGE_PASSWORD: {
                 return setAuth({
                     user: payload.user,
                     loggedInBool: true,
-                    errorMessage: null
+                    errorMessage: null,
+                    guestMode: auth.guestMode
                 })
             }
             case AuthActionType.DELETE_ACCOUNT: {
                 return setAuth({
                     user: null,
                     loggedInBool: false,
-                    errorMessage: null
+                    errorMessage: null,
+                    guestMode: auth.guestMode
                 })
             }
             case AuthActionType.ERROR_MESSAGE: {
                 return setAuth({
                     user: null,
                     loggedInBool: false,
-                    errorMessage: payload.errorMessage
+                    errorMessage: payload.errorMessage,
+                    guestMode: auth.guestMode
+                })
+            }
+            case AuthActionType.GUEST_MODE: {
+                return setAuth({
+                    user: null,
+                    loggedInBool: false,
+                    errorMessage: null,
+                    guestMode: true
                 })
             }
             default:

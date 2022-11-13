@@ -57,9 +57,10 @@ getMapById = async (mapId, userId) => {
     if (!map) {
         return null;
     }
-    if (map.owner == userId || map.collaborators.includes(userId)) {
-        return map;
-    }
+    // if (map.owner == userId || map.collaborators.includes(userId)) {
+    //     return map;
+    // }
+    return map;
     return null;
 }
 
@@ -127,9 +128,10 @@ getTilesetById = async (tilesetId, userId) => {
     if (!tileset) {
         return null;
     }
-    if (tileset.owner == userId || tileset.collaborators.includes(userId)) {
-        return tileset;
-    }
+    // if (tileset.owner == userId || tileset.collaborators.includes(userId)) {
+    //     return tileset;
+    // }
+    return tileset;
     return null;
 }
 
