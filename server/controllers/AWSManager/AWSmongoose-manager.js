@@ -109,6 +109,14 @@ deleteTileset = async (tilesetId, userId) => {
     }
     if (tileset.owner == userId) {
         const deletedTileset = await Tileset.findOneAndDelete({ _id: tilesetId });
+
+        let user = await User.findById({ _id: userId }).catch(err => {return null;});
+        if (!user) {
+            return null;
+        }
+        user.tilesets = user.tilesets.filter(tileset => tileset != tilesetId);
+        await user.save().catch(err => {return null;});
+        
         return (deletedTileset === {} ? null : deletedTileset);
     }
     return null;
