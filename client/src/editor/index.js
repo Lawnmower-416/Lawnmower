@@ -1,10 +1,9 @@
 import { createContext, useContext, useState } from 'react';
-//import mapApi from "../requests/map-editor-api"
-//import tilesetApi from "../requests/tileset-api"
+import mapApi from "../../src/requests/map-editor-api";
+import tilesetApi from "../../src/requests/tileset-editor-api";
 import { useAuth } from "../auth"
 import AuthContext from '../auth';
-import {getTilesetById} from "../requests/store-request";
-import {getTilesetImage} from "../requests/tileset-editor-api";
+
 
 export const EditorContext = createContext();
 
@@ -162,7 +161,7 @@ function EditorContextProvider(props) {
     store.importTileset = async (tilesetId) => {
 
     }
-
+/*
     store.setTileset = async (tilesetId) => {
         const res = await getTilesetById(tilesetId);
 
@@ -178,7 +177,7 @@ function EditorContextProvider(props) {
                 }
             })
         }
-    }
+    }*/
     return (
         <EditorContext.Provider value={{ 
             store 

@@ -32,7 +32,7 @@ function App() {
               <Route path="/about" exact element={<About/>} />
               <Route path="/support" exact element={<ContactUs/>} />
               <Route path="/profile" exact element={<ProfileScreen/>} />
-              <Route path="/mapEditor" exact element={<MapEditor/>} />
+              <Route path="/mapEditor/:mapId" exact element={<MapEditor/>} />
               <Route path="/tilesetEditor/:tilesetId" exact element={<TilesetEditor/>} />
               <Route path="/community" exact element={<CommunityScreen/>} />
               <Route path="/change-password" exact element={<PasswordChange/>} />
