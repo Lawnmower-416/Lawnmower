@@ -16,18 +16,13 @@ const hostname = "0.0.0.0";
 const port = 3000;
 
 const cors = require('cors');
-app.use(cors({ origin: 'https://production.d3ojarusvycsb5.amplifyapp.com'}));
+app.use(cors({ origin: 'http://34.193.24.27', credentials: true }));
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use((req, res, next) => {
- res.header('Access-Control-Allow-Origin', 'https://production.d3ojarusvycsb5.amplifyapp.com');
- next();
-});
 
 app.use('/auth', authRouter);
 app.use('/', contentRouter);

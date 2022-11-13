@@ -11,7 +11,7 @@ loggedIn = async (req, res) => {
             return res.status(200).json({
                 loggedIn: false,
                 user: null,
-                errorMessage: "?"
+                errorMessage: ""
             })
         }
 
@@ -19,12 +19,16 @@ loggedIn = async (req, res) => {
 
         return res.status(200).json({
             loggedIn: true,
-            user: {
+            user: { //send all back except password hash
                 firstName: loggedInUser.firstName,
                 lastName: loggedInUser.lastName,
                 username: loggedInUser.username,
                 email: loggedInUser.email,
-                joinDate: loggedInUser.joinDate
+                joinDate: loggedInUser.joinDate,
+                maps: loggedInUser.maps,
+                tilesets: loggedInUser.tilesets,
+                comments: loggedInUser.comments,
+                _id: loggedInUser._id
             }
         })
     } catch (err) {
@@ -43,6 +47,7 @@ login = async (req, res) => {
         }
 
         const existingUser = await User.findOne({ username: username });
+
         if (!existingUser) {
             return res
                 .status(401)
@@ -64,42 +69,37 @@ login = async (req, res) => {
 
         // LOGIN THE USER
         const token = auth.signToken(existingUser._id);
-
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: true
+        await res.cookie("token", token, {
+            httpOnly: false,
+            secure: false,
+            samesite: "lax"
         }).status(200).json({
             success: true,
-            user: {
-                firstName: existingUser.firstName,
-                lastName: existingUser.lastName,
-                username: existingUser.username,
-                email: existingUser.email              
-            }
-        })
-
+            user: existingUser
+        });
+        next();
     } catch (err) {
         // console.error(err);
         return res.status({ success: false, errorMessage: err});
     }
 }
 
-logout = async (req, res) => {
+logout = async (req, res, next) => {
     try {
-        res.cookie("token", "", {
-            httpOnly: true,
+        await res.cookie("token", "", {
+            httpOnly: false,
             expires: new Date(0),
-            secure: true,
-            sameSite: true
+            secure: false,
+            samesite: "lax"
         }).json({ success: true, message: "Logged Out" });
+        next();
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, errorMessage: err })
     }
 }
 
-register = async (req, res) => {
+register = async (req, res, next) => {
     try {
         const { firstName, lastName, username, email, password, passwordVerify } = req.body;
         if (!firstName || !lastName || !username || !email || !password || !passwordVerify) {
@@ -126,7 +126,7 @@ register = async (req, res) => {
         }
         
         const existingUser = await User.findOne({ email: email });
-        
+
         if (existingUser) {
             return res
                 .status(400)
@@ -137,13 +137,13 @@ register = async (req, res) => {
         }
 
         const existingUserUsername = await User.findOne({ username: username });
-        
+
         if (existingUserUsername) {
             return res
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "An account with this username address already exists."
+                    errorMessage: "An account with this username already exists."
                 })
         }
 
@@ -160,25 +160,21 @@ register = async (req, res) => {
         const token = auth.signToken(savedUser._id);
 
         await res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: true
+            httpOnly: false,
+            secure: false,
+            samesite: "lax"
         }).status(200).json({
             success: true,
-            user: {
-                firstName: savedUser.firstName,
-                lastName: savedUser.lastName,
-                username: savedUser.username,
-                email: savedUser.email              
-            }
+            user: savedUser
         });
+        next();
     } catch (err) {
         console.log(err)
         return res.status(500).json({ success: false, errorMessage: err });
     }
 }
 
-changePassword = async (req, res) => {
+changePassword = async (req, res, next) => {
     try {
         const { password, passwordVerify } = req.body;
         if (!password || !passwordVerify) {
@@ -232,24 +228,21 @@ changePassword = async (req, res) => {
         const token = auth.signToken(updatedUser._id);
         
         await res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: true
+            httpOnly: false,
+            secure: false,
+            samesite: "lax"
         }).status(200).json({
             success: true,
-            user: {
-                firstName: updatedUser.firstName,
-                lastName: updatedUser.lastName,
-                email: updatedUser.email
-            }
-        })
+            user: updatedUser
+        });
+        next();
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        res.status(500).json({"success": false, "errorMessage":  "Something went wrong"});
     }
 }
 
-deleteAccount = async (req, res) => {
+deleteAccount = async (req, res, next) => {
     try {
         const userId = auth.verifyUser(req);
         if (!userId) {
@@ -271,24 +264,19 @@ deleteAccount = async (req, res) => {
 
         const deletedUser = await User.findOneAndDelete({ _id: userId });
 
-        res.cookie("token", "", {
-            httpOnly: true,
+        await res.cookie("token", "", {
+            httpOnly: false,
             expires: new Date(0),
-            secure: true,
-            sameSite: true
+            secure: false,
+            samesite: "lax"
         }).status(200).json({
             success: true,
-            user: {
-                firstName: deletedUser.firstName,
-                lastName: deletedUser.lastName,
-                username: deletedUser.username,
-                email: deletedUser.email
-            }
-        })
-
+            user: deletedUser
+        });
+        next();
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        res.status(500).json({"success": false, "errorMessage":  "Something went wrong"});
     }
 }
 

@@ -38,12 +38,12 @@ const RegisterScreen = () => {
 
     {
       label: "Password",
-      type: "text",
+      type: "password",
       name: "password",
     },
     {
       label: "Verify Password",
-      type: "text",
+      type: "password",
       name: "verifypassword",
     },
   ];
@@ -51,8 +51,32 @@ const RegisterScreen = () => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
+  //regex validation for email
+    const validateEmail = (email) => {
+        const re = /\S+@\S+\.\S+/;
+        return re.test(email);
+    }
+
   const onSubmit = (e) => {
     e.preventDefault();
+
+    if (values.email === "" || values.password === "" || values.username === "" || values.firstname === "" || values.lastname === "") {
+      auth.setErrorMessage("All fields are required");
+      return;
+    }
+
+    if (!validateEmail(values.email)) {
+      auth.setErrorMessage("Invalid email");
+      return;
+    }
+    if (values.password.length < 8) {
+      auth.setErrorMessage("Password must be at least 8 characters");
+      return;
+    }
+    if (values.password !== values.verifypassword) {
+      auth.setErrorMessage("Passwords do not match");
+      return;
+    }
     const firstname = values.firstname;
     const lastname = values.lastname;
     const username = values.username;

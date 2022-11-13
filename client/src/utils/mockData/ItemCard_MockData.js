@@ -52,8 +52,8 @@ export const generateRandomComments = () => {
                 nestedCommentOwner: owners[Math.floor(Math.random() * owners.length)],
                 nestedIndex: Math.floor(Math.random() * 4),
                 deleted: false,
-                likedComments: Math.round(Math.random() * 100 + 50),
-                dislikedComments: Math.round(Math.random() * 50)
+                likedComments: new Array(Math.round(Math.random() * 100 + 50)),
+                dislikedComments: new Array(Math.round(Math.random() * 50))
             }
         )
     }
@@ -69,8 +69,8 @@ export const generateRandomMaps = (owner) => {
                 title: randomMapTitle(),
                 creationDate: randomCreationDate(),
                 views: Math.round(Math.random() * 3000 + 5000),
-                likedUsers: Math.round(Math.random() * 1000 + 500),
-                dislikedUsers: Math.round(Math.random() * 500),
+                likedUsers: new Array(Math.round(Math.random() * 1000 + 500)),
+                dislikedUsers: new Array(Math.round(Math.random() * 500)),
                 comments: generateRandomComments(),
                 deleted: false,
                 collaborators: [],

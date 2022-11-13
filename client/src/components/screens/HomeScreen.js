@@ -2,9 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const HomeScreen = () => {
-  const buttonClick = () => {
-    console.log("button clicked");
-  };
 
   return (
     <div>
@@ -25,16 +22,16 @@ const HomeScreen = () => {
           </p>
           <div className="flex flex-col justify-center items-center pt-8">
             <Link to="/register">
-              <button onClick={buttonClick}
+              <button
                 className="outline-none bg-dark-green px-5 rounded-xl py-3 text-white hover:bg-black font-bold text-2xl text-center sm:text-3xl lg:text-4xl xl:text-5xl  2xl:text-6xl font-inter">
                 SIGN UP FOR FREE
               </button>
             </Link>
             <div className="pt-2 flex justify-between items-center gap-6 lg:gap-10">
-              <Link to='/login' className="font-inter text-white font-bold text-md sm:text-md lg:text-xl xl:text-2xl 2xl:text-4xl">
+              <Link to='/login' className="font-inter hover:underline text-white font-bold text-md sm:text-md lg:text-xl xl:text-2xl 2xl:text-4xl">
                 Existing User?
               </Link>
-              <Link to='/community'className="font-inter text-white font-bold text-md sm:text-lg lg:text-xl xl:text-2xl 2xl:text-4xl">
+              <Link to='/community'className="font-inter hover:underline text-white font-bold text-md sm:text-lg lg:text-xl xl:text-2xl 2xl:text-4xl">
                 Enter as a guest
               </Link>
             </div>

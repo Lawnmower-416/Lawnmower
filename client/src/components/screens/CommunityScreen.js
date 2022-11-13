@@ -5,6 +5,7 @@ import { Menu } from '@headlessui/react';
 import ItemCard from '../ItemCard';
 import ModalTwo from '../modals/TagModal/ModalTwo';
 import { generateRandomMaps } from '../../utils/mockData/ItemCard_MockData';
+import { getMaps, getTilesets } from '../../requests/store-request';
 
 
 export default function CommunityScreen() {
@@ -26,10 +27,28 @@ export default function CommunityScreen() {
 
     // copied directly from website and it worked somehow
     const [modalOpen2, setModalOpen2] = React.useState(false);
-    const [data, setData] = React.useState(generateRandomMaps());
+    // FOR RANDOMNESS
+    // const [data, setData] = React.useState(generateRandomMaps());
+    const [data, setData] = React.useState([]);
+    const [dataTilesets, setDataTilesets] = React.useState([]);
     useEffect(() => {
-        console.log(data);
-    })
+        async function getAllMaps() {
+            const response = await getMaps();
+            if (response.data.success) {
+                console.log(response.data.maps);
+                setData(response.data.maps);
+            }
+        }
+        getAllMaps();
+
+        async function getAllTilesets() {
+            const response = await getTilesets();
+            if (response.data.success) {
+                setDataTilesets(response.data.maps);
+            }
+        }
+        getAllTilesets();
+    }, [])
 
     const handleMapToTilesetTab = () => {
         if (!mapTabBool) {
@@ -149,10 +168,12 @@ export default function CommunityScreen() {
                             <div className="w-full h-auto mx-10 my-4 overflow-y-auto">
                                 <div className='mr-5 space-y-3'>
                                     {
-                                        data.map((d) => {
-                                            if (d.tilesets) return <ItemCard map={d} key={Math.random() * 500} />
-                                            else return <ItemCard key={Math.random() * 500} tileset={d} />
+                                        mapTabBool ? data.map((d) => {
+                                            return <ItemCard map={d} key={Math.random() * 500} />
                                         })
+                                        :   dataTilesets.map((d) => {
+                                                return <ItemCard key={Math.random() * 500} tileset={d} />
+                                            })
                                     }
                                 </div>
                             </div>

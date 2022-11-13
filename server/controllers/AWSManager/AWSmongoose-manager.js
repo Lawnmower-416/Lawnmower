@@ -1,7 +1,8 @@
 const Map =require('../../models/map-schema');
 const Tileset = require('../../models/tileset-schema');
 const User = require('../../models/user-schema');
-
+const { createCanvas } = require('canvas');
+const { uploadData } = require('./AWS-S3-manager');
 // content-controller-generalized.js is a generalization of database interactions
 // content-controller-generalized.js handles json req, res and calls mongoose-manager.js
 // this file, mongoose-manager.js, is a specialization of those interactions for mongoose
@@ -17,9 +18,16 @@ createMap = async (body, userId) => {
             return null;
         }
 
+        newMap.owner = user._id;
+
         const updatedMap = await newMap.save().catch(err => {return null;});
+
+        if(!updatedMap) return null;
+
+
         user.maps.push(updatedMap._id);
         await user.save().catch(err => {return null;});
+
         return updatedMap;
     }
 }
@@ -31,6 +39,14 @@ deleteMap = async (mapId, userId) => {
     }
     if (map.owner == userId) {
         const deletedMap = await Map.findOneAndDelete({ _id: mapId });
+
+        let user = await User.findById({ _id: userId }).catch(err => {return null;});
+        if (!user) {
+            return null;
+        }
+        user.maps = user.maps.filter(map => map != mapId);
+        await user.save().catch(err => {return null;});
+
         return (deletedMap === {} ? null : deletedMap);
     }
     return null;
@@ -53,7 +69,7 @@ getMaps = async () => {
 }
 
 updateMapGeneral = async (updatedMap) => {
-    return await Map.findOneAndUpdate({ _id: updatedMap._id}, updatedMap, {returnOriginal: false});
+    return await Map.findOneAndUpdate({ _id: updatedMap.map._id}, updatedMap.map, {new: true});
 }
 
 createTileset = async (body, userId) => {
@@ -63,10 +79,26 @@ createTileset = async (body, userId) => {
         if (!user) {
             return null;
         }
-        const updatedTileset = await newTileset.save().catch(err => { console.log(err); return null;});
+
+        const updatedTileset = await newTileset.save().catch(err => {return null;});
         user.tilesets.push(updatedTileset._id);
         await user.save().catch(err => {return null;});
-        return updatedTileset;
+
+        //Start each tileset with 1 tile
+        const tileSize = newTileset.tileSize;
+        const canvas = createCanvas(tileSize, tileSize);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, tileSize, tileSize);
+        const tile = ctx.getImageData(0, 0, tileSize, tileSize);
+
+        updatedTileset.imageHeight = tileSize;
+        updatedTileset.imageWidth = tileSize;
+        await uploadData(tile, userId, updatedTileset._id, false);
+
+        return await updatedTileset.save().catch(err => {
+            return null;
+        });
     }
 }
 
@@ -99,7 +131,7 @@ getTilesets = async () => {
 }
 
 updateTilesetGeneral = async (updatedTileset) => {
-    return await Tileset.findOneAndUpdate({ _id: updatedTileset._id}, updatedTileset, {returnOriginal: false});
+    return await Tileset.findOneAndUpdate({ _id: updatedTileset.tileset._id}, updatedTileset.tileset, {new: true});
 }
 
 module.exports = {

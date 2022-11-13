@@ -1,7 +1,17 @@
 import React from "react";
 import close from "./close.png";
+import { useContext } from "react";
+import GlobalStoreContext from "../../../store";
 
-export const DeleteMapModal = ({ modalOpen, setModalOpen, mapName }) => {
+
+export const DeleteMapModal = ({ modalOpen, setModalOpen, map }) => {
+	const { store } = useContext(GlobalStoreContext);
+
+	const handleDeleteMap = () => {
+		setModalOpen(!modalOpen)
+		store.deleteMap(map._id);
+	}
+
 	return (
 		<>
 			<div
@@ -26,16 +36,16 @@ export const DeleteMapModal = ({ modalOpen, setModalOpen, mapName }) => {
 								Are You Sure?
 							</h4>
 							<div>
-								Are you sure you want to delete your <u>{mapName}</u>? This
+								Are you sure you want to delete your <u>{map.title}</u>? This
 								action cannot be undone.
 							</div>
 						</div>
 						<div className="flex justify-between gap-4 mt-5">
 							<button
 								className="rounded-lg py-[5px] px-6  cursor-pointer duration-300 bg-dark-green text-red text-[16px] font-bold flex-grow max-w-[200px]"
-								onClick={() => setModalOpen(!modalOpen)}
+								onClick={handleDeleteMap}
 							>
-								Delete Map
+								Delete
 							</button>
 							<button
 								className="rounded-lg py-[5px] px-6 text-white cursor-pointer duration-300 bg-dark-green text-[16px] font-bold flex-grow max-w-[200px]"

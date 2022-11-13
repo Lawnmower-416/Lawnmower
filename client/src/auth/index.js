@@ -31,12 +31,13 @@ function AuthContextProvider(props) {
         errorMessage: null
     });
 
-    //useHistory hase been replaced with useNavigate
-    const history = useNavigate();
-
     useEffect(() => {
         auth.loggedIn();
-    }, [auth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    //useHistory hase been replaced with useNavigate
+    const history = useNavigate();
 
     const authReducer = (action) => {
         const { type, payload } = action;
@@ -110,23 +111,24 @@ function AuthContextProvider(props) {
     // setting to username, password. Requires changes in backend
     // as backend is expecting email, password
     auth.login = async (username, password) => {
-        const response = await api.login(username, password);
+        const response = await api.login(username, password).catch((error) => {
+            authReducer({
+                type: AuthActionType.ERROR_MESSAGE,
+                payload: {
+                    errorMessage: error.response.data.errorMessage
+                }
+            }
+        )});
+
         if (response.status === 200) {
+            console.log("response", response);
             authReducer({
                 type: AuthActionType.LOGIN,
                 payload: {
                     user: response.data.user
                 }
             });
-            history.push('/profile');
-        }
-        if (response.status === 401) {
-            authReducer({
-                type: AuthActionType.ERROR_MESSAGE,
-                payload: {
-                    errorMessage: response.data.errorMessage
-                }
-            });
+            history('/profile');
         }
     }
     auth.logout = async () => {
@@ -136,11 +138,19 @@ function AuthContextProvider(props) {
                 type: AuthActionType.LOGOUT,
                 payload: null
             });
-            history.push('/');
+            history('/');
         }
     }
-    auth.register = async (firstName, lastName, username, password) => {
-        const response = await api.register(firstName, lastName, username, password);
+    auth.register = async (firstName, lastName, username, email, password, passwordVerify) => {
+        const response = await api.register(firstName, lastName, username, email, password, passwordVerify).catch((error) => {
+            authReducer({
+                type: AuthActionType.ERROR_MESSAGE,
+                payload: {
+                    errorMessage: error.response.data.errorMessage
+                }
+            }
+        )});
+
         if (response.status === 200) {
             authReducer({
                 type: AuthActionType.REGISTER,
@@ -149,17 +159,8 @@ function AuthContextProvider(props) {
                 }
             });
             // a registered user is automatically logged in
-            history.push('/profile');
+            history('/profile');
         }
-        if (response.status === 401) {
-            authReducer({
-                type: AuthActionType.ERROR_MESSAGE,
-                payload: {
-                    errorMessage: response.data.errorMessage
-                }
-            });
-        }
-
     }
     // changing password should logout user (this can be done on the backend OR just calling logout here)
     // in the backend, there is a functionality where it re-logins the user. If the feature is changed, then make sure to change that too
@@ -172,7 +173,7 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
-            history.push('/');
+            history('/');
         }
     }
     auth.deleteAccount = async (password) => {
@@ -182,8 +183,16 @@ function AuthContextProvider(props) {
                 type: AuthActionType.DELETE_ACCOUNT,
                 payload: null
             });
-            history.push('/');
+            history('/');
         }
+    }
+    auth.setErrorMessage = (errorMessage) => {
+        authReducer({
+            type: AuthActionType.ERROR_MESSAGE,
+            payload: {
+                errorMessage: errorMessage
+            }
+        });
     }
 
     return (

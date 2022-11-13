@@ -18,7 +18,7 @@ const LoginScreen = () => {
     },
     {
       label: "Password",
-      type: "text",
+      type: "password",
       name: "password",
     },
   ];
@@ -28,6 +28,12 @@ const LoginScreen = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+
+    if(values.username === "" || values.password === "") {
+      auth.setErrorMessage("All fields are required");
+      return;
+    }
+
     const username = values.username;
     const password = values.password;
     auth.login(username, password);
