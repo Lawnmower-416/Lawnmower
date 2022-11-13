@@ -1,23 +1,31 @@
-import axios from "axios";
+// const AuthRequest = require('../requests/auth-request');
+// const axios = require('axios');
+// const { baseAPI } = require('../requests');
+import {authRequest} from './__mocks__/auth-request-test';
 
-jest.mock('axios');
+// jest.mock('axios');
+// jest.mock('../__mocks__/auth-request-test');
 
-const baseURL = 'https://ec2-3-89-194-170.compute-1.amazonaws.com:3000';
-const sampleUser = { firstName: "JohnTest", lastName: "Test", username: "jdoe123", email: "t@t.com", password: "test11234", passwordVerify: "test1234" };
-
-const createUser = async (data) => {
-    const url = `${baseURL}/auth/register`;
-    return await axios.post(url, data);
-}
+const sampleUser = { firstName: "JohnTest", lastName: "Test", username: "jdoe123", email: "t@t.com", password: "test1234", passwordVerify: "test1234" };
 
 describe("User Testing", () => {
-    it("Creates User Successfully", async () => {
-        // const result = await axios.post(`${baseURL}/auth/register`, sampleUser);
-        axios.post.mockImplementationOnce(sampleUser);
+    it("register | SUCCESS", async () => {
+        // axios.post.mockResolvedValue('Promise').mockResolvedValueOnce({
+        //     success: true,
+        //     firstName: "JohnTest",
+        //     lastName: "Test",
+        //     username: "jdoe123",
+        //     email: "t@t.com",
+        //     password: "test1234",
+        //     passwordHash: "someHashedtest1234"
+        // });
 
-        const result = await createUser(sampleUser);
-        
-        expect(axios.post).toHaveBeenCalledWith(`${baseURL}/auth/register`, sampleUser);
-        expect(result).toEqual(users);
+        // jest.spyon(axios, axios.post);
+        // const user = await axios.post(`${baseAPI}/auth/register`, sampleUser.firstName, sampleUser.lastName, sampleUser.username, sampleUser.email, sampleUser.password, sampleUser.passwordVerify);
+        // expect(user).toHaveProperty("success", true);
+        // expect(axios.post).toHaveBeenCalledTimes(1);
+
+        expect.assertions(1);
+        return expect(authRequest('/auth/register/', sampleUser).resolves.toContain("success", true));
     });
 });
