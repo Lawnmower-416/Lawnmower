@@ -59,7 +59,8 @@ const PasswordChange = () => {
     auth.changePassword(values.email, values.newpassword, values.verifypassword);
   }
 
-  console.log(values);
+  // console.log(values);
+  const credentialError = <div className="absolute text-red font-inter font-bold">{auth.errorMessage}</div>;
   return (
     <div>
       <Header/>
@@ -72,6 +73,9 @@ const PasswordChange = () => {
           <img src="./contactus.png" alt="#" className="w-96 lg:w-full" />
         </div>
         <div className=" max-w-lg w-full">
+        {
+          credentialError
+        }
           {inputs.map((el, i) => (
             <Input {...el} key={i} value={values["size"]} onChange={onChange} />
           ))}
