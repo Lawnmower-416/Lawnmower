@@ -105,7 +105,11 @@ export default function ItemCard(props) {
                     </div>
                 {/* Column 3: Map/Tileset Name, Author, Creation Date */}
                     <div className="flex flex-col flex-grow order-3 align-middle p-2">
-                        <Link className="text-3xl font-bold" to={(props.map ? "/mapEditor" : "/tilesetEditor")}>{title}</Link>
+                        <Link className="text-3xl font-bold" to={(props.map ? "/mapEditor/"+currentData._id : "/tilesetEditor/"+currentData._id)}>{
+                        
+                        title
+                        
+                        }</Link>
                             <Menu as="div" className="relative">
                                 <Menu.Button>
                                     <p className="text-xl text-left">By: {owner}</p>

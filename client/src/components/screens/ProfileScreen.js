@@ -6,6 +6,7 @@ import ItemCard from "./../ItemCard";
 import Header from "./Header";
 import { useLocation } from "react-router-dom";
 import AuthContext from "../../auth";
+import { useNavigate } from "react-router-dom";
 
 import ModalEight from "../modals/CreateMapModal/CreateMap";
 import CreateTilesetModal from "../modals/CreateTilesetModal";
@@ -15,6 +16,7 @@ import GlobalStoreContext from "../../store";
 // import {UserCircleIcon} from "@heroicons/react/24/outline";
 
 export default function Profile() {
+
     const location = useLocation();
     const contentBefore = location.state ? location.state.contentBefore : null;
     const { store } = useContext(GlobalStoreContext);
@@ -66,9 +68,9 @@ export default function Profile() {
                         .toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'})
                 );
                 setPoints(user.points);
-
                 await store.loadUserMaps();
                 userMaps = store.userMaps;
+                
             }
         }
         fetchData();
@@ -108,8 +110,6 @@ export default function Profile() {
             setEditing((prev) => "");
         }
     };
-
-    console.log(userMaps)
 
     return (
         <>
