@@ -73,9 +73,9 @@ const PasswordChange = () => {
           <img src="./contactus.png" alt="#" className="w-96 lg:w-full" />
         </div>
         <div className=" max-w-lg w-full">
-        {
-          credentialError
-        }
+          {
+            credentialError
+          }
           {inputs.map((el, i) => (
             <Input {...el} key={i} value={values["size"]} onChange={onChange} />
           ))}

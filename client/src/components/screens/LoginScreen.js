@@ -39,7 +39,7 @@ const LoginScreen = () => {
     auth.login(username, password);
   };
 
-  const credentialError = <div className="absolute text-red font-inter font-bold">{auth.errorMessage}</div>;    
+  const credentialError = <div className="absolute text-red font-inter font-bold">{auth.errorMessage}</div>;
 
   return (
     <div>
