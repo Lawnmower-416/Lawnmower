@@ -41,12 +41,9 @@ function GlobalStoreContextProvider(props) {
     const history = useNavigate();
 
     const storeReducer = (action) => {
-        console.log("reducer called", action.type);
         const { type, payload } = action;
         switch (type) {
             case GlobalStoreActionType.LOAD_USER_MAPS: {
-                console.log("OLD MAPS", store.userMaps);
-                console.log("NEW MAPS", payload.userMaps);
                 return setStore({
                     userMaps: payload.userMaps,
                     userTilesets: store.userTilesets,
@@ -240,7 +237,7 @@ function GlobalStoreContextProvider(props) {
 
             if (mapPromises.length > 0) {
                 Promise.all(mapPromises).then((maps) => {
-                    let returnMaps = new Array();
+                    let returnMaps = [];
 
                     for (let i = 0; i < maps.length; i++) {
                         returnMaps.push(maps[i].data.map);
@@ -459,20 +456,14 @@ function GlobalStoreContextProvider(props) {
 
     // delete a map
     store.deleteMap = async function (mapId) {
-        console.log("INSIDE STORE FUNCTION")
         try {
             let response = await api.deleteMap(mapId)
             // a user can only delete their maps in their profile page
             // refresh only the user's maps
             // community maps will be refreshed the next time the community page is opened
             if (response.data.success) {
-                let newUserMaps = store.userMaps.filter(map => map._id !== mapId)
-                storeReducer({
-                    type: GlobalStoreActionType.LOAD_USER_MAPS,
-                    payload: {
-                        userMaps: newUserMaps
-                    }
-                })
+                auth.user.maps = auth.user.maps.filter(map => map !== mapId)
+                store.loadUserMaps();
             }
         } catch (error) {
             console.log("Error deleting map: ", error)
@@ -631,13 +622,8 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 // open map editor with newly created map
                 // handle it differently for now by refreshing user's maps
-                storeReducer({
-                    type: GlobalStoreActionType.CREATE_NEW_MAP,
-                    payload: {
-                        userMaps: response.data.maps,
-                        currentMapEditing: response.data.map
-                    }
-                })
+                auth.user.maps.push(response.data.map._id)
+                store.loadUserMaps()
                 history("/mapEditor/" + response.data.map._id)
                 
             }
