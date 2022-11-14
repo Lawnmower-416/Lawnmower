@@ -5,6 +5,7 @@ const ObjectId = Schema.Types.ObjectId;
 const MapSchema = new Schema(
     {
         owner: { type: ObjectId, ref: 'User', required: true },
+        ownerUsername: { type: String, required: true },
         title: { type: String, required: true },
         creationDate: { type: String },
         tags: { type: [{type: ObjectId, ref: 'Tag'}] },

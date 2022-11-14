@@ -1,7 +1,23 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
+import AuthContext from "../../auth"
 
 export default function DeleteAccount({setModalOpen, modalOpen}) {
     const [openModal, closeModal] = useState(false);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const {auth} = useContext(AuthContext);
+
+    const handleUsernameText = (e) => {
+        setUsername(e.target.value);
+    }
+    const handlePasswordText = (e) => {
+        setPassword(e.target.value);
+    }
+
+    const handleDeleteAccount = () => {
+        setModalOpen(false)
+        auth.deleteAccount(username, password);
+    }
 
     return (
         <div className="fixed insert-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
@@ -18,13 +34,17 @@ export default function DeleteAccount({setModalOpen, modalOpen}) {
 
                     <div className="flex justify-center pt-2">
                         <form className="w-4/6">
-                            <label for="username" className="text-lg text-white float-left">Verify Your Username</label>
+                            <label htmlFor="username" className="text-lg text-white float-left">Verify Your Username</label>
                             <input type="username" id="username" required
-                                className="align-middle w-full text-black text-md rounded-lg block p-2.5 bg-white "/>
+                                className="align-middle w-full text-black text-md rounded-lg block p-2.5 bg-white "
+                                onChange={handleUsernameText}
+                                />
                                     
-                            <label for="username" className="text-lg text-white float-left pt-2">Verify Your Password</label>
+                            <label htmlFor="username" className="text-lg text-white float-left pt-2">Verify Your Password</label>
                             <input type="username" id="username" required
-                                className="align-middle w-full text-black text-md rounded-lg block p-2.5 bg-white"/>
+                                className="align-middle w-full text-black text-md rounded-lg block p-2.5 bg-white"
+                                onChange={handlePasswordText}
+                                />
                         </form>
                     </div>
 
@@ -33,7 +53,7 @@ export default function DeleteAccount({setModalOpen, modalOpen}) {
 
                     <div className="items-center pt-5 flex justify-center">
                         <button className="p-2 bg-dark-green text-red
-                                    text-base font-medium rounded-lg w-1/3 hover:bg-black" onClick={() => setModalOpen(false)} >
+                                    text-base font-medium rounded-lg w-1/3 hover:bg-black" onClick={handleDeleteAccount} >
                                 Delete Account
                         </button>
                         <span className="w-1/6"></span>

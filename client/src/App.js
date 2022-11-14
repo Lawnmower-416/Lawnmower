@@ -16,6 +16,7 @@ import CommunityScreen from './components/screens/CommunityScreen';
 import PasswordChange from './components/screens/PasswordChange';
 import MapEditor from './components/screens/MapEditor';
 import TilesetEditor from './components/screens/TilesetEditor';
+import ExpandedCommunityScreen from './components/screens/ExpandedCommunityScreen';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
               <Route path="/tilesetEditor/:tilesetId" exact element={<TilesetEditor/>} />
               <Route path="/community" exact element={<CommunityScreen/>} />
               <Route path="/change-password" exact element={<PasswordChange/>} />
+              <Route path="/expandedcommunity" exact element={<ExpandedCommunity/>} />
             </Routes>
 
           </EditorContextProvider>

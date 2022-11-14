@@ -1,8 +1,9 @@
 import { baseAPI as api } from ".";
 
-export const createMap = (owner, title, height, width, tileSize) => {
+export const createMap = (owner, ownerUsername, title, height, width, tileSize) => {
     return api.post(`/map/`, {
         owner: owner,
+        ownerUsername: ownerUsername,
         title: title,
         height: height,
         width: width,
@@ -28,9 +29,10 @@ export const updateMapGeneral = (mapId, map) => {
     });
 }
 
-export const createTileset = (owner, title, tileSize) => {
+export const createTileset = (owner, ownerUsername, title, tileSize) => {
     return api.post(`/tileset/`, {
         owner : owner,
+        ownerUsername: ownerUsername,
         title : title,
         tileSize : tileSize
     }, {withCredentials: true});

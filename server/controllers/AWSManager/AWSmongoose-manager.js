@@ -89,13 +89,14 @@ createTileset = async (body, userId) => {
         const tileSize = newTileset.tileSize;
         const canvas = createCanvas(tileSize, tileSize);
         const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = '#ff0000';
         ctx.fillRect(0, 0, tileSize, tileSize);
         const tile = ctx.getImageData(0, 0, tileSize, tileSize);
 
-        updatedTileset.imageHeight = tileSize;
-        updatedTileset.imageWidth = tileSize;
-        await uploadData(tile, userId, updatedTileset._id, false);
+        const tileData = {
+            tiles:[tile]
+        }
+        await uploadData(tileData, userId, updatedTileset._id, false);
 
         return await updatedTileset.save().catch(err => {
             return null;

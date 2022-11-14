@@ -1,17 +1,17 @@
 import React from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
-import NavBar from '../components/NavBar'
-import PostBody from '../components/PostBody'
-import PostComments from '../components/PostComments'
-import { socket } from '../config/SocketIO'
+import NavBar from '../NavBar'
+import PostBody from '../PostBody'
+import PostComments from '../PostComments'
+import { socket } from '../../config/socket'
 
 export default function Home() {
-
+  
   const [currentPost, setCurrentPost] = useState(null)
   const [userName, setUserName] = useState(null);
-
-
+  
+  
   useEffect(() => {
     socket.on('updated_post', data => {
       console.log('updated_post: ', data)

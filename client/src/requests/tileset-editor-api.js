@@ -20,9 +20,14 @@ export const getTilesetImage = (tilesetId) => {
     return baseAPI.get(`/editor/tileset/${tilesetId}/image`, {withCredentials: true})
 }
 
+export const uploadTilesetImage = (tilesetId, stringImage) => {
+    return baseAPI.put(`/editor/tileset/${tilesetId}/image`, {tilesetImage: stringImage}, {withCredentials: true})
+}
+
 const apis = {
     getTileset,
     placeColor,
     changeSettings,
-    exportVersion
+    exportVersion,
+    uploadTilesetImage
 }

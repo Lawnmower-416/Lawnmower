@@ -256,7 +256,7 @@ changePassword = async (req, res) => {
             },
             auth: {
                 user: 'lawnmower416@outlook.com',
-                pass: 'Editor416'
+                pass: process.env.EMAIL_PASSWORD
             }
         });
         let isError = false;
@@ -343,26 +343,36 @@ verifyUserPassword = async (req, res) => {
 
 deleteAccount = async (req, res, next) => {
     try {
-        const userId = auth.verifyUser(req);
-        if (!userId) {
-            return res.status(200).json({
-                success: false,
-                errorMessage: "You must be logged in to delete your account."
-            })
-        }
+        const deleteUsername = req.body.username;
+        const deletePassword = req.body.password;
 
-        const existingUser = await User.findOne({ _id: userId });
+        const existingUser = await User.findOne({ username: deleteUsername });
         if (!existingUser) {
             return res
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "Could not find account to delete."
+                    errorMessage: "Invalid Credentials."
                 })
         }
 
-        const deletedUser = await User.findOneAndDelete({ _id: userId });
+        //check password
+        const passwordCorrect = await bcrypt.compare(
+            deletePassword,
+            existingUser.passwordHash
+        );
+        if (!passwordCorrect) {
+            return res
+                .status(401)
+                .json({
+                    success: false,
+                    errorMessage: "Invalid Credentials"
+                })
+        }
 
+        const deletedUser = await User.findOneAndDelete({ _id: existingUser._id });
+
+        //also logs out user
         await res.cookie("token", "", {
             httpOnly: false,
             expires: new Date(0),
@@ -370,12 +380,13 @@ deleteAccount = async (req, res, next) => {
             samesite: "lax"
         }).status(200).json({
             success: true,
-            user: deletedUser
+            user: deletedUser,
+            message: "Account Deleted and logged out!"
         });
         next();
     } catch (err) {
         console.error(err);
-        res.status(500).json({"success": false, "errorMessage":  "Something went wrong"});
+        res.status(500).json({"success": false, errorMessage: "Something went wrong"});
     }
 }
 

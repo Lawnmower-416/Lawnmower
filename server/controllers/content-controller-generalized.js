@@ -2,9 +2,9 @@ const databaseManager= require('../controllers/AWSManager/AWSmongoose-manager');
 // this controller is generalized to work with any db
 
 function createMap(req, res) {
-    const {owner, title, height, width, tileSize} = req.body;
-    const body = {owner, title, height, width, tileSize};
-    if (!owner || !title || !height || !width || !tileSize) {
+    const {owner, ownerUsername, title, height, width, tileSize} = req.body;
+    const body = {owner, ownerUsername, title, height, width, tileSize};
+    if (!owner || !ownerUsername || !title || !height || !width || !tileSize) {
         return res.status(400).json({
             success: false,
             errorMessage: 'Improperly formatted request'
@@ -98,9 +98,9 @@ function updateMapGeneral(req, res) {
 }
 
 function createTileset(req, res) {
-    const {owner, title, tileSize} = req.body;
-    const body = {owner, title, tileSize};
-    if (!owner || !title || !tileSize) {
+    const {owner, ownerUsername,  title, tileSize} = req.body;
+    const body = {owner, ownerUsername, title, tileSize};
+    if (!owner || !ownerUsername || !title || !tileSize) {
         return res.status(400).json({
             success: false,
             errorMessage: 'Improperly formatted request'
