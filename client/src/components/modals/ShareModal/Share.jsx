@@ -1,28 +1,40 @@
-import React, { useRef, useState } from "react";
+import React, {useContext, useRef, useState} from "react";
 import avatar from "./avatar.png";
 
 import user_add from "./add-user.svg";
 import downArrow from "./down-arrow.png";
 import user from "./user.png";
+import AuthContext from "../../../auth";
+import EditorContext from "../../../editor";
 
-const ModalOne = ({ modalOpen, setModalOpen }) => {
-	const [status, setStatus] = useState("private");
-	const ref = useRef();
+const ShareModal = ({ modalOpen, setModalOpen }) => {
+	const { auth } = useContext(AuthContext);
+	const { store } = useContext(EditorContext);
+
+	const [isPublic, setVisibility] = useState(store.tileset.visible);
 	const [copy, setCopy] = useState(false);
+
+	const link = "http://34.193.24.27//tilesetEditor/" + store.tileset._id;
 
 	const handleCopy = () => {
 		setCopy(true);
-		navigator.clipboard.writeText(ref.current.value);
+		navigator.clipboard.writeText(link);
 		setTimeout(() => {
 			setCopy(false);
 		}, 1500);
 	};
+
+	const handleSubmit = () => {
+		store.setTilesetVisiblity(isPublic);
+		setModalOpen(false);
+	}
+
 	return (
 		<>
 			<div
-				className={`modal fixed z-50 inset-0 overflow-y-auto duration-100 ${
-					modalOpen ? "active" : ""
-				}`}
+				className={
+					`modal fixed z-50 inset-0 overflow-y-auto duration-100 ${modalOpen ? "active" : ""}`
+				}
 			>
 				<div className="min-h-full flex justify-center items-center relative py-12 px-4 sm:px-10">
 					<div
@@ -34,13 +46,21 @@ const ModalOne = ({ modalOpen, setModalOpen }) => {
 						<div className="flex items-center flex-wrap gap-3">
 							<div className="text-[24px] font-semibold">Status : </div>
 							<button
-								className={`rounded-lg py-2 sm:py-3 px-4 sm:px-6 text-white cursor-pointer duration-300 bg-dark-green`}
+								className={
+									`rounded-lg py-2 sm:py-3 px-4 sm:px-6 text-white cursor-pointer duration-300 
+									${isPublic ? "bg-dark-green" : "bg-purple"}`
+								}
+								onClick={() => setVisibility(false)}
 							>
 								Private
 							</button>
 
 							<button
-								className={`rounded-lg py-2 sm:py-3 px-4 sm:px-6 text-white cursor-pointer duration-300 bg-purple`}
+								className={
+									`rounded-lg py-2 sm:py-3 px-4 sm:px-6 text-white cursor-pointer duration-300
+									${isPublic ? "bg-purple" : "bg-dark-green"}`
+								}
+								onClick={() => setVisibility(true)}
 							>
 								Public
 							</button>
@@ -52,10 +72,9 @@ const ModalOne = ({ modalOpen, setModalOpen }) => {
 							</div>
 							<div className="flex gap-1 flex-grow">
 								<input
-									ref={ref}
 									type="text"
 									readOnly
-									value="https://www.url.com/ma.."
+									value={link}
 									className="h-[42px] px-3 rounded-lg bg-dark-green text-white focus:text-white border-none outline-none w-0 flex-grow"
 								/>
 								<button
@@ -77,13 +96,14 @@ const ModalOne = ({ modalOpen, setModalOpen }) => {
 								<div className="flex items-center">
 									<img className="w-7 mr-1" src={avatar} alt="" />
 									<h5 className="text-[18px] font-medium text-white">
-										John Doe
+										{auth.user.username}
 									</h5>
 								</div>
 								<h5 className="text-[18px] font-medium text-white">
 									Owner
 								</h5>
 							</div>
+							{/*
 							<div className="flex justify-between items-center p-1 px-2 border border-white rounded-md">
 								<div className="flex items-center">
 									<img className="w-7 mr-1" src={avatar} alt="" />
@@ -144,10 +164,10 @@ const ModalOne = ({ modalOpen, setModalOpen }) => {
 									/>
 								</h5>
 							</div>
+							*/}
 						</div>
 						<div className="flex gap-2 flex-grow mt-3">
 							<input
-								ref={ref}
 								type="text"
 								placeholder="Add People by Username"
 								className="h-[42px] px-3 rounded-[6px] white-shade text-black focus:text-black border-none outline-none w-0 flex-grow"
@@ -166,6 +186,7 @@ const ModalOne = ({ modalOpen, setModalOpen }) => {
 							<button
 								type="button"
 								className="py-[5px] px-4 font-medium text-white text-[20px] group rounded bg-dark-green mt-10"
+								onClick={handleSubmit}
 							>
 								Done
 							</button>
@@ -177,4 +198,4 @@ const ModalOne = ({ modalOpen, setModalOpen }) => {
 	);
 };
 
-export default ModalOne;
+export default ShareModal;

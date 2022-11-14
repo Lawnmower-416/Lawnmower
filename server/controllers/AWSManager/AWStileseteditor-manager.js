@@ -13,8 +13,8 @@ module.exports.getTilesetsForMapById = async (mapId) => {
     return tilesetList;
 }
 
-module.exports.updateTileset = async (tilesetId , tilesetToUpdate) => {
-    return await Tileset.findOneAndUpdate({ _id: tilesetId}, tilesetToUpdate, {new: true});
+module.exports.updateTileset = (tilesetId , tilesetToUpdate) => {
+    return Tileset.findOneAndUpdate({_id: tilesetId}, tilesetToUpdate, {new: true});
 }
 
 module.exports.getTilesetImage = async (tilesetId) => {

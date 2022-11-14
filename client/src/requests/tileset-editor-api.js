@@ -4,6 +4,10 @@ export const getTileset = (tilesetId) => {
     return baseAPI.get(`/editor/tileset/${tilesetId}`)
 }
 
+export const updateTileset = (tilesetId, tileset) => {
+    return baseAPI.put(`/editor/tileset/${tilesetId}`, {tileset}, {withCredentials: true})
+}
+
 export const placeColor = (tilesetId, color, positions) => {
         return baseAPI.put(`/editor/color/tileset/${tilesetId}/place`, positions)
 }
@@ -26,6 +30,7 @@ export const uploadTilesetImage = (tilesetId, stringImage) => {
 
 const apis = {
     getTileset,
+    updateTileset,
     placeColor,
     changeSettings,
     exportVersion,
