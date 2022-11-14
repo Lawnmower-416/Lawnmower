@@ -13,6 +13,8 @@ const UserSchema = new Schema(
         maps: [{ type: ObjectId, ref: 'Map' }],
         tilesets: [{ type: ObjectId, ref: 'Tileset' }],
         comments: [{ type: ObjectId, ref: 'Comment' }],
+        key: { type: String },
+        changingPassword: { type: String, default: "" }
     },
     { timestamps: true }
 );
