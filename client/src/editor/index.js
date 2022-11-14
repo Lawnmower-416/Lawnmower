@@ -4,6 +4,7 @@ import tilesetApi, {getTilesetImage, uploadTilesetImage} from "../../src/request
 import { useAuth } from "../auth"
 import AuthContext from '../auth';
 import {getTilesetById} from "../requests/store-request";
+import jsTPS from "../transactions/jsTPS";
 
 
 export const EditorContext = createContext();
@@ -49,6 +50,8 @@ export const EditorTool = {
     REGION: "REGION",
 }
 
+const tps = new jsTPS();
+
 function EditorContextProvider(props) {
     const [ store, setStore ] = useState({
         map: null,
@@ -84,7 +87,7 @@ function EditorContextProvider(props) {
                 setStore({
                     ...store,
                     currentTool: payload.tool,
-                    selectedPixels: payload.selectedPixels ? payload.selectedPixels : [],
+                    selectedPixels: payload.selectedPixels || [],
                 });
                 break;
 
@@ -159,6 +162,13 @@ function EditorContextProvider(props) {
                 });
                 break;
 
+            case EditorActionType.ADD_TRANSACTION:
+                setStore({
+                    ...store,
+                    transactionStack: [payload.transaction, ...store.transactionStack],
+                });
+                break;
+
             default:
                 console.error("Unknown action type: " + type);
                 break;
@@ -216,16 +226,21 @@ function EditorContextProvider(props) {
     }
     // adds a new transaction to the stack
     store.addTransaction = (transaction) => {
-    
+        tps.addTransaction(transaction);
     }
     // processes an undo for the last transaction
     store.processUndo = () => {
-
+        tps.undoTransaction();
     }
     // processes a redo for the last transaction
     store.processRedo = () => {
-
+        tps.doTransaction();
     }
+
+    store.clearTransactions = () => {
+        tps.clearAllTransactions();
+    }
+
     // unselects all selected tiles
     store.unselectAll = () => {
 

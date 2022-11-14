@@ -6,16 +6,6 @@ function TileSidebar({ tiles }) {
 
     const { store } = useContext(EditorContext);
 
-    const setCurrentTile = (tile) => {
-        //store.setCurrentTile(tile);
-    }
-
-    const addTile = () => {
-        store.addTile();
-    }
-
-
-
     return (
         <div className="bg-editor-primary h-screen w-64">
             <div className="flex flex-col h-full">
@@ -39,7 +29,7 @@ function TileSidebar({ tiles }) {
                         <div className="flex justify-center">
                              <PlusCircleIcon
                                  className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer"
-                                 onClick={addTile}
+                                 onClick={() => store.addTile()}
                              />
                         </div>
                         </div>
@@ -57,6 +47,7 @@ function Tile({ tile, index }) {
 
     const setCurrentTile = () => {
         store.setCurrentTile(index);
+        store.clearTransactions();
     }
 
     useEffect(() => {
