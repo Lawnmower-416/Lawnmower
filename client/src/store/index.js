@@ -646,7 +646,8 @@ function GlobalStoreContextProvider(props) {
     store.createNewMap = async (title, height, width, tileSize) => {
         try {
             let owner = auth.user
-            let response = await api.createMap(owner, title, height, width, tileSize);
+            let ownerUsername = auth.user.username
+            let response = await api.createMap(owner, ownerUsername, title, height, width, tileSize);
             if (response.data.success) {
                 // open map editor with newly created map
                 // handle it differently for now by refreshing user's maps
@@ -663,7 +664,8 @@ function GlobalStoreContextProvider(props) {
     store.createNewTileset = async (title, tileSize) => {
         try {
             let owner = auth.user
-            let response = await api.createTileset(owner, title, tileSize);
+            let ownerUsername = auth.user.username
+            let response = await api.createTileset(owner, ownerUsername, title, tileSize);
             if (response.data.success) {
                 // open tileset editor with newly created tileset
                 // handle it differently for now by refreshing user's tilesets

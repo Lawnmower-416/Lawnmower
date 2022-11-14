@@ -5,6 +5,7 @@ const ObjectID = Schema.Types.ObjectId;
 const TilesetSchema = new Schema(
     {
         owner: { type: ObjectID, ref: 'User', required: true },
+        ownerUsername: { type: String, required: true },
         title: { type: String, required: true },
         tileSize: { type: Number , required: true },
         tags: { type: ObjectID, ref: 'Tag' },
