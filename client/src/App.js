@@ -38,6 +38,11 @@ function App() {
               <Route path="/community" exact element={<CommunityScreen/>} />
               <Route path="/change-password" exact element={<PasswordChange/>} />
               <Route path="/expandedcommunity" exact element={<ExpandedCommunityScreen/>} />
+              <Route path="*" element={
+              <div>
+                <Headers />
+                <h1>Error...</h1>
+              </div>} />
             </Routes>
 
           </EditorContextProvider>
