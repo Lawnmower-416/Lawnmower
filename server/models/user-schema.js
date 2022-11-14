@@ -6,7 +6,7 @@ const UserSchema = new Schema(
     {
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },
-        username: { type: String },
+        username: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         passwordHash: { type: String, required: true },
         joinDate: { type: Date, default: Date.now },

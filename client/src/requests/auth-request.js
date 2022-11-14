@@ -34,16 +34,12 @@ export const changePassword = (email, password, passwordVerify) => {
     })
 }
 // This should be modified to check input username and password before deleting
-export const deleteAccount = () => baseAPI.delete(`/auth/deleteAccount/`)
-
-/* Modified version. Front end and backend functions should be changed to fit this way
 export const deleteAccount = (username, password) => {
-    return api.delete(`/deleteAccount/`, {
+    return baseAPI.put(`/auth/deleteAccount/`, {
         username : username,
         password : password
-    })
+    }, {withCredentials: true});
 }
-*/
 
 export const MapVerify = (mapId) => baseAPI.get(`/map/${mapId}/verify/`);
 

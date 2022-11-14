@@ -190,16 +190,29 @@ function AuthContextProvider(props) {
             history('/');
         }
     }
-    auth.deleteAccount = async (password) => {
-        const response = await api.deleteAccount(password);
-        if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.DELETE_ACCOUNT,
-                payload: null
-            });
-            history('/');
+    auth.deleteAccount = async (username, password) => {
+        try {
+        
+            const response = await api.deleteAccount(username, password)
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.DELETE_ACCOUNT,
+                    payload: null
+                });
+                history('/');
+            } else {
+                authReducer({
+                    type: AuthActionType.ERROR_MESSAGE,
+                    payload: {
+                        errorMessage: response.data.errorMessage
+                    }
+                });
+            }
+        } catch (error) {
+            console.log('error with delete account');
         }
     }
+
     auth.setErrorMessage = (errorMessage) => {
         authReducer({
             type: AuthActionType.ERROR_MESSAGE,
