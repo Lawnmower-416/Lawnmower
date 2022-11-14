@@ -131,7 +131,7 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.ERROR_MESSAGE,
                 payload: {
-                    errorMessage: error.response.data.errorMessage
+                    errorMessage: error
                 }
             }
         )});
@@ -162,7 +162,7 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.ERROR_MESSAGE,
                 payload: {
-                    errorMessage: error.response.data.errorMessage
+                    errorMessage: error
                 }
             }
         )});
