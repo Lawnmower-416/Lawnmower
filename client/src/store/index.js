@@ -15,8 +15,6 @@ export const GlobalStoreActionType = {
     LOAD_PUBLIC_MAPS: "LOAD_PUBLIC_MAPS",
     LOAD_PUBLIC_TILESETS: "LOAD_PUBLIC_TILESETS",
     LOAD_COMMENTS: "LOAD_COMMENTS",
-    SORT_PUBLIC_MAPS: "SORT_PUBLIC_MAPS",
-    SORT_PUBLIC_TILESETS: "SORT_PUBLIC_TILESETS",
     CREATE_NEW_MAP: "CREATE_NEW_MAP",
     CREATE_NEW_TILESET: "CREATE_NEW",
     EDITING_MAP: "EDITING_MAP",
@@ -32,8 +30,6 @@ function GlobalStoreContextProvider(props) {
         publicMaps: [],
         publicTilesets: [],
         comments: [],
-        shownPublicMaps: [],
-        shownPublicTilesets: [],
         currentMapEditing: null,
         currentTilesetEditing: null,
         currentContentCommentsExpanded: null,
@@ -56,8 +52,6 @@ function GlobalStoreContextProvider(props) {
                     publicMaps: store.publicMaps,
                     publicTilesets: store.publicTilesets,
                     comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
                     currentMapEditing: store.currentMapEditing,
                     currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
@@ -70,8 +64,6 @@ function GlobalStoreContextProvider(props) {
                     publicMaps: payload.publicMaps,
                     publicTilesets: payload.publicTilesets,
                     comments: store.comments,
-                    shownPublicMaps: payload.publicMaps,
-                    shownPublicTilesets: payload.publicTilesets,
                     currentMapEditing: store.currentMapEditing,
                     currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
@@ -84,8 +76,6 @@ function GlobalStoreContextProvider(props) {
                     publicMaps: payload.publicMaps,
                     publicTilesets: store.publicTilesets,
                     comments: store.comments,
-                    shownPublicMaps: payload.publicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
                     currentMapEditing: store.currentMapEditing,
                     currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
@@ -99,8 +89,6 @@ function GlobalStoreContextProvider(props) {
                     publicMaps: store.publicMaps,
                     publicTilesets: payload.publicTilesets,
                     comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: payload.publicTilesets,
                     currentMapEditing: store.currentMapEditing,
                     currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
@@ -114,38 +102,6 @@ function GlobalStoreContextProvider(props) {
                     publicMaps: store.publicMaps,
                     publicTilesets: store.publicTilesets,
                     comments: payload.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
-                    currentMapEditing: store.currentMapEditing,
-                    currentTilesetEditing: store.currentTilesetEditing,
-                    currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                });
-            }
-            case GlobalStoreActionType.SORT_PUBLIC_MAPS: {
-                return setStore({
-                    userMaps: store.userMaps,
-                    userTilesets: store.userTilesets,
-                    userComments: store.userComments,
-                    publicMaps: store.publicMaps,
-                    publicTilesets: store.publicTilesets,
-                    comments: store.comments,
-                    shownPublicMaps: payload.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
-                    currentMapEditing: store.currentMapEditing,
-                    currentTilesetEditing: store.currentTilesetEditing,
-                    currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                });
-            }
-            case GlobalStoreActionType.SORT_PUBLIC_TILESETS: {
-                return setStore({
-                    userMaps: store.userMaps,
-                    userTilesets: store.userTilesets,
-                    userComments: store.userComments,
-                    publicMaps: store.publicMaps,
-                    publicTilesets: store.publicTilesets,
-                    comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: payload.shownPublicTilesets,
                     currentMapEditing: store.currentMapEditing,
                     currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
@@ -159,8 +115,6 @@ function GlobalStoreContextProvider(props) {
                     publicMaps: store.publicMaps,
                     publicTilesets: store.publicTilesets,
                     comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
                     currentMapEditing: payload.editingMap,
                     currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
@@ -174,8 +128,6 @@ function GlobalStoreContextProvider(props) {
                     publicMaps: store.publicMaps,
                     publicTilesets: store.publicTilesets,
                     comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
                     currentMapEditing: store.currentMapEditing,
                     currentTilesetEditing: payload.editingTileset,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
@@ -189,8 +141,6 @@ function GlobalStoreContextProvider(props) {
                     publicMaps: store.publicMaps,
                     publicTilesets: store.publicTilesets,
                     comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: payload.shownPublicTilesets,
                     currentMapEditing: store.currentMapEditing,
                     currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
@@ -204,8 +154,6 @@ function GlobalStoreContextProvider(props) {
                     publicMaps: store.publicMaps,
                     publicTilesets: store.publicTilesets,
                     comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
                     currentMapEditing: payload.currentMapEditing,
                     currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded
@@ -219,8 +167,6 @@ function GlobalStoreContextProvider(props) {
                     publicMaps: store.publicMaps,
                     publicTilesets: store.publicTilesets,
                     comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
                     currentMapEditing: store.currentMapEditing,
                     currentTilesetEditing: payload.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded
@@ -273,9 +219,10 @@ function GlobalStoreContextProvider(props) {
             console.log("Error loading content: ", error)
         }
     }
+    // gets every single PUBLIC content and puts then into store.publicMaps and store.publicTilesets
     store.loadPublicContent = async () => {
         try {
-            let allMaps = await api.getMaps();
+            let allMaps = await api.getMaps(); //only public maps
             let publicMaps = []
             for (let i = 0; i < allMaps.data.maps.length; i++) {
                 if (allMaps.data.maps[i].public) {
@@ -286,7 +233,7 @@ function GlobalStoreContextProvider(props) {
                 return (b.likedUsers.length - b.dislikedUsers.length) - (a.likedUsers.length - a.dislikedUsers.length);
             })
 
-            let allTilesets = await api.getTilesets();
+            let allTilesets = await api.getTilesets(); //only public tilesets
             let publicTilesets = []
             for (let i = 0; i < allTilesets.data.tilesets.length; i++) {
                 if (allTilesets.data.tilesets[i].public) {
@@ -307,87 +254,55 @@ function GlobalStoreContextProvider(props) {
             console.log("Error loading public content: ", error)
         }
     }
-
-
-
-    // load all public maps in community page
-    store.loadPublicMaps = async () => {
-        try {
-            let allMaps = await api.getMaps()
-            let publicMaps = []
-            for (let i = 0; i < allMaps.length; i++) {
-                if (allMaps[i].public) {
-                    publicMaps.push(allMaps[i])
-                }
-            }
-            // sort maps by most likes
-            let shownMaps = publicMaps.sort((a, b) => {
-                return b.likes.length - a.likes.length
-            })
-            storeReducer({
-                type: GlobalStoreActionType.LOAD_PUBLIC_MAPS,
-                payload: {
-                    publicMaps: publicMaps,
-                    shownPublicMaps: shownMaps
-                }
-            })
-        } catch (error) {
-            console.log("Error loading public maps: ", error)
-        }
-    }
-    // load all public tilesets in community page
-    store.loadPublicTilesets = async () => {
-       try {
-            let allTilesets = await api.getTilesets()
-            let publicTilesets = []
-            for (let i = 0; i < allTilesets.length; i++) {
-                if (allTilesets[i].public) {
-                    publicTilesets.push(allTilesets[i])
-                }
-            }
-            // sort tilesets by most likes
-            let shownTilesets = publicTilesets.sort((a, b) => {
-                return b.likes - a.likes
-            })
-            storeReducer({
-                type: GlobalStoreActionType.LOAD_PUBLIC_TILESETS,
-                payload: {
-                    publicTilesets: publicTilesets,
-                    shownPublicTilesets: shownTilesets
-                }
-            })
-        } catch (error) {
-            console.log("Error loading public tilesets: ", error)
-        }
-    }
     // sort the public maps by a certain criteria
-    store.sortPublicMaps = function (criteria) {
-        let publicMaps = store.shownPublicMaps
+    store.sortPublicContent = function (criteria) {
+        let publicMaps = store.publicMaps;
+        let publicTilesets = store.publicTilesets;
         // sort by Likes, Creator, Date Created, Comments, Views, Tags (secondary sort by likes)
         switch (criteria) {
-            case "Likes":
+            case "Likes": //default
+                console.log("sorting by likes");
                 publicMaps.sort((a, b) => {
-                    return b.likes.length - a.likes.length
+                    return (b.likedUsers.length - b.dislikedUsers.length) - (a.likedUsers.length - a.dislikedUsers.length);
+                })
+                publicTilesets.sort((a, b) => {
+                    return (b.likedUsers.length - b.dislikedUsers.length) - (a.likedUsers.length - a.dislikedUsers.length);
                 })
                 break
             case "Creator":
+                console.log("sorting by creator");
                 publicMaps.sort((a, b) => {
-                    return a.creator.username.localeCompare(b.creator.username)
+                    return a.ownerUsername.localeCompare(b.ownerUsername)
+                })
+                publicTilesets.sort((a, b) => {
+                    return a.ownerUsername.localeCompare(b.ownerUsername)
                 })
                 break
             case "Date Created":
+                console.log("sorting by date created");
                 publicMaps.sort((a, b) => {
+                    return new Date(b.createdAt) - new Date(a.createdAt)
+                })
+                publicTilesets.sort((a, b) => {
                     return new Date(b.createdAt) - new Date(a.createdAt)
                 })
                 break
             case "Comments":
+                console.log("sorting by number of comments");
                 publicMaps.sort((a, b) => {
+                    return b.comments.length - a.comments.length
+                })
+                publicTilesets.sort((a, b) => {
                     return b.comments.length - a.comments.length
                 })
                 break
             case "Views":
+                console.log("sorting by number of views");
                 publicMaps.sort((a, b) => {
-                    return b.views - a.views
+                    return b.viewers.length - a.viewers.length
+                })
+                publicTilesets.sort((a, b) => {
+                    return b.viewers.length - a.viewers.length
                 })
                 break
         }
@@ -409,48 +324,6 @@ function GlobalStoreContextProvider(props) {
                 }
                 return bTagCount - aTagCount
             })
-        }
-        storeReducer({
-            type: GlobalStoreActionType.SORT_PUBLIC_MAPS,
-            payload: {
-                shownPublicMaps: publicMaps
-            }
-        })
-    }
-    // sort the public tilesets by a certain criteria
-    store.sortPublicTilesets = function (criteria) {
-        let publicTilesets = store.shownPublicTilesets
-        // sort by Likes, Creator, Date Created, Comments, Views, Tags (secondary sort by likes)
-        switch (criteria) {
-            case "Likes":
-                publicTilesets.sort((a, b) => {
-                    return b.likes.length - a.likes.length
-                })
-                break
-            case "Creator":
-                publicTilesets.sort((a, b) => {
-                    return a.creator.username.localeCompare(b.creator.username)
-                })
-                break
-            case "Date Created":
-                publicTilesets.sort((a, b) => {
-                    return new Date(b.createdAt) - new Date(a.createdAt)
-                })
-                break
-            case "Comments":
-                publicTilesets.sort((a, b) => {
-                    return b.comments.length - a.comments.length
-                })
-                break
-            case "Views":
-                publicTilesets.sort((a, b) => {
-                    return b.views - a.views
-                })
-                break
-        }
-        // if criteria is an array, then it is an array of tags
-        if (Array.isArray(criteria)) {
-            // in this case, sort by how many tags each tileset has that is in the criteria
             publicTilesets.sort((a, b) => {
                 let aTagCount = 0
                 let bTagCount = 0
@@ -462,18 +335,20 @@ function GlobalStoreContextProvider(props) {
                 for (let i = 0; i < b.tags.length; i++) {
                     if (criteria.includes(b.tags[i])) {
                         bTagCount++
-                    } 
+                    }
                 }
                 return bTagCount - aTagCount
             })
         }
         storeReducer({
-            type: GlobalStoreActionType.SORT_PUBLIC_TILESETS,
+            type: GlobalStoreActionType.LOAD_PUBLIC_CONTENT,
             payload: {
-                shownPublicTilesets: publicTilesets
+                publicMaps: publicMaps,
+                publicTilesets: publicTilesets
             }
         })
     }
+
 
     // delete a map
     store.deleteMap = async function (mapId) {

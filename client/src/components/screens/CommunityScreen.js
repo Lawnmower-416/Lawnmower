@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Header from './Header';
 import { BsFilter } from 'react-icons/bs';
 import { Menu } from '@headlessui/react';
@@ -13,6 +13,8 @@ export default function CommunityScreen() {
 
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+
+    const [text, setText] = useState("");
 
     // if true, then current Tab is the maps
     // if false, then current Tab is tilesets
@@ -61,28 +63,43 @@ export default function CommunityScreen() {
     
     const handleLikesFilter = () => {
         console.log("like filter");
+        store.sortPublicContent("Likes");
     }
 
     const handleCreatorFilter = () => {
         console.log("creator filter");
+        store.sortPublicContent("Creator");
     }
 
     const handleDateCreatedFilter = () => {
         console.log("date filter");
+        store.sortPublicContent("Date Created");
     }
 
     const handleCommentsFilter = () => {
         console.log("comment filter");
+        store.sortPublicContent("Comments");
     }
 
     const handleViewsFilter = () => {
         console.log("view filter");
+        store.sortPublicContent("Views");
     }
 
     const handleTagsFilter = () => {
         console.log("tag filter");
+        // this is a whole other can of worms
     }
 
+    const handleUpdateText = (event) => {
+        console.log(event.target.value);
+        setText(event.target.value);
+    }
+
+
+
+    // items are default sorted by points (likes - dislikes)
+    console.log("rendering community screen");
     return (
         <div>
             <Header/>
@@ -92,9 +109,12 @@ export default function CommunityScreen() {
                     <div className="w-1/3"/>  
 
                     <form className="flex justify-center w-1/3 p-10">   
-                        <label htmlFor="search" className="sr-only">Search</label>
-                        <input type="text" id="search" placeholder="Search"
-                            className="text- hover:bg-blackgray-900 text-xl rounded-xl p-2.5 w-full outline-none border-none"/>
+                        <label htmlFor="search" className="sr-only">Search by title</label>
+                        <input type="text" id="search" placeholder="Search by title"
+                            className="text- hover:bg-blackgray-900 text-xl rounded-xl p-2.5 w-full outline-none border-none"
+                            onChange = {handleUpdateText}
+                            defaultValue={text}
+                            />
                     </form>
 
                     <div className="flex w-1/3 flexbox">
@@ -162,8 +182,9 @@ export default function CommunityScreen() {
                                 <div className='mr-5 space-y-3'>
                                     {
                                         mapTabBool 
-                                        ?   publicMaps.map((d, i) => <ItemCard map={d} key={i} inProfile={true}/>)
-                                        :   publicTilesets.map((d, i) => <ItemCard tileset={d} key={i} inProfile={true}/>)
+                                        ?   (publicMaps.filter((map) => map.title.toLowerCase().includes(text.toLowerCase()))).map((d, i) => <ItemCard map={d} key={i} inProfile={true}/>)
+                                        :   (publicTilesets.filter((tileset) => tileset.title.toLowerCase().includes(text.toLowerCase()))).map((d, i) => <ItemCard tileset={d} key={i} inProfile={true}/>)
+
                                     }
                                 </div>
                             </div>
