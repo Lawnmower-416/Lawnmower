@@ -37,7 +37,7 @@ function App() {
               <Route path="/tilesetEditor/:tilesetId" exact element={<TilesetEditor/>} />
               <Route path="/community" exact element={<CommunityScreen/>} />
               <Route path="/change-password" exact element={<PasswordChange/>} />
-              <Route path="/expandedcommunity" exact element={<ExpandedCommunity/>} />
+              <Route path="/expandedcommunity" exact element={<ExpandedCommunityScreen/>} />
             </Routes>
 
           </EditorContextProvider>
