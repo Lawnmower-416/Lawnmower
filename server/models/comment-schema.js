@@ -12,8 +12,7 @@ const commentSchema = mongoose.Schema({
     },
     post: {
         type: ObjectId,
-        ref: 'Post',
-        required: false
+        ref: 'Post'
     },
     parent: {
         type: ObjectId,

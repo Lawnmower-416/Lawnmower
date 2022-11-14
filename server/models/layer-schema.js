@@ -6,7 +6,6 @@ const LayerSchema = new Schema(
     {
         name: { type: String, required: true },
         locked: { type: Boolean },
-        visible: { type: Boolean },
         properties: [{ type: ObjectId, ref: 'Property' }],
         height: { type: Number },
         width: { type: Number },
