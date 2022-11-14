@@ -145,6 +145,14 @@ function AuthContextProvider(props) {
                 }
             });
             history('/profile');
+        } else {
+            authReducer({
+                type: AuthActionType.ERROR_MESSAGE,
+                payload: {
+                    errorMessage: response.data.errorMessage
+                }
+            }
+        )
         }
     }
     auth.logout = async () => {
@@ -176,6 +184,14 @@ function AuthContextProvider(props) {
             });
             // a registered user is automatically logged in
             history('/profile');
+        } else {
+            authReducer({
+                type: AuthActionType.ERROR_MESSAGE,
+                payload: {
+                    errorMessage: response.data.errorMessage
+                }
+            }
+        )
         }
     }
     // changing password should logout user (this can be done on the backend OR just calling logout here)
