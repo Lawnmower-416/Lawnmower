@@ -296,7 +296,6 @@ function EditorContextProvider(props) {
     }
 
     store.setTileset = async (tilesetId) => {
-        /*
         const res = await getTilesetById(tilesetId);
 
         if (res.status === 200) {
