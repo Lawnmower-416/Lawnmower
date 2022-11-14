@@ -413,10 +413,10 @@ function EditorContextProvider(props) {
         })
     }
 
-    store.floodFill = (x, y) => {
+    store.floodFill = (x, y, fillColor) => {
         const newImage = { ...store.tilesetImage };
         const tile = newImage.tiles[store.currentTileIndex].data;
-        const color = store.currentColor;
+        const color = fillColor || store.currentColor;
         const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
         const greenIndex = redIndex + 1;
         const blueIndex = redIndex + 2;
