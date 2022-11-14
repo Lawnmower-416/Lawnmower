@@ -34,6 +34,7 @@ export const EditorActionType = {
     ADD_COLOR: "ADD_COLOR",
     SELECT_PIXEL: "SELECT_PIXEL",
     ADD_SELECTED_PIXEL: "ADD_SELECTED_PIXEL",
+    SET_SELECTED_PIXELS: "SET_SELECTED_PIXELS",
     EDIT_TILE: "EDIT_TILE",
     SAVE_TILESET: "SAVE_TILESET",
     ADD_TILE: "ADD_TILE",
@@ -67,7 +68,6 @@ function EditorContextProvider(props) {
         selectedTiles: [],
         selectedPixels: [],
     });
-    const { auth } = useContext(AuthContext);
 
     useEffect(() => {
         store.loadColors();
@@ -128,6 +128,13 @@ function EditorContextProvider(props) {
                 setStore({
                     ...store,
                     selectedPixels: [...store.selectedPixels, payload.pixel],
+                });
+                break;
+
+            case EditorActionType.SET_SELECTED_PIXELS:
+                setStore({
+                    ...store,
+                    selectedPixels: payload.pixels,
                 });
                 break;
 
@@ -441,6 +448,7 @@ function EditorContextProvider(props) {
     }
 
     store.selectPixel = (pixel) => {
+        if(store.selectedPixels.includes(pixel)) return;
         storeReducer({
             type: EditorActionType.SELECT_PIXEL,
             payload: {
@@ -450,12 +458,22 @@ function EditorContextProvider(props) {
     }
 
     store.addSelectedPixel = (pixel) => {
+        if(store.selectedPixels.includes(pixel)) return;
         storeReducer({
             type: EditorActionType.ADD_SELECTED_PIXEL,
             payload: {
                 pixel: pixel,
             },
         })
+    }
+
+    store.setSelectedPixels = (pixels) => {
+        storeReducer({
+            type: EditorActionType.SET_SELECTED_PIXELS,
+            payload: {
+                pixels: pixels,
+            },
+        });
     }
 
     store.saveTileset = async () => {

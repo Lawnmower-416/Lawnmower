@@ -1,8 +1,10 @@
 import Toolbar from './Toolbar';
-import {useRef, useEffect, useContext} from 'react';
+import {useRef, useEffect, useContext, useState} from 'react';
 import EditorContext, {EditorTool} from "../../../editor";
 function TileEditor() {
     const { store } = useContext(EditorContext);
+
+    const [dragStart, setDragStart] = useState(null);
 
     const ref = useRef(null);
 
@@ -18,7 +20,7 @@ function TileEditor() {
 
     useEffect(() => {
         drawTile();
-    }, [store.currentTileIndex, store.tilesetImage]);
+    }, [store.currentTileIndex, store.tilesetImage, store.selectedPixels]);
 
     const drawTile = () => {
         const tileSize = store.tileset.tileSize;
@@ -26,14 +28,8 @@ function TileEditor() {
         const colorData = new Uint8ClampedArray(Object.values(currentTile.data));
         //formatted as [r, g, b, a, r, g, b, a, ...]
 
-        //context.putImageData(new ImageData(colorData, store.tileset.tileSize, store.tileset.tileSize), 0, 0);
         const context = ref.current.getContext('2d');
-        //draw rgba data from colorData to canvas and scale it to fit the canvas
-        // const imageData = context.createImageData(tileSize, tileSize);
-        // for(let i = 0; i < colorData.length; i++) {
-        //     imageData.data[i] = colorData[i];
-        // }
-        // context.putImageData(imageData, 0, 0);
+
         const data = colorData;
         for(let y = 0; y < tileSize; y++) {
             for(let x = 0; x < tileSize; x++) {
@@ -80,10 +76,6 @@ function TileEditor() {
                 context.fillRect(x*pixelSize, y*pixelSize, pixelSize, pixelSize);
                 break;
 
-            case EditorTool.REGION:
-                store.addSelectedPixel({x, y});
-                break;
-
             case EditorTool.PAINT:
                 changePixel(e);
                 break;
@@ -96,21 +88,46 @@ function TileEditor() {
 
     const changePixel = (e) => {
         if(store.currentTool !== EditorTool.PAINT) return;
+
         const rect = ref.current.getBoundingClientRect();
         const x = Math.floor((e.clientX - rect.left) / pixelSize);
         const y = Math.floor((e.clientY - rect.top) / pixelSize);
-        const color = store.currentColor;
-        const index = (y * store.tileset.tileSize + x) * 4;
         store.editTile(x,y)
-        // const data = currentTile.data;
-        // data[index] = color.red;
-        // data[index+1] = color.green;
-        // data[index+2] = color.blue;
-        // data[index+3] = color.alpha;
+
         drawTile();
+    }
 
-        const context = ref.current.getContext('2d');
+    const handleDragStart = (e) => {
+        if(store.currentTool !== EditorTool.REGION) return;
 
+        const rect = ref.current.getBoundingClientRect();
+        const x = Math.floor((e.clientX - rect.left) / pixelSize);
+        const y = Math.floor((e.clientY - rect.top) / pixelSize);
+        setDragStart({x, y});
+
+    }
+
+    const handleDragEnd = (e) => {
+        if(store.currentTool !== EditorTool.REGION) return;
+
+        const rect = ref.current.getBoundingClientRect();
+        const endX = Math.floor((e.clientX - rect.left) / pixelSize);
+        const endY = Math.floor((e.clientY - rect.top) / pixelSize);
+
+        const {x: startX, y: startY} = dragStart;
+        const minX = Math.min(startX, endX);
+        const maxX = Math.max(startX, endX);
+        const minY = Math.min(startY, endY);
+        const maxY = Math.max(startY, endY);
+
+        const selectedPixels = [];
+        for(let y = minY; y <= maxY; y++) {
+            for(let x = minX; x <= maxX; x++) {
+                selectedPixels.push({x, y});
+            }
+        }
+
+        store.setSelectedPixels(selectedPixels);
     }
     
     return (
@@ -122,9 +139,10 @@ function TileEditor() {
                         ref={ref}
                         width="600"
                         height="600"
-                        onMouseMove={(e) => highlightPixel(e)}
+                        onMouseMove={highlightPixel}
                         onClick={handleClick}
-                        onDra
+                        onMouseDown={handleDragStart}
+                        onMouseUp={handleDragEnd}
                     />
                 }
             </div>

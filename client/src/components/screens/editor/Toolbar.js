@@ -17,6 +17,22 @@ function Toolbar() {
     const isPaint = currentTool === EditorTool.PAINT;
     const isFill = currentTool === EditorTool.FILL;
 
+    const handleCopy = () => {
+        navigator.clipboard.write(
+            // eslint-disable-next-line no-undef
+            [new ClipboardItem({ 'text/plain': new Blob([JSON.stringify(store.selectedPixels)], { type: 'text/plain' }) })
+            ]);
+    }
+
+    const handleCut = () => {
+        handleCopy();
+    }
+
+    const handlePaste = () => {
+
+    }
+
+
 
     return (
         <Disclosure as="div" className="bg-editor-tertiary h-10">
@@ -78,13 +94,22 @@ function Toolbar() {
                             </div>
 
                             <div className="flex items-center justify-between">
-                                <button className="w-10 h-10 bg-white flex justify-center items-center hover:bg-editor-highlight">
+                                <button
+                                    className="w-10 h-10 bg-white flex justify-center items-center hover:bg-editor-highlight"
+                                    onClick={handleCopy}
+                                >
                                     <DocumentDuplicateIcon className="h-6 w-6 text-black"/>
                                 </button>
-                                <button className="w-10 h-10 bg-white flex justify-center items-center hover:bg-editor-highlight">
+                                <button
+                                    className="w-10 h-10 bg-white flex justify-center items-center hover:bg-editor-highlight"
+                                    onClick={handleCut}
+                                >
                                     <ScissorsIcon className="h-6 w-6 text-black"/>
                                 </button>
-                                <button className="w-10 h-10 bg-white flex justify-center items-center hover:bg-editor-highlight">
+                                <button
+                                    className="w-10 h-10 bg-white flex justify-center items-center hover:bg-editor-highlight"
+                                    onClick={handlePaste}
+                                >
                                     <ClipboardIcon className="h-6 w-6 text-black"/>
                                 </button>
                             </div>
