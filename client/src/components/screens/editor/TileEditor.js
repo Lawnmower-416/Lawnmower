@@ -1,6 +1,7 @@
 import Toolbar from './Toolbar';
 import {useRef, useEffect, useContext, useState} from 'react';
 import EditorContext, {EditorTool} from "../../../editor";
+import TileEditTransaction from "../../../transactions/TileEditTransaction";
 function TileEditor() {
     const { store } = useContext(EditorContext);
 
@@ -81,7 +82,28 @@ function TileEditor() {
                 break;
 
             case EditorTool.FILL:
-                store.floodFill(x, y)
+                const color = store.currentColor;
+                const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
+                const greenIndex = redIndex + 1;
+                const blueIndex = redIndex + 2;
+                const alphaIndex = redIndex + 3;
+
+                const oldColor = {
+                    red: currentTile.data[redIndex],
+                    green: currentTile.data[greenIndex],
+                    blue: currentTile.data[blueIndex],
+                    alpha: currentTile.data[alphaIndex]
+                }
+
+                store.addTransaction(
+                    new TileEditTransaction(
+                        oldColor,
+                        color,
+                        x,
+                        y,
+                        store.floodFill
+                    )
+                );
                 break;
         }
     }
@@ -92,7 +114,27 @@ function TileEditor() {
         const rect = ref.current.getBoundingClientRect();
         const x = Math.floor((e.clientX - rect.left) / pixelSize);
         const y = Math.floor((e.clientY - rect.top) / pixelSize);
-        store.editTile(x,y)
+
+        const color = store.currentColor;
+        const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
+        const greenIndex = redIndex + 1;
+        const blueIndex = redIndex + 2;
+        const alphaIndex = redIndex + 3;
+
+        const oldColor = {
+            red: currentTile.data[redIndex],
+            green: currentTile.data[greenIndex],
+            blue: currentTile.data[blueIndex],
+            alpha: currentTile.data[alphaIndex]
+        }
+
+        store.addTransaction(new TileEditTransaction(
+            oldColor,
+            color,
+            x,
+            y,
+            store.editTile
+        ));
 
         drawTile();
     }
@@ -104,7 +146,6 @@ function TileEditor() {
         const x = Math.floor((e.clientX - rect.left) / pixelSize);
         const y = Math.floor((e.clientY - rect.top) / pixelSize);
         setDragStart({x, y});
-
     }
 
     const handleDragEnd = (e) => {

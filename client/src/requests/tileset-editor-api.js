@@ -29,5 +29,8 @@ const apis = {
     placeColor,
     changeSettings,
     exportVersion,
+    getTilesetImage,
     uploadTilesetImage
 }
+
+export default apis;

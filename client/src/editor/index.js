@@ -1,9 +1,7 @@
 import {createContext, useContext, useEffect, useState} from 'react';
-import mapApi from "../../src/requests/map-editor-api";
-import tilesetApi, {getTilesetImage, uploadTilesetImage} from "../../src/requests/tileset-editor-api";
-import { useAuth } from "../auth"
-import AuthContext from '../auth';
+import {getTilesetImage, uploadTilesetImage} from "../../src/requests/tileset-editor-api";
 import {getTilesetById} from "../requests/store-request";
+import jsTPS from "../transactions/jsTPS";
 
 
 export const EditorContext = createContext();
@@ -49,6 +47,8 @@ export const EditorTool = {
     REGION: "REGION",
 }
 
+const tps = new jsTPS();
+
 function EditorContextProvider(props) {
     const [ store, setStore ] = useState({
         map: null,
@@ -84,7 +84,7 @@ function EditorContextProvider(props) {
                 setStore({
                     ...store,
                     currentTool: payload.tool,
-                    selectedPixels: payload.selectedPixels ? payload.selectedPixels : [],
+                    selectedPixels: payload.selectedPixels || [],
                 });
                 break;
 
@@ -159,6 +159,13 @@ function EditorContextProvider(props) {
                 });
                 break;
 
+            case EditorActionType.ADD_TRANSACTION:
+                setStore({
+                    ...store,
+                    transactionStack: [payload.transaction, ...store.transactionStack],
+                });
+                break;
+
             default:
                 console.error("Unknown action type: " + type);
                 break;
@@ -215,17 +222,17 @@ function EditorContextProvider(props) {
 
     }
     // adds a new transaction to the stack
-    store.addTransaction = (transaction) => {
-    
-    }
+    store.addTransaction = (transaction) => tps.addTransaction(transaction);
+
     // processes an undo for the last transaction
-    store.processUndo = () => {
+    store.processUndo = () => tps.undoTransaction();
 
-    }
     // processes a redo for the last transaction
-    store.processRedo = () => {
+    store.processRedo = () => tps.doTransaction();
 
-    }
+
+    store.clearTransactions = () => tps.clearAllTransactions();
+
     // unselects all selected tiles
     store.unselectAll = () => {
 
@@ -398,10 +405,10 @@ function EditorContextProvider(props) {
         })
     }
 
-    store.floodFill = (x, y) => {
+    store.floodFill = (x, y, fillColor) => {
         const newImage = { ...store.tilesetImage };
         const tile = newImage.tiles[store.currentTileIndex].data;
-        const color = store.currentColor;
+        const color = fillColor || store.currentColor;
         const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
         const greenIndex = redIndex + 1;
         const blueIndex = redIndex + 2;
@@ -496,6 +503,7 @@ function EditorContextProvider(props) {
             const blueIndex = redIndex + 2;
             const alphaIndex = redIndex + 3;
             const tile = store.tilesetImage.tiles[store.currentTileIndex].data;
+            //Subtract by min to find relative position
             ret.push({
                 x: x - minX,
                 y: y - minY,
@@ -507,21 +515,29 @@ function EditorContextProvider(props) {
                 }
             });
         }
-        return JSON.stringify(ret);
+        return ret;
     }
 
+    //Paste data assuming x and y are relative positions
     store.pasteData = (pixels) => {
         if(store.selectedPixels.length === 0) return;
 
         const minX = store.selectedPixels[0].x;
         const minY = store.selectedPixels[0].y;
 
+        for (let i = 0; i < pixels.length; i++) {
+            const {x, y, color} = pixels[i];
+            store.editTile(x + minX, y + minY, color);
+        }
+    }
 
+    //Paste data assuming x and y are actual position
+    store.pasteDataActual = (pixels) => {
+        console.log(pixels);
 
         for (let i = 0; i < pixels.length; i++) {
             const {x, y, color} = pixels[i];
-            console.log(x + minX, y + minY, color);
-            store.editTile(x + minX, y + minY, color);
+            store.editTile(x, y, color);
         }
     }
 
@@ -536,10 +552,25 @@ function EditorContextProvider(props) {
         }
     }
 
+    //TODO: Refactor earlier code to use this
+    store.getPixel = (x, y) => {
+        const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
+        const greenIndex = redIndex + 1;
+        const blueIndex = redIndex + 2;
+        const alphaIndex = redIndex + 3;
+        const tile = store.tilesetImage.tiles[store.currentTileIndex].data;
+        return {
+            red: tile[redIndex],
+            green: tile[greenIndex],
+            blue: tile[blueIndex],
+            alpha: tile[alphaIndex]
+        }
+    }
+
     return (
-        <EditorContext.Provider value={{ 
-            store 
-        }}>
+        <EditorContext.Provider
+            value={{store}}
+        >
             {props.children}
         </EditorContext.Provider>
     )
