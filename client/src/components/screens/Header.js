@@ -20,7 +20,7 @@ const Header = () => {
   const [sidebar, setSidebar] = useState(false);
   let navArray = [
     { navItem: "FAQ", to: "/faq" },
-    { navItem: "About", to: "/about" },
+    { navItem: "About", to: "/expandedcommunity" },
     { navItem: "Support", to: "/support" },
 
   ];
