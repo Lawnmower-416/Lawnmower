@@ -5,6 +5,7 @@ import {
 import { Disclosure } from '@headlessui/react'
 import {useContext} from "react";
 import EditorContext, {EditorTool} from "../../../editor";
+import BulkTileChangeTransaction from "../../../transactions/BulkTileChangeTransaction";
 
 function Toolbar() {
 
@@ -20,20 +21,69 @@ function Toolbar() {
     const handleCopy = () => {
         navigator.clipboard.write(
             // eslint-disable-next-line no-undef
-            [new ClipboardItem({ 'text/plain': new Blob([store.getCopyData()], { type: 'text/plain' }) })
+            [new ClipboardItem({ 'text/plain': new Blob([JSON.stringify(store.getCopyData())], { type: 'text/plain' }) })
             ]);
     }
 
     const handleCut = () => {
+        const minX = Math.min(...store.selectedPixels.map(p => p.x));
+        const minY = Math.min(...store.selectedPixels.map(p => p.y));
+        //Undo subtracting done in copy calculation to get actual position
+        const oldData = store.getCopyData().map(p => {
+            return {
+                x:p.x + minX,
+                y:p.y + minY,
+                color:p.color
+            }
+        });
+        const newData = oldData.map(pixel => ({...pixel, color: {r: 0, g: 0, b: 0, a: 0}}));
         handleCopy();
-        store.clearSelectedPixels();
+        store.addTransaction(
+            new BulkTileChangeTransaction(
+                oldData,
+                newData,
+                store.pasteDataActual
+            )
+        );
+        //store.clearSelectedPixels();
     }
 
     const handlePaste = () => {
         navigator.clipboard.readText().then(text => {
             try{
+                const minX = store.selectedPixels[0].x;
+                const minY = store.selectedPixels[0].y;
+
                 const pixels = JSON.parse(text);
-                store.pasteData(pixels);
+                const oldData = [];
+                for (let i = 0; i < pixels.length; i++) {
+                    const x = pixels[i].x;
+                    const y = pixels[i].y;
+
+                    //Undo subtracting done in copy calculation to get actual position
+                    const oldColor = store.getPixel(x + minX, y + minY);
+                    oldData.push({
+                        x: x + minX,
+                        y: y + minY,
+                        color: oldColor
+                    });
+                }
+
+                const newData = pixels.map(p => {
+                    return {
+                        x:p.x + minX,
+                        y:p.y + minY,
+                        color:p.color
+                    }
+                });
+
+                store.addTransaction(
+                    new BulkTileChangeTransaction(
+                        oldData,
+                        newData,
+                        store.pasteDataActual
+                    )
+                );
             } catch (e) {
                 console.error(e);
             }
