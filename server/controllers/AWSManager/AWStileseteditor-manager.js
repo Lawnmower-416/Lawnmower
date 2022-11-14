@@ -21,6 +21,7 @@ module.exports.getTilesetImage = async (tilesetId) => {
     const tileset = await Tileset.findOne({ _id: tilesetId }).catch(err => {return null;});
 
     const data = await getData(tileset.owner, tilesetId, false);
+    console.log(data);
     return JSON.parse(data);
 }
 
