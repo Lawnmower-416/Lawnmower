@@ -55,20 +55,6 @@ export default function Comment({comment, userName, currentPost}) {
 
   const handleDelete = async() => {
     socket.emit('comment_delete', { comment: comment._id })
-    // fetch('http://localhost:5001/comment/delete/'+comment._id, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({
-    //       type: 'comment',
-    //       user: userName,
-    //       comment: comment._id
-    //     })
-    //   }).then(res => res.json())
-    //   .then( async result => {   
-    //     console.log(result) 
-    //   })
   }
 
   const handleCreateLike = async() => {
