@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from "react";
 import EditHistoryModal from "../modals/EditHistoryModal";
 import ExportModal from "../modals/Export";
-import ModalOne from "../modals/ShareModal/Share";
+import ShareModal from "../modals/ShareModal/Share";
 import TilesetSettingsModal from "../modals/TilesetSettingsModal";
 import ColorSidebar from "./editor/ColorSidebar";
 import Headerbar from "./editor/Headerbar";
@@ -38,7 +38,7 @@ function TilesetEditor() {
             <TilesetSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen} />
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
             <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} />
-            <ModalOne modalOpen={shareOpen} setModalOpen={setShareOpen} />
+            <ShareModal modalOpen={shareOpen} setModalOpen={setShareOpen} />
 
             <Headerbar
                 title={tileset.title}

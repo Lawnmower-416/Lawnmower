@@ -1,5 +1,5 @@
 import {createContext, useContext, useEffect, useState} from 'react';
-import {getTilesetImage, uploadTilesetImage} from "../../src/requests/tileset-editor-api";
+import {getTilesetImage, updateTileset, uploadTilesetImage} from "../../src/requests/tileset-editor-api";
 import {getTilesetById} from "../requests/store-request";
 import jsTPS from "../transactions/jsTPS";
 
@@ -37,6 +37,7 @@ export const EditorActionType = {
     SAVE_TILESET: "SAVE_TILESET",
     ADD_TILE: "ADD_TILE",
     SET_CURRENT_TILE: "SET_CURRENT_TILE",
+
 }
 
 export const EditorTool = {
@@ -565,6 +566,16 @@ function EditorContextProvider(props) {
             blue: tile[blueIndex],
             alpha: tile[alphaIndex]
         }
+    }
+
+    store.setTilesetVisiblity = (isPublic) => {
+        updateTileset(store.tileset._id, {...store.tileset, public: isPublic}).then(r => {
+            if(r.status === 200) {
+                store.setTileset(store.tileset._id);
+            } else {
+                console.log('Error updating tileset visibility');
+            }
+        });
     }
 
     return (

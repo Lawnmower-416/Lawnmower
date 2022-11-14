@@ -7,7 +7,7 @@ import MapSettingsModal from "../modals/MapSettingsModal";
 import ExportModal from "../modals/Export";
 import EditHistoryModal from "../modals/EditHistoryModal";
 import ImportTilesetModal from "../modals/ImportTilesetModal";
-import ModalOne from "../modals/ShareModal/Share";
+import ShareModal from "../modals/ShareModal/Share";
 
 
 function MapEditor() {    
@@ -34,7 +34,7 @@ function MapEditor() {
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
             <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} />
             <ImportTilesetModal isOpen={importOpen} setIsOpen={setImportOpen} tilesets={tilesets}/>
-            <ModalOne modalOpen={shareOpen} setModalOpen={setShareOpen} />
+            <ShareModal modalOpen={shareOpen} setModalOpen={setShareOpen} />
 
             <Headerbar 
                 setSettingsOpen={setSettingsOpen} 
