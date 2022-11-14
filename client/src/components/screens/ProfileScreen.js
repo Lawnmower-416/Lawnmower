@@ -127,10 +127,10 @@ export default function Profile() {
                             <div className="">
                                 {imageURL !== "" ? <img className="max-w-[18rem]" src={imageURL} alt="User Logo" /> : <UserCircleIcon className="text-[blue] w-40" />}
                             </div>
-                            <label className="w-fit">
+                            {/* <label className="w-fit">
                                 <input className="hidden" type={"file"} onChange={handleImage} accept={"image/*"} />
                                 <PencilIcon className="w-12 hover:text-white cursor-pointer" />
-                            </label>
+                            </label> */}
                                 
                         </div>
                     </div>
@@ -139,15 +139,15 @@ export default function Profile() {
                     <div className="col-auto grid grid-rows-4 gap-0 p-5 bg-dark-green-lighter" >
                         <div className={`col-auto grid grid-cols-10 items-center text-2xl text-white`}>
                             <div className="col-span-8 px-2" >{editing === "username" ? <input className="px-1 text-black" type={"text"} placeholder={username} onChange={handleChange} onKeyDown={handleKeyDown}></input> : username}</div>
-                            <div className={`col-span-2 px-1 content-start ${contentBefore ? "hidden" : ""}`}>
+                            {/* <div className={`col-span-2 px-1 content-start ${contentBefore ? "hidden" : ""}`}>
                                 {editing === "username" ? <DocumentCheckIcon className="w-12 cursor-pointer" onClick={() => setEditing(prev => "")} /> : <PencilIcon className={`w-12 cursor-pointer text-black hover:text-white ${editing !== "username"} ? 'disabled disabled:opacity-60' : ""`} onClick={() => setEditing((prev) => {return prev === "" ? "username" : prev})} />}
-                            </div>
+                            </div> */}
                         </div>
                         <div className="col-auto grid grid-cols-10 content-center align-middle items-center text-2xl text-white" >
                             <div className="col-span-8 px-2" >{editing === "email" ? <input className="px-1 text-black" type={"text"} placeholder={email} onChange={handleChange} onKeyDown={handleKeyDown}></input> : email}</div>
-                            <div className={`col-span-2 px-1 content-start ${contentBefore ? "hidden" : ""}`}>
+                            {/* <div className={`col-span-2 px-1 content-start ${contentBefore ? "hidden" : ""}`}>
                                 {editing === "email" ? <DocumentCheckIcon className="w-12 cursor-pointer" onClick={() => setEditing(prev => "")} /> : <PencilIcon className={`w-12 cursor-pointer text-black hover:text-white ${editing !== "email"} ? 'disabled disabled:opacity-60' : ""`} onClick={() => setEditing((prev) => {return prev === "" ? "email" : prev})} />}
-                            </div>
+                            </div> */}
                         </div>
                         <span className="col-auto grid px-2 text-2xl content-center align-middle items-center text-white">Join Date: {joinDate}</span>
                         <span className="col-auto grid px-2 text-2xl content-center align-middle items-center text-white">Points: {user ? user.points : 0}</span>
