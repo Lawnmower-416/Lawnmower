@@ -11,9 +11,9 @@ const ShareModal = ({ modalOpen, setModalOpen }) => {
 	const { auth } = useContext(AuthContext);
 	const { store } = useContext(EditorContext);
 
-	const [isPublic, setVisibility] = useState(store.tileset.visible);
+	const [isPublic, setVisibility] = useState(store.tileset.public || store.map.public || false);
 	const [copy, setCopy] = useState(false);
-
+	//TODO: Allow this to be used for tilesets and maps
 	const link = "http://34.193.24.27//tilesetEditor/" + store.tileset._id;
 
 	const handleCopy = () => {
