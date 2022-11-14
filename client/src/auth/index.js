@@ -138,7 +138,7 @@ function AuthContextProvider(props) {
                     errorMessage: message
                 }
             });
-        )});
+        });
 
         if (response.status === 200) {
             console.log("response", response);
@@ -181,7 +181,7 @@ function AuthContextProvider(props) {
                     errorMessage: message
                 }
             });
-        )});
+        });
 
         if (response.status === 200) {
             authReducer({
