@@ -6,11 +6,12 @@ const BUCKET_NAME = "lawnmowerbucket";
 const s3Client = new AWS.S3Client({ region: REGION });
 
 const uploadData = async (data, userId, dataId, isMap) => {
+    typeof data === "object" ? data = JSON.stringify(data) : data;
     const path = isMap ? "maps" : "tilesets";
     const params = {
         Bucket: BUCKET_NAME,
         Key: "content/" + userId + "/" + path + "/" + dataId + ".json",
-        Body: JSON.stringify(data),
+        Body: data,
     }
 
     try {

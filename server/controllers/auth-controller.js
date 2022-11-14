@@ -256,7 +256,7 @@ changePassword = async (req, res) => {
             },
             auth: {
                 user: 'lawnmower416@outlook.com',
-                pass: 'Editor416'
+                pass: process.env.EMAIL_PASSWORD
             }
         });
         let isError = false;

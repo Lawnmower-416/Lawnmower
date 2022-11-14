@@ -1,6 +1,6 @@
 const Tileset = require("../../models/tileset-schema");
 const Map = require("../../models/map-schema");
-const {getData} = require("./AWS-S3-manager");
+const {getData, uploadData} = require("./AWS-S3-manager");
 
 module.exports.getTilesetsForMapById = async (mapId) => {
     const map = await Map.findOne({ _id: mapId }).catch(err => {return null;});
@@ -22,4 +22,13 @@ module.exports.getTilesetImage = async (tilesetId) => {
 
     const data = await getData(tileset.owner, tilesetId, false);
     return JSON.parse(data);
+}
+
+module.exports.updateTilesetImage = async (tilesetId, tilesetImage) => {
+    const tileset = await Tileset.findOne({ _id: tilesetId }).catch(err => {return null;});
+    if(tileset) {
+        const data = await uploadData(tilesetImage, tileset.owner, tilesetId, false);
+        return data;
+    }
+    return null;
 }
