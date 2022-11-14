@@ -2,7 +2,7 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import {useRef, useEffect, useContext} from 'react';
 import EditorContext from "../../../editor";
-function TileSidebar({ tiles }) {
+function TileSidebar({ tiles, openDeleteTileModal }) {
 
     const { store } = useContext(EditorContext);
 
@@ -23,6 +23,7 @@ function TileSidebar({ tiles }) {
                                     key={tileIndex}
                                     tile={tile}
                                     index={tileIndex}
+                                    openDeleteTileModal={openDeleteTileModal}
                                 />
                             ))}
                         </div>
@@ -40,7 +41,7 @@ function TileSidebar({ tiles }) {
     )
 }
 
-function Tile({ tile, index }) {
+function Tile({ tile, index, openDeleteTileModal }) {
     const ref = useRef(null);
 
     const { store } = useContext(EditorContext);
@@ -68,7 +69,18 @@ function Tile({ tile, index }) {
     })
 
     return (
-        <canvas width="60" height="60" ref={ref} className="m-0" onClick={setCurrentTile}/>
+        <canvas
+            width="60"
+            height="60"
+            ref={ref}
+            className="m-0"
+            onClick={setCurrentTile}
+            onDoubleClick={() => {
+                if(store.tilesetImage.tiles.length > 1) {
+                    openDeleteTileModal();
+                }
+            }}
+        />
     )
 
 }

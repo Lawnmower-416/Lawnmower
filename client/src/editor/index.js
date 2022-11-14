@@ -37,7 +37,7 @@ export const EditorActionType = {
     SAVE_TILESET: "SAVE_TILESET",
     ADD_TILE: "ADD_TILE",
     SET_CURRENT_TILE: "SET_CURRENT_TILE",
-
+    DELETE_TILE: "DELETE_TILE",
 }
 
 export const EditorTool = {
@@ -164,6 +164,14 @@ function EditorContextProvider(props) {
                 setStore({
                     ...store,
                     transactionStack: [payload.transaction, ...store.transactionStack],
+                });
+                break;
+
+            case EditorActionType.DELETE_TILE:
+                setStore({
+                    ...store,
+                    currentTileIndex: 0,
+                    tilesetImage: payload.tilesetImage,
                 });
                 break;
 
@@ -584,6 +592,20 @@ function EditorContextProvider(props) {
                 store.setTileset(store.tileset._id);
             } else {
                 console.log('Error updating tileset title');
+            }
+        });
+    }
+
+    store.deleteTile = () => {
+        if(store.tilesetImage.tiles.length === 1) return;
+
+        const newTiles = store.tilesetImage.tiles.filter((t, i) => i !== store.currentTileIndex);
+        const newTilesetImage = {...store.tilesetImage, tiles: newTiles};
+
+        storeReducer({
+            type: EditorActionType.DELETE_TILE,
+            payload: {
+                tilesetImage: newTilesetImage,
             }
         });
     }

@@ -9,6 +9,7 @@ import TileEditor from "./editor/TileEditor";
 import TileSidebar from "./editor/TileSidebar";
 import {useParams} from "react-router-dom";
 import EditorContext from "../../editor";
+import DeleteTileModal from "../modals/DeleteTileModal";
 
 function TilesetEditor() {
     const { tilesetId } = useParams();
@@ -27,6 +28,7 @@ function TilesetEditor() {
     const [historyOpen, setHistoryOpen] = useState(false);
     const [exportOpen, setExportOpen] = useState(false);
     const [shareOpen, setShareOpen] = useState(false);
+    const [deleteTileOpen, setDeleteTileOpen] = useState(false);
 
     //TODO: Loading Icon
     if(!tileset) {
@@ -39,6 +41,7 @@ function TilesetEditor() {
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
             <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} />
             <ShareModal modalOpen={shareOpen} setModalOpen={setShareOpen} />
+            <DeleteTileModal isOpen={deleteTileOpen} setIsOpen={setDeleteTileOpen} />
 
             <Headerbar
                 title={tileset.title}
@@ -50,7 +53,7 @@ function TilesetEditor() {
             <div className="flex h-screen">
                 <ColorSidebar/>
                 <TileEditor />
-                <TileSidebar tiles={tilesetImage.tiles} />
+                <TileSidebar tiles={tilesetImage.tiles} openDeleteTileModal={() => setDeleteTileOpen(true)} />
             </div>
         </div>
         
