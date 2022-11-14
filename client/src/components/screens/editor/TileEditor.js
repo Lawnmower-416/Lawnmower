@@ -18,7 +18,7 @@ function TileEditor() {
 
     useEffect(() => {
         drawTile();
-    }, [store.currentTileIndex]);
+    }, [store.currentTileIndex, store.tilesetImage]);
 
     const drawTile = () => {
         const tileSize = store.tileset.tileSize;
@@ -87,6 +87,10 @@ function TileEditor() {
             case EditorTool.PAINT:
                 changePixel(e);
                 break;
+
+            case EditorTool.FILL:
+                store.floodFill(x, y)
+                break;
         }
     }
 
@@ -97,11 +101,12 @@ function TileEditor() {
         const y = Math.floor((e.clientY - rect.top) / pixelSize);
         const color = store.currentColor;
         const index = (y * store.tileset.tileSize + x) * 4;
-        const data = currentTile.data;
-        data[index] = color.red;
-        data[index+1] = color.green;
-        data[index+2] = color.blue;
-        data[index+3] = color.alpha;
+        store.editTile(x,y)
+        // const data = currentTile.data;
+        // data[index] = color.red;
+        // data[index+1] = color.green;
+        // data[index+2] = color.blue;
+        // data[index+3] = color.alpha;
         drawTile();
 
         const context = ref.current.getContext('2d');
@@ -119,6 +124,7 @@ function TileEditor() {
                         height="600"
                         onMouseMove={(e) => highlightPixel(e)}
                         onClick={handleClick}
+                        onDra
                     />
                 }
             </div>

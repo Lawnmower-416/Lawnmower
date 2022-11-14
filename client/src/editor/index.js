@@ -134,7 +134,6 @@ function EditorContextProvider(props) {
             case EditorActionType.EDIT_TILE:
                 setStore({
                     ...store,
-                    tileset: payload.tileset,
                     tilesetImage: payload.tilesetImage,
                 });
                 break;
@@ -309,6 +308,12 @@ function EditorContextProvider(props) {
     }
 
     store.setColor = (color) => {
+        if(typeof color.red === "string" || typeof color.green === "string" || typeof color.blue === "string") {
+            color.red = parseInt(color.red);
+            color.green = parseInt(color.green);
+            color.blue = parseInt(color.blue);
+        }
+
         storeReducer({
             type: EditorActionType.SET_COLOR,
             payload: {
@@ -361,8 +366,11 @@ function EditorContextProvider(props) {
         });
     }
 
-    store.editTile = (tileIndex, x, y, color) => {
-        const tile = store.tilesetImage.tiles[tileIndex];
+    store.editTile = (x, y) => {
+        const newImage = { ...store.tilesetImage };
+        const tile = newImage.tiles[store.currentTileIndex].data;
+
+        const color = store.currentColor
         const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
         const greenIndex = redIndex + 1;
         const blueIndex = redIndex + 2;
@@ -376,64 +384,50 @@ function EditorContextProvider(props) {
         storeReducer({
             type: EditorActionType.EDIT_TILE,
             payload: {
-                tileIndex: tileIndex,
-                tile: tile,
+                tilesetImage: newImage
             }
         })
     }
 
-    //fast flood fill algorithm
-    store.floodFill = (tileIndex, x, y, color) => {
-        const tile = store.tilesetImage.tiles[tileIndex];
+    //a function that performs a flood fill on the tileset
+    store.floodFill = (x, y) => {
+        const newImage = { ...store.tilesetImage };
+        const tile = newImage.tiles[store.currentTileIndex].data;
+        const color = store.currentColor;
         const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
         const greenIndex = redIndex + 1;
         const blueIndex = redIndex + 2;
         const alphaIndex = redIndex + 3;
+        const oldRed = tile[redIndex];
+        const oldGreen = tile[greenIndex];
+        const oldBlue = tile[blueIndex];
+        const oldAlpha = tile[alphaIndex];
+        const queue = [[x, y]];
 
-        const oldColor = {
-            red: tile[redIndex],
-            green: tile[greenIndex],
-            blue: tile[blueIndex],
-            alpha: tile[alphaIndex],
-        }
-
-        const stack = [[x, y]];
-
-        while (stack.length > 0) {
-            const [x, y] = stack.pop();
-
+        while (queue.length > 0) {
+            const [x, y] = queue.pop();
             const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
             const greenIndex = redIndex + 1;
             const blueIndex = redIndex + 2;
             const alphaIndex = redIndex + 3;
 
-            const currentColor = {
-                red: tile[redIndex],
-                green: tile[greenIndex],
-                blue: tile[blueIndex],
-                alpha: tile[alphaIndex],
-            }
-
-            if (currentColor.red === oldColor.red &&
-                currentColor.green === oldColor.green &&
-                currentColor.blue === oldColor.blue &&
-                currentColor.alpha === oldColor.alpha) {
+            if (tile[redIndex] === oldRed && tile[greenIndex] === oldGreen && tile[blueIndex] === oldBlue && tile[alphaIndex] === oldAlpha) {
                 tile[redIndex] = color.red;
                 tile[greenIndex] = color.green;
                 tile[blueIndex] = color.blue;
                 tile[alphaIndex] = color.alpha;
 
                 if (x > 0) {
-                    stack.push([x - 1, y]);
+                    queue.push([x - 1, y]);
                 }
                 if (x < store.tileset.tileSize - 1) {
-                    stack.push([x + 1, y]);
+                    queue.push([x + 1, y]);
                 }
                 if (y > 0) {
-                    stack.push([x, y - 1]);
+                    queue.push([x, y - 1]);
                 }
                 if (y < store.tileset.tileSize - 1) {
-                    stack.push([x, y + 1]);
+                    queue.push([x, y + 1]);
                 }
             }
         }
@@ -441,8 +435,7 @@ function EditorContextProvider(props) {
         storeReducer({
             type: EditorActionType.EDIT_TILE,
             payload: {
-                tileIndex: tileIndex,
-                tile: tile,
+                tilesetImage: newImage
             }
         })
     }
