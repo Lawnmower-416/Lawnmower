@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import NavBar from '../NavBar'
 import PostBody from '../PostBody'
 import PostComments from '../PostComments'
-import { socket } from '../../config/socket'
+import { socket } from './../../config/SocketIO'
 
 export default function Home() {
   
