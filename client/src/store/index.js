@@ -2,12 +2,14 @@
 import { createContext, useContext, useState } from "react";
 import api from "./../requests/store-request";
 import AuthContext from "../auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 
 export const GlobalStoreContext = createContext();
 
 export const GlobalStoreActionType = {
+    LOAD_USER_CONTENT: "LOAD_USER_CONTENT",
+    LOAD_PUBLIC_CONTENT: "LOAD_PUBLIC_CONTENT",
     LOAD_USER_MAPS: "LOAD_USER_MAPS",
     LOAD_USER_TILESETS: "LOAD_USER_TILESETS",
     LOAD_PUBLIC_MAPS: "LOAD_PUBLIC_MAPS",
@@ -38,32 +40,17 @@ function GlobalStoreContextProvider(props) {
     });
     const { auth } = useContext(AuthContext);
 
+    const location = useLocation();
+    const path = location.pathname;
+
     const history = useNavigate();
 
     const storeReducer = (action) => {
-        console.log("reducer called", action.type);
         const { type, payload } = action;
         switch (type) {
-            case GlobalStoreActionType.LOAD_USER_MAPS: {
-                console.log("OLD MAPS", store.userMaps);
-                console.log("NEW MAPS", payload.userMaps);
+            case GlobalStoreActionType.LOAD_USER_CONTENT:
                 return setStore({
                     userMaps: payload.userMaps,
-                    userTilesets: store.userTilesets,
-                    userComments: store.userComments,
-                    publicMaps: store.publicMaps,
-                    publicTilesets: store.publicTilesets,
-                    comments: store.comments,
-                    shownPublicMaps: store.shownPublicMaps,
-                    shownPublicTilesets: store.shownPublicTilesets,
-                    currentMapEditing: store.currentMapEditing,
-                    currentTilesetEditing: store.currentTilesetEditing,
-                    currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                })
-            }
-            case GlobalStoreActionType.LOAD_USER_TILESETS: {
-                return setStore({
-                    userMaps: store.userMaps,
                     userTilesets: payload.userTilesets,
                     userComments: store.userComments,
                     publicMaps: store.publicMaps,
@@ -74,8 +61,21 @@ function GlobalStoreContextProvider(props) {
                     currentMapEditing: store.currentMapEditing,
                     currentTilesetEditing: store.currentTilesetEditing,
                     currentContentCommentsExpanded: store.currentContentCommentsExpanded,
-                })
-            }
+                });
+            case GlobalStoreActionType.LOAD_PUBLIC_CONTENT:
+                return setStore({
+                    userMaps: store.userMaps,
+                    userTilesets: store.userTilesets,
+                    userComments: store.userComments,
+                    publicMaps: payload.publicMaps,
+                    publicTilesets: payload.publicTilesets,
+                    comments: store.comments,
+                    shownPublicMaps: payload.publicMaps,
+                    shownPublicTilesets: payload.publicTilesets,
+                    currentMapEditing: store.currentMapEditing,
+                    currentTilesetEditing: store.currentTilesetEditing,
+                    currentContentCommentsExpanded: store.currentContentCommentsExpanded,
+                });
             case GlobalStoreActionType.LOAD_PUBLIC_MAPS: {
                 return setStore({
                     userMaps: store.userMaps,
@@ -229,8 +229,9 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    // load the user's maps in their profile
-    store.loadUserMaps = async () => {
+    // loads the mapId's found in auth.user.maps into actual map objects into store.userMaps
+    // to update content in the profile screen, push/splice the auth.user.maps array and then call this function
+    store.loadUserContent = async () => {
         try {
             let userMapIds = auth.user.maps || [];
             let mapPromises= []
@@ -238,60 +239,77 @@ function GlobalStoreContextProvider(props) {
                 mapPromises.push((api.getMapById(userMapIds[i])));
             }
 
-            if (mapPromises.length > 0) {
+            if (mapPromises.length >= 0) {
                 Promise.all(mapPromises).then((maps) => {
-                    let returnMaps = new Array();
+                    let returnMaps = [];
 
                     for (let i = 0; i < maps.length; i++) {
                         returnMaps.push(maps[i].data.map);
                     }
-                    storeReducer({
-                        type: GlobalStoreActionType.LOAD_USER_MAPS,
-                        payload: {
-                            userMaps: returnMaps,
-                        }
-                    });
-                });
-            }  else {
-                storeReducer({
-                    type: GlobalStoreActionType.LOAD_USER_MAPS,
-                    payload: {
-                        userMaps: null,
+
+                    let userTilesetIds = auth.user.tilesets || [];
+                    let tilesetPromises = [];
+                    for (let i = 0; i < userTilesetIds.length; i++) {
+                        tilesetPromises.push((api.getTilesetById(userTilesetIds[i])));
+                    }
+                    if (tilesetPromises.length >= 0) {
+                        Promise.all(tilesetPromises).then((tilesets) => {
+                            let returnTilesets = [];
+                            for (let i = 0; i < tilesets.length; i++) {
+                                returnTilesets.push(tilesets[i].data.tileset);
+                            }
+                            storeReducer({
+                                type: GlobalStoreActionType.LOAD_USER_CONTENT,
+                                payload: {
+                                    userMaps: returnMaps,
+                                    userTilesets: returnTilesets
+                                }
+                            })
+                        })
                     }
                 });
             }
         } catch (error) {
-            console.log("Error loading user maps: ", error)
+            console.log("Error loading content: ", error)
         }
     }
-    // load the user's tilesets in their profile
-    store.loadUserTilesets = async () => {
+    store.loadPublicContent = async () => {
         try {
-            let userTilesetIds = auth.user.tilesets
-            let tilesetPromises = [];
-
-            for (let i = 0; i < userTilesetIds.length; i++) {
-                tilesetPromises.push(api.getTilesetById(userTilesetIds[i]));
-            }
-
-            Promise.all(tilesetPromises).then((responses) => {
-                let tilesets = [];
-                for (let i = 0; i < responses.length; i++) {
-                    if(responses[i].status === 200) {
-                        tilesets.push(responses[i].data.tileset);
-                    }
+            let allMaps = await api.getMaps();
+            let publicMaps = []
+            for (let i = 0; i < allMaps.data.maps.length; i++) {
+                if (allMaps.data.maps[i].public) {
+                    publicMaps.push(allMaps.data.maps[i]);
                 }
-                storeReducer({
-                    type: GlobalStoreActionType.LOAD_USER_TILESETS,
-                    payload: {
-                        userTilesets: tilesets
-                    }
-                })
-            });
+            }
+            let shownMaps = publicMaps.sort((a, b) => {
+                return (b.likedUsers.length - b.dislikedUsers.length) - (a.likedUsers.length - a.dislikedUsers.length);
+            })
+
+            let allTilesets = await api.getTilesets();
+            let publicTilesets = []
+            for (let i = 0; i < allTilesets.data.tilesets.length; i++) {
+                if (allTilesets.data.tilesets[i].public) {
+                    publicTilesets.push(allTilesets.data.tilesets[i]);
+                }
+            }
+            let shownTilesets = publicTilesets.sort((a, b) => {
+                return (b.likedUsers.length - b.dislikedUsers.length) - (a.likedUsers.length - a.dislikedUsers.length);
+            })
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_PUBLIC_CONTENT,
+                payload: {
+                    publicMaps: shownMaps,
+                    publicTilesets: shownTilesets
+                }
+            })
         } catch (error) {
-            console.log("Error loading user tilesets: ", error)
+            console.log("Error loading public content: ", error)
         }
     }
+
+
+
     // load all public maps in community page
     store.loadPublicMaps = async () => {
         try {
@@ -459,20 +477,14 @@ function GlobalStoreContextProvider(props) {
 
     // delete a map
     store.deleteMap = async function (mapId) {
-        console.log("INSIDE STORE FUNCTION")
         try {
             let response = await api.deleteMap(mapId)
             // a user can only delete their maps in their profile page
             // refresh only the user's maps
             // community maps will be refreshed the next time the community page is opened
             if (response.data.success) {
-                let newUserMaps = store.userMaps.filter(map => map._id !== mapId)
-                storeReducer({
-                    type: GlobalStoreActionType.LOAD_USER_MAPS,
-                    payload: {
-                        userMaps: newUserMaps
-                    }
-                })
+                auth.user.maps = auth.user.maps.filter(map => map !== mapId)
+                store.loadUserContent();
             }
         } catch (error) {
             console.log("Error deleting map: ", error)
@@ -486,7 +498,8 @@ function GlobalStoreContextProvider(props) {
             // refresh only the user's tilesets
             // community maps will be refreshed the next time the community page is opened
             if (response.data.success) {
-                store.loadUserTilesets()
+                auth.user.tilesets = auth.user.tilesets.filter(tileset => tileset !== tilesetId)
+                store.loadUserContent()
             }
         } catch (error) {
             console.log("Error deleting tileset: ", error)
@@ -499,10 +512,8 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 const map = response.data.map
                 if (map.likedUsers.includes(auth.user._id)) {
-                    console.log("Removing like to map")
                     map.likedUsers.splice(map.likedUsers.indexOf(auth.user._id), 1)
                 } else {
-                    console.log("adding like to map")
                     map.likedUsers.push(auth.user._id)
                     if (map.dislikedUsers.includes(auth.user._id)) {
                         map.dislikedUsers.splice(map.dislikedUsers.indexOf(auth.user._id), 1)
@@ -510,9 +521,12 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateMapGeneral(mapId, map)
                 if (responseGeneral.data.success) {
-                    store.loadUserMaps()
-                    // extend the rerendering to community screen later
-                    //store.loadPublicMaps()
+                    if (path === "/profile") {
+                        store.loadUserContent()
+                    }
+                    if (path === "/community") {
+                        store.loadPublicContent()
+                    }
                 }
             }
         } catch (error) {
@@ -527,10 +541,8 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 let map = response.data.map;
                 if (map.dislikedUsers.includes(auth.user._id)) {
-                    console.log("Removing dislike to map")
                     map.dislikedUsers.splice(map.dislikedUsers.indexOf(auth.user._id), 1)
                 } else {
-                    console.log("adding dislike to map")
                     map.dislikedUsers.push(auth.user._id)
                     if (map.likedUsers.includes(auth.user._id)) {
                         map.likedUsers.splice(map.likedUsers.indexOf(auth.user._id), 1)
@@ -538,9 +550,12 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateMapGeneral(mapId, map)
                 if (responseGeneral.data.success) {
-                    store.loadUserMaps()
-                    // extend the rerendering to community screen later
-                    //store.loadPublicMaps()
+                    if (path === "/profile") {
+                        store.loadUserContent()
+                    }
+                    if (path === "/community") {
+                        store.loadPublicContent()
+                    }
                 }
             }
         } catch (error) {
@@ -554,10 +569,8 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 const tileset = response.data.tileset
                 if (tileset.likedUsers.includes(auth.user._id)) {
-                    console.log("Removing like to tileset")
                     tileset.likedUsers.splice(tileset.likedUsers.indexOf(auth.user._id), 1)
                 } else {
-                    console.log("adding like to tileset")
                     tileset.likedUsers.push(auth.user._id)
                     if (tileset.dislikedUsers.includes(auth.user._id)) {
                         tileset.dislikedUsers.splice(tileset.dislikedUsers.indexOf(auth.user._id), 1)
@@ -565,8 +578,12 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateTilesetGeneral(tilesetId, tileset)
                 if (responseGeneral.data.success) {
-                    store.loadUserTilesets()
-                    store.loadPublicTilesets()
+                    if (path === "/profile") {
+                        store.loadUserContent()
+                    }
+                    if (path === "/community") {
+                        store.loadPublicContent()
+                    }
                 }
             }
         } catch (error) {
@@ -580,10 +597,8 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 const tileset = response.data.tileset
                 if (tileset.dislikedUsers.includes(auth.user._id)) {
-                    console.log("Removing dislike to tileset")
                     tileset.dislikedUsers.splice(tileset.dislikedUsers.indexOf(auth.user._id), 1)
                 } else {
-                    console.log("adding dislike to tileset")
                     tileset.dislikedUsers.push(auth.user._id)
                     if (tileset.likedUsers.includes(auth.user._id)) {
                         tileset.likedUsers.splice(tileset.likedUsers.indexOf(auth.user._id), 1)
@@ -591,8 +606,12 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateTilesetGeneral(tilesetId, tileset)
                 if (responseGeneral.data.success) {
-                    store.loadUserTilesets();
-                    store.loadPublicTilesets();
+                    if (path === "/profile") {
+                        store.loadUserContent()
+                    }
+                    if (path === "/community") {
+                        store.loadPublicContent()
+                    }
                 }
             }
         } catch (error) {
@@ -631,13 +650,8 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 // open map editor with newly created map
                 // handle it differently for now by refreshing user's maps
-                storeReducer({
-                    type: GlobalStoreActionType.CREATE_NEW_MAP,
-                    payload: {
-                        userMaps: response.data.maps,
-                        currentMapEditing: response.data.map
-                    }
-                })
+                auth.user.maps.push(response.data.map._id)
+                store.loadUserContent()
                 history("/mapEditor/" + response.data.map._id)
                 
             }
@@ -648,16 +662,17 @@ function GlobalStoreContextProvider(props) {
     // create new tileset, open tileset editor
     store.createNewTileset = async (title, tileSize) => {
         try {
-            let response = await api.createTileset(auth.user._id, title, tileSize);
+            let owner = auth.user
+            let response = await api.createTileset(owner, title, tileSize);
             if (response.data.success) {
                 // open tileset editor with newly created tileset
                 // handle it differently for now by refreshing user's tilesets
-                storeReducer({
-                    type: GlobalStoreActionType.EDITING_TILESET,
-                    payload: {
-                        editingTileset: response.data.tileset
-                    }
-                })
+                auth.user.tilesets.push(response.data.tileset._id)
+                store.loadUserContent()
+
+                // TODO: need to open the tileset editor after creation
+
+                //history("/tilesetEditor/" + response.data.tileset._id)
             }
         } catch (error) {
             console.log("Error creating new tileset: ", error);
@@ -674,9 +689,12 @@ function GlobalStoreContextProvider(props) {
                     map.viewers.push(auth.user._id)
                     const responseGeneral = await api.updateMapGeneral(mapId, map)
                     if (responseGeneral.data.success) {
-                        store.loadUserMaps()
-                        // extend the rerendering to community screen later
-                        //store.loadPublicMaps()
+                        if (path === "/profile") {
+                            store.loadUserContent()
+                        }
+                        if (path === "/community") {
+                            store.loadPublicContent()
+                        }
                     }
                 }
             }
@@ -693,9 +711,12 @@ function GlobalStoreContextProvider(props) {
                     tileset.viewers.push(auth.user._id)
                     const responseGeneral = await api.updateTilesetGeneral(tilesetId, tileset)
                     if (responseGeneral.data.success) {
-                        store.loadUserTilesets()
-                        // extend the rerendering to community screen later
-                        //store.loadPublicMaps()
+                        if (path === "/profile") {
+                            store.loadUserContent()
+                        }
+                        if (path === "/community") {
+                            store.loadPublicContent()
+                        }
                     }
                 }
             }

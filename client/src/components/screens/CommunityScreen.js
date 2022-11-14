@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import Header from './Header';
 import { BsFilter } from 'react-icons/bs';
 import { Menu } from '@headlessui/react';
@@ -6,9 +6,14 @@ import ItemCard from '../ItemCard';
 import ModalTwo from '../modals/TagModal/ModalTwo';
 import { generateRandomMaps } from '../../utils/mockData/ItemCard_MockData';
 import { getMaps, getTilesets } from '../../requests/store-request';
-
+import GlobalStoreContext from "../../store"
+import AuthContext from '../../auth';
 
 export default function CommunityScreen() {
+
+    const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
+
     // if true, then current Tab is the maps
     // if false, then current Tab is tilesets
     const [mapTabBool, setMapTabBool] = React.useState(true);
@@ -27,28 +32,16 @@ export default function CommunityScreen() {
 
     // copied directly from website and it worked somehow
     const [modalOpen2, setModalOpen2] = React.useState(false);
-    // FOR RANDOMNESS
-    // const [data, setData] = React.useState(generateRandomMaps());
-    const [data, setData] = React.useState([]);
-    const [dataTilesets, setDataTilesets] = React.useState([]);
-    useEffect(() => {
-        async function getAllMaps() {
-            const response = await getMaps();
-            if (response.data.success) {
-                console.log(response.data.maps);
-                setData(response.data.maps);
-            }
-        }
-        getAllMaps();
 
-        async function getAllTilesets() {
-            const response = await getTilesets();
-            if (response.data.success) {
-                setDataTilesets(response.data.maps);
-            }
+    useEffect(() => {
+        async function getTheContent() {
+            await store.loadPublicContent();
         }
-        getAllTilesets();
+        getTheContent();
     }, [])
+
+    let publicMaps = store.publicMaps;
+    let publicTilesets = store.publicTilesets;
 
     const handleMapToTilesetTab = () => {
         if (!mapTabBool) {
@@ -168,12 +161,9 @@ export default function CommunityScreen() {
                             <div className="w-full h-auto mx-10 my-4 overflow-y-auto">
                                 <div className='mr-5 space-y-3'>
                                     {
-                                        mapTabBool ? data.map((d) => {
-                                            return <ItemCard map={d} key={Math.random() * 500} />
-                                        })
-                                        :   dataTilesets.map((d) => {
-                                                return <ItemCard key={Math.random() * 500} tileset={d} />
-                                            })
+                                        mapTabBool 
+                                        ?   publicMaps.map((d, i) => <ItemCard map={d} key={i} inProfile={true}/>)
+                                        :   publicTilesets.map((d, i) => <ItemCard tileset={d} key={i} inProfile={true}/>)
                                     }
                                 </div>
                             </div>
