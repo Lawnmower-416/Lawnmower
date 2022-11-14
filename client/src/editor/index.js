@@ -578,6 +578,16 @@ function EditorContextProvider(props) {
         });
     }
 
+    store.changeTilesetTitle = (title) => {
+        updateTileset(store.tileset._id, {...store.tileset, title: title}).then(r => {
+            if(r.status === 200) {
+                store.setTileset(store.tileset._id);
+            } else {
+                console.log('Error updating tileset title');
+            }
+        });
+    }
+
     return (
         <EditorContext.Provider
             value={{store}}

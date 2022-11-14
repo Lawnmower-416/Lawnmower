@@ -1,14 +1,20 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
+import {Fragment, useContext, useState} from 'react'
+import EditorContext from "../../editor";
 
 function TilesetSettingsModal({isOpen, setIsOpen}) {
-  function closeModal() {
-    setIsOpen(false)
-  }
+    const { store } = useContext(EditorContext);
 
-  function openModal() {
-    setIsOpen(true)
-  }
+    const [title , setTitle] = useState(store.tileset.title);
+
+    function closeModal() {
+        store.changeTilesetTitle(title);
+        setIsOpen(false)
+    }
+
+    function openModal() {
+        setIsOpen(true)
+    }
 
   return (
     <>
@@ -46,24 +52,20 @@ function TilesetSettingsModal({isOpen, setIsOpen}) {
                                     Settings
                                 </Dialog.Title>
                                 <div className="bg-editor-background">
-                                    <div className="grid grid-rows-4">
-                                        <div className="row-span-1">
+                                    <div className="grid grid-rows-3">
+                                        <div className="row-span-1 text-2xl">
                                             Title
                                         </div>
                                         <div>
-                                            <input type="text" className="w-full text-black p-2" value={"Title"}/>
+                                            <input
+                                                type="text"
+                                                className="w-full text-black p-2"
+                                                value={title}
+                                                onChange={(event) => {
+                                                    setTitle(event.target.value);
+                                                }}/>
                                         </div>
-                                        <div className="row-span-1">
-                                            Tile Size
-                                        </div>
-                                        <span className="row-span-1 flex justify-center">
-                                            <div className="mr-7">
-                                                <input type="text" className="w-8 text-black p-2" value={1}/> Length
-                                            </div>
-                                        </span>
-
                                     </div>
-
                                     <div className="pt-4 pb-4 flex items-center justify-center">
                                         <button
                                             type="button"
