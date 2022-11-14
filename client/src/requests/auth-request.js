@@ -26,8 +26,9 @@ export const register = (firstName, lastName, username, email, password, passwor
         passwordVerify : passwordVerify
     }, {withCredentials: true});
 }
-export const changePassword = (password, passwordVerify) => {
+export const changePassword = (email, password, passwordVerify) => {
     return baseAPI.put(`/auth/changePassword/`, {
+        email: email,
         password : password,
         passwordVerify : passwordVerify
     })
