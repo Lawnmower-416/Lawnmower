@@ -398,7 +398,6 @@ function EditorContextProvider(props) {
         })
     }
 
-    //a function that performs a flood fill on the tileset
     store.floodFill = (x, y) => {
         const newImage = { ...store.tilesetImage };
         const tile = newImage.tiles[store.currentTileIndex].data;
