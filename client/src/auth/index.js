@@ -128,12 +128,16 @@ function AuthContextProvider(props) {
     // as backend is expecting email, password
     auth.login = async (username, password) => {
         const response = await api.login(username, password).catch((error) => {
+            let message = error.message;
+            if(error.response && error.response.data && error.response.data.message) {
+                message = error.response.data.errorMessage;
+            }
             authReducer({
                 type: AuthActionType.ERROR_MESSAGE,
                 payload: {
-                    errorMessage: error
+                    errorMessage: message
                 }
-            }
+            });
         )});
 
         if (response.status === 200) {
@@ -167,12 +171,16 @@ function AuthContextProvider(props) {
     }
     auth.register = async (firstName, lastName, username, email, password, passwordVerify) => {
         const response = await api.register(firstName, lastName, username, email, password, passwordVerify).catch((error) => {
+            let message = error.message;
+            if(error.response && error.response.data && error.response.data.message) {
+                message = error.response.data.errorMessage;
+            }
             authReducer({
                 type: AuthActionType.ERROR_MESSAGE,
                 payload: {
-                    errorMessage: error
+                    errorMessage: message
                 }
-            }
+            });
         )});
 
         if (response.status === 200) {
@@ -204,6 +212,14 @@ function AuthContextProvider(props) {
                 payload: { }
             });
             history('/');
+        } else {
+            authReducer({
+                type: AuthActionType.ERROR_MESSAGE,
+                payload: {
+                    errorMessage: response.data.errorMessage
+                }
+            }
+        )
         }
     }
     auth.deleteAccount = async (username, password) => {
