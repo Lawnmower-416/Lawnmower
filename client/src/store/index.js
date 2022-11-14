@@ -546,10 +546,7 @@ function GlobalStoreContextProvider(props) {
                 // handle it differently for now by refreshing user's tilesets
                 auth.user.tilesets.push(response.data.tileset._id)
                 store.loadUserContent()
-
-                // TODO: need to open the tileset editor after creation
-
-                //history("/tilesetEditor/" + response.data.tileset._id)
+                history("/tilesetEditor/" + response.data.tileset._id)
             }
         } catch (error) {
             console.log("Error creating new tileset: ", error);
