@@ -1,14 +1,14 @@
 import React from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
-import { socket } from '../config/SocketIO';
+import { socket } from '../config/SocketIO'; 
 import Comment from './Comment';
 
 export default function PostComments({ userName, currentPost}) {
 
   const [comments, setComments] = useState([])
   const [inputMessage, setInputMessage] = useState(null)
-
+  
   function nestComments(commentList) {
     const commentMap = {};
   

@@ -7,11 +7,11 @@ import PostComments from '../components/PostComments'
 import { socket } from '../config/SocketIO'
 
 export default function Home() {
-
+  
   const [currentPost, setCurrentPost] = useState(null)
   const [userName, setUserName] = useState(null);
-
-
+  
+  
   useEffect(() => {
     socket.on('updated_post', data => {
       console.log('updated_post: ', data)

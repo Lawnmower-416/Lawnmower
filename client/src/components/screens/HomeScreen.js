@@ -42,6 +42,13 @@ const HomeScreen = () => {
                 Enter as a guest
                 </button>
               </Link>
+              <Link to='/expandedcommunity'className="font-inter hover:underline text-white font-bold text-md sm:text-lg lg:text-xl xl:text-2xl 2xl:text-4xl">
+                <button
+                  onClick={handleGuestMode}
+                >
+                Expanded Community Page Test
+                </button>
+              </Link>
             </div>
           </div>
         </div>
