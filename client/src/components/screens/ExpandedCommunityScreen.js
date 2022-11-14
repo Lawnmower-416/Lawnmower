@@ -2,9 +2,9 @@ import React from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import NavBar from '../NavBar'
-import PostBody from '../components/PostBody'
-import PostComments from '../components/PostComments'
-import { socket } from '../config/SocketIO'
+import PostBody from '../PostBody'
+import PostComments from '../PostComments'
+import { socket } from '../../config/socket'
 
 export default function Home() {
   
