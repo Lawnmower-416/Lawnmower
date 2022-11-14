@@ -24,9 +24,10 @@ describe('User Model Test', () => {
 
     it('Create Tileset', async () => {
         let owner = createdUser._id;
+        let username = createdUser.username;
         let title = "Sample Title";
         let tileSize = 64;
-        tilesetId = await Tileset.create({owner: owner, title: title, tileSize: tileSize});
+        tilesetId = await Tileset.create({owner: owner, ownerUsername: username, title: title, tileSize: tileSize});
 
         expect(tilesetId._id).toBeDefined();
         expect(tilesetId.title).toBe(title);

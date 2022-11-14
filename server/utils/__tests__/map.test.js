@@ -25,6 +25,7 @@ describe('Map Model Test', () => {
     it('Create Map', async () => {
         const sampleMapData = {
             owner: createdUser._id,
+            ownerUsername: createdUser.username,
             title: "Sample Title",
             height: 128,
             width: 128,
