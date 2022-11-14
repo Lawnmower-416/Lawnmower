@@ -373,20 +373,22 @@ function EditorContextProvider(props) {
         });
     }
 
-    store.editTile = (x, y) => {
+    store.editTile = (x, y, color) => {
+        if(x < 0 || y < 0 || x >= store.tileset.tileSize || y >= store.tileset.tileSize) return;
+
         const newImage = { ...store.tilesetImage };
         const tile = newImage.tiles[store.currentTileIndex].data;
 
-        const color = store.currentColor
+        const c = color || store.currentColor
         const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
         const greenIndex = redIndex + 1;
         const blueIndex = redIndex + 2;
         const alphaIndex = redIndex + 3;
 
-        tile[redIndex] = color.red;
-        tile[greenIndex] = color.green;
-        tile[blueIndex] = color.blue;
-        tile[alphaIndex] = color.alpha;
+        tile[redIndex] = c.red;
+        tile[greenIndex] = c.green;
+        tile[blueIndex] = c.blue;
+        tile[alphaIndex] = c.alpha;
 
         storeReducer({
             type: EditorActionType.EDIT_TILE,
@@ -474,6 +476,54 @@ function EditorContextProvider(props) {
                 pixels: pixels,
             },
         });
+    }
+
+    store.clearSelectedPixels = () => {
+        for (let i = 0; i < store.selectedPixels.length; i++) {
+            const pixel = store.selectedPixels[i];
+            store.editTile(pixel.x, pixel.y, {red: 0, green: 0, blue: 0, alpha: 0});
+        }
+    }
+
+    store.getCopyData = () => {
+        const minX = Math.min(...store.selectedPixels.map(p => p.x));
+        const minY = Math.min(...store.selectedPixels.map(p => p.y));
+
+        const ret = [];
+        for (let i = 0; i < store.selectedPixels.length; i++) {
+            const {x, y} = store.selectedPixels[i];
+            const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
+            const greenIndex = redIndex + 1;
+            const blueIndex = redIndex + 2;
+            const alphaIndex = redIndex + 3;
+            const tile = store.tilesetImage.tiles[store.currentTileIndex].data;
+            ret.push({
+                x: x - minX,
+                y: y - minY,
+                color: {
+                    red: tile[redIndex],
+                    green: tile[greenIndex],
+                    blue: tile[blueIndex],
+                    alpha: tile[alphaIndex]
+                }
+            });
+        }
+        return JSON.stringify(ret);
+    }
+
+    store.pasteData = (pixels) => {
+        if(store.selectedPixels.length === 0) return;
+
+        const minX = store.selectedPixels[0].x;
+        const minY = store.selectedPixels[0].y;
+
+
+
+        for (let i = 0; i < pixels.length; i++) {
+            const {x, y, color} = pixels[i];
+            console.log(x + minX, y + minY, color);
+            store.editTile(x + minX, y + minY, color);
+        }
     }
 
     store.saveTileset = async () => {

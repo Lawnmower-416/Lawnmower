@@ -20,16 +20,24 @@ function Toolbar() {
     const handleCopy = () => {
         navigator.clipboard.write(
             // eslint-disable-next-line no-undef
-            [new ClipboardItem({ 'text/plain': new Blob([JSON.stringify(store.selectedPixels)], { type: 'text/plain' }) })
+            [new ClipboardItem({ 'text/plain': new Blob([store.getCopyData()], { type: 'text/plain' }) })
             ]);
     }
 
     const handleCut = () => {
         handleCopy();
+        store.clearSelectedPixels();
     }
 
     const handlePaste = () => {
-
+        navigator.clipboard.readText().then(text => {
+            try{
+                const pixels = JSON.parse(text);
+                store.pasteData(pixels);
+            } catch (e) {
+                console.error(e);
+            }
+        });
     }
 
 
