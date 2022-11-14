@@ -35,6 +35,7 @@ export default function ItemCard(props) {
 
     const title = currentData.title || "Error Loading Title";
     const owner = currentData.owner ||"Error Loading Owner";
+    const ownerUsername = currentData.ownerUsername || "Error Loading Owner Username";
     const creationDate = new Date(currentData.createdAt).toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'}) || "Error Loading Creation Date";
     const publicStatus = currentData.public || false
     const comments = currentData.comments || "Error Loading Comments";
@@ -139,7 +140,7 @@ export default function ItemCard(props) {
                         }</Link>
                             <Menu as="div" className="relative">
                                 <Menu.Button>
-                                    <p className="text-xl text-left">By: {owner}</p>
+                                    <p className="text-xl text-left">By: {ownerUsername}</p>
                                 </Menu.Button>
                                 <Menu.Items className="absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg w-">
                                     <Menu.Item>
