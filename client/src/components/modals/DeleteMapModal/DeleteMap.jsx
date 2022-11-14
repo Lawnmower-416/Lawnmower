@@ -4,12 +4,18 @@ import { useContext } from "react";
 import GlobalStoreContext from "../../../store";
 
 
-export const DeleteMapModal = ({ modalOpen, setModalOpen, map }) => {
+export const DeleteMapModal = ({ modalOpen, setModalOpen, content }) => {
 	const { store } = useContext(GlobalStoreContext);
 
-	const handleDeleteMap = () => {
+	const handleDeleteContent = () => {
 		setModalOpen(!modalOpen)
-		store.deleteMap(map._id);
+		if (content.tilesets) {
+			console.log("DELETING MAP")
+			store.deleteMap(content._id);
+		} else {
+			console.log("DELETING TILESET")
+			store.deleteTileset(content._id);
+		}
 	}
 
 	return (
@@ -36,14 +42,14 @@ export const DeleteMapModal = ({ modalOpen, setModalOpen, map }) => {
 								Are You Sure?
 							</h4>
 							<div>
-								Are you sure you want to delete your <u>{map.title}</u>? This
+								Are you sure you want to delete your <u>{content.title}</u>? This
 								action cannot be undone.
 							</div>
 						</div>
 						<div className="flex justify-between gap-4 mt-5">
 							<button
 								className="rounded-lg py-[5px] px-6  cursor-pointer duration-300 bg-dark-green text-red text-[16px] font-bold flex-grow max-w-[200px]"
-								onClick={handleDeleteMap}
+								onClick={handleDeleteContent}
 							>
 								Delete
 							</button>

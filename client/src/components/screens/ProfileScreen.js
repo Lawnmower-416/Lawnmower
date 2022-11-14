@@ -6,6 +6,7 @@ import ItemCard from "./../ItemCard";
 import Header from "./Header";
 import { useLocation } from "react-router-dom";
 import AuthContext from "../../auth";
+import { useNavigate } from "react-router-dom";
 
 import ModalEight from "../modals/CreateMapModal/CreateMap";
 import CreateTilesetModal from "../modals/CreateTilesetModal";
@@ -15,6 +16,7 @@ import GlobalStoreContext from "../../store";
 // import {UserCircleIcon} from "@heroicons/react/24/outline";
 
 export default function Profile() {
+
     const location = useLocation();
     const contentBefore = location.state ? location.state.contentBefore : null;
     const { store } = useContext(GlobalStoreContext);
@@ -32,10 +34,7 @@ export default function Profile() {
     // Get user's stuff
     // const userMaps = (contentBefore ? [contentBefore] : (user && user.maps)) || [];
 
-    //store.loadUserMaps();
-    let userMaps = store.userMaps;
-
-    const userTilesets = (contentBefore ? [contentBefore] : (user && user.tilesets)) || [];
+    //const userTilesets = (contentBefore ? [contentBefore] : (user && user.tilesets)) || [];
     const userComments = (contentBefore ? [contentBefore] : (user && user.comments)) || [];
 
     const [username, setUsername] = useState(user ? user.username : "");
@@ -56,6 +55,9 @@ export default function Profile() {
     const [tilesetModal, setTilesetModal] = useState(false);
     const [deleteAccountModal, setDeleteAccountModal] = useState(false);
 
+    let userMaps = [];
+    let userTilesets = [];
+
     useEffect(() => {
         async function fetchData() {
             if (user) {
@@ -66,9 +68,8 @@ export default function Profile() {
                         .toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'})
                 );
                 setPoints(user.points);
-
-                await store.loadUserMaps();
-                userMaps = store.userMaps;
+                console.log("auth.user was change so useEffect is called store.loadUserContent", auth.user);
+                await store.loadUserContent();
             }
         }
         fetchData();
@@ -109,7 +110,9 @@ export default function Profile() {
         }
     };
 
-    console.log(userMaps)
+    console.log("rendering profile", store.userMaps, store.userTilesets);
+    userMaps = store.userMaps;
+    userTilesets = store.userTilesets;
 
     return (
         <>
@@ -169,8 +172,8 @@ export default function Profile() {
                         <div className="snap-y h-[64rem] overflow-y-auto p-8 space-y-2">
                             {
                                 (currentTab === "Maps" && userMaps) ? userMaps.map((m, i) => <ItemCard key={i} inProfile={true} map={m} />)
-                                : (currentTab === "Tilesets" ? userTilesets.map(t => <ItemCard key={t.views} inProfile={true} tileset={t} />)
-                                    : getUserCommentsFromMapsAndTilesets())
+                                : (currentTab === "Tilesets" && userTilesets) ? userTilesets.map((t, i) => <ItemCard key={i} inProfile={true} tileset={t} />)
+                                    : getUserCommentsFromMapsAndTilesets()
                             }
                         </div>
                     </div>

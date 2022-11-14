@@ -3,7 +3,7 @@ import GlobalStoreContext from "../../store";
 
 const CreateTilesetModal = ({ modalOpen, setModalOpen }) => {
 	const { store } = useContext(GlobalStoreContext);
-    const [title, setTitle] = useState("");
+    const [title, setTitle] = useState("Untitled");
 	const [size, setSize] = useState("8");
 
 	const handleCreateTileset = () => {
