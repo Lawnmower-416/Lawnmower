@@ -1,18 +1,24 @@
 import Toolbar from './Toolbar';
 import {useRef, useEffect, useContext} from 'react';
 import EditorContext, {EditorTool} from "../../../editor";
-function TileEditor({currentTile}) {
+function TileEditor() {
     const { store } = useContext(EditorContext);
 
     const ref = useRef(null);
 
-    const pixelSize = 100;
+    const pixelSize = Math.ceil(600 / store.tileset.tileSize);
+
+    const currentTile = store.tilesetImage.tiles[store.currentTileIndex];
 
     useEffect(() => {
         if(ref && currentTile) {
             drawTile();
         }
     });
+
+    useEffect(() => {
+        drawTile();
+    }, [store.currentTileIndex]);
 
     const drawTile = () => {
         const tileSize = store.tileset.tileSize;
@@ -48,6 +54,7 @@ function TileEditor({currentTile}) {
     }
 
     const highlightPixel = (e) => {
+        if(!currentTile) return;
         drawTile();
         const context = ref.current.getContext('2d');
         const rect = ref.current.getBoundingClientRect();
@@ -58,6 +65,8 @@ function TileEditor({currentTile}) {
     }
 
     const handleClick = (e) => {
+        if(!currentTile) return;
+
         const context = ref.current.getContext('2d');
         const rect = ref.current.getBoundingClientRect();
         const x = Math.floor((e.clientX - rect.left) / pixelSize);

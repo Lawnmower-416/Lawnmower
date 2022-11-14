@@ -14,7 +14,6 @@ function ColorSidebar() {
     }, []);
 
     const setCurrentColor = (color) => {
-        console.log(color.red, color.green, color.blue);
         store.setColor(color);
     }
 

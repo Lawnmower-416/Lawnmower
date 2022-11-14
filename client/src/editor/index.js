@@ -36,6 +36,8 @@ export const EditorActionType = {
     ADD_SELECTED_PIXEL: "ADD_SELECTED_PIXEL",
     EDIT_TILE: "EDIT_TILE",
     SAVE_TILESET: "SAVE_TILESET",
+    ADD_TILE: "ADD_TILE",
+    SET_CURRENT_TILE: "SET_CURRENT_TILE",
 }
 
 export const EditorTool = {
@@ -57,6 +59,7 @@ function EditorContextProvider(props) {
         tilesetImage: null,
         currentColor: {red: 0, green: 0, blue: 0, alpha: 255},
         colors: [],
+        currentTileIndex: 0,
 
         currentTool: EditorTool.SELECT,
         currentItem: null,
@@ -136,6 +139,20 @@ function EditorContextProvider(props) {
                 });
                 break;
 
+            case EditorActionType.ADD_TILE:
+                setStore({
+                    ...store,
+                    tilesetImage: payload.tilesetImage
+                });
+                break;
+
+            case EditorActionType.SET_CURRENT_TILE:
+                setStore({
+                    ...store,
+                    currentTileIndex: payload.index,
+                });
+                break;
+
             default:
                 console.error("Unknown action type: " + type);
                 break;
@@ -173,6 +190,16 @@ function EditorContextProvider(props) {
             }
         });
     }
+
+    store.setCurrentTile = (tileIndex) => {
+        storeReducer({
+            type: EditorActionType.SET_CURRENT_TILE,
+            payload: {
+                index: tileIndex,
+            }
+        });
+    }
+
     // returns the currently chosen tile/color
     store.getCurrentItem = () => {
     
@@ -312,6 +339,25 @@ function EditorContextProvider(props) {
             payload: {
                 color: color,
             },
+        });
+    }
+
+    store.addTile = async () => {
+        const tileSize = store.tileset.tileSize;
+        const canvas = document.createElement('canvas');
+        canvas.width = tileSize;
+        canvas.height = tileSize;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ff0000';
+        ctx.fillRect(0, 0, tileSize, tileSize);
+        const imageData = ctx.getImageData(0, 0, tileSize, tileSize);
+        const data = JSON.parse(JSON.stringify(imageData.data));
+        const newImage = [...store.tilesetImage.tiles, {data}];
+        storeReducer({
+            type: EditorActionType.ADD_TILE,
+            payload: {
+                tilesetImage: { tiles: newImage }
+            }
         });
     }
 

@@ -49,7 +49,7 @@ function TilesetEditor() {
             />
             <div className="flex h-screen">
                 <ColorSidebar/>
-                <TileEditor currentTile={tilesetImage.tiles[0]} />
+                <TileEditor />
                 <TileSidebar tiles={tilesetImage.tiles} />
             </div>
         </div>
