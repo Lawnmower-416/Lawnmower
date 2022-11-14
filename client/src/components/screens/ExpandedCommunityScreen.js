@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
-import NavBar from '../components/NavBar'
+import NavBar from '../NavBar'
 import PostBody from '../components/PostBody'
 import PostComments from '../components/PostComments'
 import { socket } from '../config/SocketIO'
