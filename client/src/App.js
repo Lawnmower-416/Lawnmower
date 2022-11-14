@@ -17,6 +17,7 @@ import PasswordChange from './components/screens/PasswordChange';
 import MapEditor from './components/screens/MapEditor';
 import TilesetEditor from './components/screens/TilesetEditor';
 import ExpandedCommunityScreen from './components/screens/ExpandedCommunityScreen';
+import Header from './components/screens/Header';
 
 function App() {
   return (
@@ -40,7 +41,7 @@ function App() {
               <Route path="/expandedcommunity" exact element={<ExpandedCommunityScreen/>} />
               <Route path="*" element={
               <div>
-                <Headers />
+                <Header />
                 <h1>Error...</h1>
               </div>} />
             </Routes>
