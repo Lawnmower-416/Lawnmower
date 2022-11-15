@@ -63,8 +63,12 @@ export default function Home() {
     })
   }
 
-  useEffect(() => {
-    createUserAndUniqueView()
+  // send me a screenshot of terminal with logs
+
+
+  //ok
+  useEffect(() => {    
+    createUserAndUniqueView()   
     createUniqueView()
 
     fetch('http://34.193.24.27/post/get-all')
