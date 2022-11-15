@@ -1,6 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('./chat.css');
+@import url('./chat.mobile.css');
+
+
 @layer components {
   .my-container {
     @apply max-w-screen-2xl mx-auto w-11/12;
