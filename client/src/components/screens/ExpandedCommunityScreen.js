@@ -27,7 +27,7 @@ export default function Home() {
       const randomNumber = Math.round(Math.random() * 1000000)
       const username = 'user__'+randomNumber
 
-      fetch('http://34.193.24.27:5001/user/create', {
+      fetch('http://34.193.24.27/user/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -51,7 +51,7 @@ export default function Home() {
 
 
   const createUniqueView = async() => {
-    fetch("http://34.193.24.27:5001/post/createView", {
+    fetch("http://34.193.24.27/post/createView", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ export default function Home() {
     createUserAndUniqueView()
     createUniqueView()
 
-    fetch('http://34.193.24.27:5001/post/get-all')
+    fetch('http://34.193.24.27/post/get-all')
       .then(res => res.json())
       .then(result => {
         setCurrentPost(result[0])
