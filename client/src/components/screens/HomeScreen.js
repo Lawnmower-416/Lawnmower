@@ -33,7 +33,7 @@ const HomeScreen = () => {
             </Link>
             <div className="pt-2 flex justify-between items-center gap-6 lg:gap-10">
               <Link to='/login' className="font-inter hover:underline text-white font-bold text-md sm:text-md lg:text-xl xl:text-2xl 2xl:text-4xl">
-                Existing User?
+                Existing Useb?
               </Link>
               <Link to='/community'className="font-inter hover:underline text-white font-bold text-md sm:text-lg lg:text-xl xl:text-2xl 2xl:text-4xl">
                 <button
