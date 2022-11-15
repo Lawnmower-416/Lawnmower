@@ -112,8 +112,8 @@ export default function Comment({comment, userName, currentPost}) {
               }
               <button>
                 <div onClick={() => onClickAction('reply')} className="comment__icon_btn">
-                  <img src="/assets/reply.png" alt="" />
-                  <span>Reply</span>
+                  <img className='reply' src="/assets/reply.png" alt="" />
+                  <span className=''>Reply</span>
                 </div>
               </button>
             </div>
@@ -156,3 +156,4 @@ export default function Comment({comment, userName, currentPost}) {
     </>
   )
 }
+

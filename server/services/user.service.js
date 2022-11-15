@@ -1,4 +1,4 @@
-const User = require("../mongodb/schemas/user.schema")
+const User = require("../models/user-schema")
 
 const userService = {
   createUser: async(data) => {

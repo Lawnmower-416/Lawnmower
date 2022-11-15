@@ -1,4 +1,4 @@
-const Comment = require("../mongodb/schemas/comment.schema");
+const Comment = require("../models/comment-schema");
 
 const commentService = {
   createComment: async(data) => {

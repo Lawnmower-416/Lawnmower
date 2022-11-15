@@ -2,6 +2,7 @@ const postService = require("../services/post.service");
 
 const postController = {
   createPost: async(req, res) => {
+    console.log('new post data: ', req.body)
     const newPost = await postService.createPost(req.body)
     res.status(200).send(newPost)
   },

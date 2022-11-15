@@ -1,4 +1,4 @@
-const Post = require("../mongodb/schemas/post.schema")
+const Post = require("../models/post-schema")
 
 const postService = {
   createPost: async(data) => {
