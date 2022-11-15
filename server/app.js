@@ -25,7 +25,7 @@ const io = new Server(server, {
 
 // MiddlewareStack
 const cors = require('cors');
-app.use(cors({ origin: ['http://34.193.24.27', "http://localhost:3000", "*"], credentials: true }));
+app.use(cors({ origin: ['http://34.193.24.27', "*"], credentials: true }));
 
 // added
 app.use(bodyParser.json());
