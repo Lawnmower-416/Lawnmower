@@ -109,17 +109,17 @@ io.on('connection', server => {
   })
 })
 
-// const authRouter = require('./routes/auth-router');
-// const contentRouter = require('./routes/content-router');
-// const mapTileRouter = require('./routes/map-tile-router');
-// const tilesetRouter = require('./routes/tileset-router');
+const authRouter = require('./routes/auth-router');
+const contentRouter = require('./routes/content-router');
+const mapTileRouter = require('./routes/map-tile-router');
+const tilesetRouter = require('./routes/tileset-router');
 const testRouter = require('./routes/test-router');
 
 
-// app.use('/auth', authRouter);
-// app.use('/', contentRouter);
-// app.use('/', userRouter);
-// app.use('/editor/', mapTileRouter);
+app.use('/auth', authRouter);
+app.use('/', contentRouter);
+app.use('/', userRouter);
+app.use('/editor/', mapTileRouter);
 app.use('/test', testRouter);
 
 // INITIALIZE OUR DATABASE OBJECT
