@@ -8,11 +8,9 @@ export const EditorContext = createContext();
 
 export const EditorActionType = {
     SET_CURRENT_TOOL: "SET_CURRENT_TOOL",
-    SET_CURRENT_ITEM: "SET_CURRENT_ITEM",
     ADD_TRANSACTION: "ADD_TRANSACTION",
     PROCESS_UNDO: "PROCESS_UNDO",
     PROCESS_REDO: "PROCESS_REDO",
-    SELECT_REGION: "SELECT_REGION",
     PLACE_TILE: "PLACE_TILE",
     SELECT_LAYER: "SELECT_LAYER",
     ADD_LAYER: "ADD_LAYER",
@@ -185,7 +183,7 @@ function EditorContextProvider(props) {
      * @param tool {EditorTool}
      */
     store.setCurrentTool = (tool) => {
-        let selectedPixels = null;
+        let selectedPixels;
 
         switch (tool) {
             case EditorTool.PAINT:
@@ -358,6 +356,10 @@ function EditorContextProvider(props) {
             color.green = parseInt(color.green);
             color.blue = parseInt(color.blue);
         }
+
+        color.red = Math.min(color.red, 255);
+        color.green = Math.min(color.green, 255);
+        color.blue = Math.min(color.blue, 255);
 
         storeReducer({
             type: EditorActionType.SET_COLOR,
