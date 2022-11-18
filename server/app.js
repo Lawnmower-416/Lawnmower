@@ -7,9 +7,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
 const hostname = "0.0.0.0";
-const port = process.env.PORT || 5000;
+const port = 3000;
 
-// added
 const routes = require('./routes');
 const bodyParser = require('body-parser');
 const http = require('http')
@@ -17,21 +16,15 @@ const { Server } = require("socket.io")
 const server = http.createServer(app)
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "http://34.193.24.27",
     methods: ["GET", "POST"]
   }
 })
 
 
-// MiddlewareStack
 const cors = require('cors');
-app.use(cors({
-  origin: true,
-  methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD','PATCH', 'DELETE'],
-  credentials: true
-}));
+app.use(cors({ origin: 'http://34.193.24.27', credentials: true }));
 
-// added
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({  extended: false }));
 
@@ -40,10 +33,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-
-
-routes(app)
 
 // For Chat
 io.on('connection', server => {
@@ -116,14 +105,14 @@ io.on('connection', server => {
 const authRouter = require('./routes/auth-router');
 const contentRouter = require('./routes/content-router');
 const mapTileRouter = require('./routes/map-tile-router');
-const tilesetRouter = require('./routes/tileset-router');
+//const tilesetRouter = require('./routes/tileset-router');
 const testRouter = require('./routes/test-router');
 
 
 app.use('/auth', authRouter);
 app.use('/', contentRouter);
-app.use('/', userRouter);
-app.use('/editor/', mapTileRouter);
+//app.use('/', userRouter);
+app.use('/editor', mapTileRouter);
 app.use('/test', testRouter);
 
 // INITIALIZE OUR DATABASE OBJECT

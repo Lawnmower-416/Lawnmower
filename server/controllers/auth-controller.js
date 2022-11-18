@@ -243,7 +243,7 @@ changePassword = async (req, res) => {
         // User is verified...
         // Send them an email with a verification code...
         const userKey = existingUser.key;
-        const body = "http://34.193.24.27/auth/verify?email=" + encodeURIComponent(email) + "&key=" + encodeURIComponent(userKey);
+        const body = "http://34.193.24.27:3000/auth/verify?email=" + encodeURIComponent(email) + "&key=" + encodeURIComponent(userKey);
         const subject = "Password Reset Link";
 
         let transporter = Nodemailer.createTransport({
