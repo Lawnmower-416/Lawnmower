@@ -1,4 +1,4 @@
-import {createContext, useContext, useEffect, useState} from 'react';
+import {createContext, useEffect, useState} from 'react';
 import {getTilesetImage, updateTileset, uploadTilesetImage} from "../../src/requests/tileset-editor-api";
 import {getTilesetById} from "../requests/store-request";
 import jsTPS from "../transactions/jsTPS";
@@ -7,13 +7,10 @@ import jsTPS from "../transactions/jsTPS";
 export const EditorContext = createContext();
 
 export const EditorActionType = {
-    GET_CAN_EDIT: "GET_CAN_EDIT",
     SET_CURRENT_TOOL: "SET_CURRENT_TOOL",
-    SET_CURRENT_ITEM: "SET_CURRENT_ITEM",
     ADD_TRANSACTION: "ADD_TRANSACTION",
     PROCESS_UNDO: "PROCESS_UNDO",
     PROCESS_REDO: "PROCESS_REDO",
-    SELECT_REGION: "SELECT_REGION",
     PLACE_TILE: "PLACE_TILE",
     SELECT_LAYER: "SELECT_LAYER",
     ADD_LAYER: "ADD_LAYER",
@@ -181,17 +178,12 @@ function EditorContextProvider(props) {
         }
     }
 
-    // returns if the user has permission to edit
-    store.getCanEdit = async () => {
-    
-    }
-    // returns the currently chosen tool
-    store.getCurrentTool = () => {
-
-    }
-    // sets the current tool
+    /**
+     * Set the current tool
+     * @param tool {EditorTool}
+     */
     store.setCurrentTool = (tool) => {
-        let selectedPixels = null;
+        let selectedPixels;
 
         switch (tool) {
             case EditorTool.PAINT:
@@ -213,6 +205,10 @@ function EditorContextProvider(props) {
         });
     }
 
+    /**
+     * Set current tile
+     * @param tileIndex {number}
+     */
     store.setCurrentTile = (tileIndex) => {
         storeReducer({
             type: EditorActionType.SET_CURRENT_TILE,
@@ -222,38 +218,33 @@ function EditorContextProvider(props) {
         });
     }
 
-    // returns the currently chosen tile/color
-    store.getCurrentItem = () => {
-    
-    }
-    // sets the current tile/color
-    store.setCurrentItem = (item) => {
-
-    }
-    // adds a new transaction to the stack
+    /**
+     * Add a new transaction to the edit stack
+     * @param transaction {jsTPS_Transaction}
+     */
     store.addTransaction = (transaction) => tps.addTransaction(transaction);
 
-    // processes an undo for the last transaction
+    /**
+     * Undo the last transaction
+     */
     store.processUndo = () => tps.undoTransaction();
 
-    // processes a redo for the last transaction
+
+    /**
+     * Redo the last transaction
+     */
     store.processRedo = () => tps.doTransaction();
 
-
+    /**
+     * Clear the transaction stack
+     */
     store.clearTransactions = () => tps.clearAllTransactions();
 
     // unselects all selected tiles
     store.unselectAll = () => {
 
     }
-    // selects the given tile(s)
-    store.selectTiles = (tile) => {
 
-    }
-    // places a tile at given coordinate(s)
-    store.placeTile = async (tile, coordinates) => {
-
-    }
     // handles selecting a layer
     store.selectLayer = (layer) => {
 
@@ -311,6 +302,31 @@ function EditorContextProvider(props) {
 
     }
 
+// -------------------TILESET EDITING--------------------- //
+    /**
+     * Get Pixel Color at given coordinates
+     * @param x {number} x-coordinate
+     * @param y {number} y-coordinate
+     * @returns {{red: *, green: *, blue: *, alpha: *}}
+     */
+    store.getPixel = (x, y) => {
+        const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
+        const greenIndex = redIndex + 1;
+        const blueIndex = redIndex + 2;
+        const alphaIndex = redIndex + 3;
+        const tile = store.tilesetImage.tiles[store.currentTileIndex].data;
+        return {
+            red: tile[redIndex],
+            green: tile[greenIndex],
+            blue: tile[blueIndex],
+            alpha: tile[alphaIndex]
+        }
+    }
+
+    /**
+     * Load Tileset and tileset image
+     * @param tilesetId {string} id of tileset to load
+     */
     store.setTileset = async (tilesetId) => {
         const res = await getTilesetById(tilesetId);
 
@@ -330,12 +346,20 @@ function EditorContextProvider(props) {
         }
     }
 
+    /**
+     * Set the current color
+     * @param color {{red: number, green: number, blue: number}}
+     */
     store.setColor = (color) => {
         if(typeof color.red === "string" || typeof color.green === "string" || typeof color.blue === "string") {
             color.red = parseInt(color.red);
             color.green = parseInt(color.green);
             color.blue = parseInt(color.blue);
         }
+
+        color.red = Math.min(color.red, 255);
+        color.green = Math.min(color.green, 255);
+        color.blue = Math.min(color.blue, 255);
 
         storeReducer({
             type: EditorActionType.SET_COLOR,
@@ -345,22 +369,32 @@ function EditorContextProvider(props) {
         })
     }
 
-    store.saveColors = () => {
-        localStorage.setItem('colors', JSON.stringify(store.colors));
-    }
+    /**
+     * Saves colors in local storage
+     */
+    store.saveColors = () => localStorage.setItem('colors', JSON.stringify(store.colors));
 
+    /**
+     * Loads colors from local storage
+     */
     store.loadColors = () => {
-        const colors = JSON.parse(localStorage.getItem('colors'));
-        if (colors) {
+        try {
+            const colors = JSON.parse(localStorage.getItem('colors'));
             storeReducer({
                 type: EditorActionType.LOAD_COLORS,
                 payload: {
                     colors: colors,
                 },
             })
+        } catch (e) {
+            console.log(e);
         }
     }
 
+    /**
+     * Adds a new color to the color palette
+     * @param color {{red: number, green: number, blue: number}}
+     */
     store.addColor = (color) => {
         storeReducer({
             type: EditorActionType.ADD_COLOR,
@@ -370,6 +404,9 @@ function EditorContextProvider(props) {
         });
     }
 
+    /**
+     * Adds a new Tile to the Tileset
+     */
     store.addTile = async () => {
         const tileSize = store.tileset.tileSize;
         const canvas = document.createElement('canvas');
@@ -389,6 +426,12 @@ function EditorContextProvider(props) {
         });
     }
 
+    /**
+     * Edit a pixel in the current tile
+     * @param x {number} x-coordinate
+     * @param y {number} y-coordinate
+     * @param color {{red: number, green: number, blue: number, alpha: number}}
+     */
     store.editTile = (x, y, color) => {
         if(x < 0 || y < 0 || x >= store.tileset.tileSize || y >= store.tileset.tileSize) return;
 
@@ -414,6 +457,12 @@ function EditorContextProvider(props) {
         })
     }
 
+    /**
+     * Flood fill a tile with a color starting at a given coordinate
+     * @param x {number} x-coordinate
+     * @param y {number} y-coordinate
+     * @param fillColor {{red: number, green: number, blue: number, alpha: number}}
+     */
     store.floodFill = (x, y, fillColor) => {
         const newImage = { ...store.tilesetImage };
         const tile = newImage.tiles[store.currentTileIndex].data;
@@ -464,6 +513,10 @@ function EditorContextProvider(props) {
         })
     }
 
+    /**
+     * Select an individual pixel in the current tile
+     * @param pixel {{x: number, y: number}}
+     */
     store.selectPixel = (pixel) => {
         if(store.selectedPixels.includes(pixel)) return;
         storeReducer({
@@ -474,6 +527,10 @@ function EditorContextProvider(props) {
         })
     }
 
+    /**
+     * Add a pixel to the selection in the current tile
+     * @param pixel {{x: number, y: number}}
+     */
     store.addSelectedPixel = (pixel) => {
         if(store.selectedPixels.includes(pixel)) return;
         storeReducer({
@@ -484,6 +541,10 @@ function EditorContextProvider(props) {
         })
     }
 
+    /**
+     * Set the selected pixels in the current tile
+     * @param pixels {Array<{x: number, y: number}>}
+     */
     store.setSelectedPixels = (pixels) => {
         storeReducer({
             type: EditorActionType.SET_SELECTED_PIXELS,
@@ -493,6 +554,9 @@ function EditorContextProvider(props) {
         });
     }
 
+    /**
+     * Clear all selected pixels in the current tile
+     */
     store.clearSelectedPixels = () => {
         for (let i = 0; i < store.selectedPixels.length; i++) {
             const pixel = store.selectedPixels[i];
@@ -500,6 +564,10 @@ function EditorContextProvider(props) {
         }
     }
 
+    /**
+     * Get vectorized form of the selected pixels
+     * @returns {Array} Array of tiles with their relative x and y coordinates and color
+     */
     store.getCopyData = () => {
         const minX = Math.min(...store.selectedPixels.map(p => p.x));
         const minY = Math.min(...store.selectedPixels.map(p => p.y));
@@ -527,7 +595,10 @@ function EditorContextProvider(props) {
         return ret;
     }
 
-    //Paste data assuming x and y are relative positions
+    /**
+     * Paste vectorized form of the selected pixels at the top-left most selected pixel
+     * @param pixels {Array} Array of tiles with their relative x and y coordinates and color
+     */
     store.pasteData = (pixels) => {
         if(store.selectedPixels.length === 0) return;
 
@@ -540,16 +611,20 @@ function EditorContextProvider(props) {
         }
     }
 
-    //Paste data assuming x and y are actual position
+    /**
+     * Paste pixels at actual coordinates
+     * @param pixels {Array} Array of tiles with their x and y coordinates and color
+     */
     store.pasteDataActual = (pixels) => {
-        console.log(pixels);
-
         for (let i = 0; i < pixels.length; i++) {
             const {x, y, color} = pixels[i];
             store.editTile(x, y, color);
         }
     }
 
+    /**
+     * Convert tileset image object to string JSON and upload to S3 Bucket
+     */
     store.saveTileset = async () => {
         const stringImage = JSON.stringify(store.tilesetImage);
         const res = await uploadTilesetImage(store.tileset._id, stringImage);
@@ -561,21 +636,10 @@ function EditorContextProvider(props) {
         }
     }
 
-    //TODO: Refactor earlier code to use this
-    store.getPixel = (x, y) => {
-        const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
-        const greenIndex = redIndex + 1;
-        const blueIndex = redIndex + 2;
-        const alphaIndex = redIndex + 3;
-        const tile = store.tilesetImage.tiles[store.currentTileIndex].data;
-        return {
-            red: tile[redIndex],
-            green: tile[greenIndex],
-            blue: tile[blueIndex],
-            alpha: tile[alphaIndex]
-        }
-    }
-
+    /**
+     * Set Tileset to Public or Private
+     * @param isPublic {boolean} Whether the tileset is public or not
+     */
     store.setTilesetVisiblity = (isPublic) => {
         updateTileset(store.tileset._id, {...store.tileset, public: isPublic}).then(r => {
             if(r.status === 200) {
@@ -583,9 +647,13 @@ function EditorContextProvider(props) {
             } else {
                 console.log('Error updating tileset visibility');
             }
-        });
+        }).catch(e => console.log(e));
     }
 
+    /**
+     * Set Tileset Title
+     * @param title {string} Title of the tileset
+     */
     store.changeTilesetTitle = (title) => {
         updateTileset(store.tileset._id, {...store.tileset, title: title}).then(r => {
             if(r.status === 200) {
@@ -593,9 +661,12 @@ function EditorContextProvider(props) {
             } else {
                 console.log('Error updating tileset title');
             }
-        });
+        }).catch(e => console.log(e));
     }
 
+    /**
+     * Delete Currently Selected Tile
+     */
     store.deleteTile = () => {
         if(store.tilesetImage.tiles.length === 1) return;
 

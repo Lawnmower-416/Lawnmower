@@ -9,7 +9,8 @@ function TileEditor() {
 
     const ref = useRef(null);
 
-    const pixelSize = Math.ceil(600 / store.tileset.tileSize);
+    const editorSize = 600;
+    const pixelSize = Math.ceil(editorSize / store.tileset.tileSize);
 
     const currentTile = store.tilesetImage.tiles[store.currentTileIndex];
 
@@ -178,8 +179,8 @@ function TileEditor() {
                 {ref &&
                     <canvas
                         ref={ref}
-                        width="600"
-                        height="600"
+                        width={editorSize}
+                        height={editorSize}
                         onMouseMove={highlightPixel}
                         onClick={handleClick}
                         onMouseDown={handleDragStart}
