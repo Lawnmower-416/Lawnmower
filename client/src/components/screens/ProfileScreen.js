@@ -73,10 +73,7 @@ export default function Profile() {
         fetchData();
     }, [auth.user]);
 
-    
-
-    console.log("rendering profile", store.userMaps, store.userTilesets);
-    userMaps = store.userMaps;
+        userMaps = store.userMaps;
     userTilesets = store.userTilesets;
 
 
@@ -110,7 +107,6 @@ export default function Profile() {
     let shownTilesets = [];
 
     if (auth.user && auth.user._id === currentId) {
-        console.log("viewing own page");
         viewingOwnPage = true;
         shownMaps = userMaps;
         shownTilesets = userTilesets;
@@ -124,8 +120,6 @@ export default function Profile() {
         shownMaps = store.publicMaps.filter((map) => map.owner === currentId);
         shownTilesets = store.publicTilesets.filter((tileset) => tileset.owner === currentId);
     }
-
-    console.log("viewingOwnPage", viewingOwnPage);
 
     const getUserCommentsFromMapsAndTilesets = () => {
         const comments = [];

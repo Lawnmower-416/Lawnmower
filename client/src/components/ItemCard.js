@@ -74,10 +74,14 @@ export default function ItemCard(props) {
     }
     const handleView = () => {
         setExpandComments(!expandComments);
-        if (props.map) {
-            store.updateMapViewCount(currentData._id);
+        if (!user || auth.guestMode) {
+            return;
         } else {
-            store.updateTilesetViewCount(currentData._id);
+            if (props.map) {
+                store.updateMapViewCount(currentData._id);
+            } else {
+                store.updateTilesetViewCount(currentData._id);
+            }
         }
     }
 
@@ -102,7 +106,6 @@ export default function ItemCard(props) {
 
     let trashCanIcon
     if (path == "/profile/" + owner) {
-        console.log("in profile, show trash can")
         trashCanIcon = <TrashIcon className={`w-12 cursor-pointer fill-red ${(auth.user && user._id !== owner) ? "hidden" : ""}`} 
         onClick={() => setDeleteMapModal((prev) => !prev)} 
         />
