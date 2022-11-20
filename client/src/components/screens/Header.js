@@ -55,7 +55,7 @@ const Header = () => {
         </Link>
       </div>;
   if (auth.loggedInBool) {
-    profileReroute = "/profile"
+    profileReroute = "/profile/" + auth.user._id;
     topRightMenu = 
     <Menu as="div" className="relative -translate-x-16">
       <Menu.Button>
@@ -63,7 +63,7 @@ const Header = () => {
       </Menu.Button>
       <Menu.Items className="absolute -translate-x-12 bg-darker-gray rounded-xl shadow-lg">
         <Menu.Item>
-          <Link to="/profile" className="block px-4 py-2 text-white text-md text-center hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Profile</Link>
+          <Link to={profileReroute} className="block px-4 py-2 text-white text-md text-center hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Profile</Link>
         </Menu.Item>
         <Menu.Item>
           <Link to="/community" className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Community</Link>

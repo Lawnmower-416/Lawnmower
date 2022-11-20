@@ -13,8 +13,6 @@ import CreateTilesetModal from "../modals/CreateTilesetModal";
 import DeleteAccount from "../modals/DeleteAccount";
 import GlobalStoreContext from "../../store";
 
-// import {UserCircleIcon} from "@heroicons/react/24/outline";
-
 export default function Profile() {
 
     const location = useLocation();
@@ -75,6 +73,60 @@ export default function Profile() {
         fetchData();
     }, [auth.user]);
 
+    
+
+    console.log("rendering profile", store.userMaps, store.userTilesets);
+    userMaps = store.userMaps;
+    userTilesets = store.userTilesets;
+
+
+    // compare the id in current path url. If auth.user exists, then it is not in guest mode.
+    // if auth.user.id === id in current path url, then the user is viewing their own profile.
+    // if auth.user.id !== id in current path url, then the user is viewing other's profile.
+    // in that case, only show public content
+
+    const path = location.pathname;
+    const currentId = path.split("/")[2];
+
+    useEffect(() => {
+        async function fetchData() {
+            if (user) {
+                setUsername(user.username);
+                setEmail(user.email);
+                setJoinDate(
+                    new Date(user.joinDate)
+                        .toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'})
+                );
+                setPoints(user.points);
+                console.log("ID profile was changed", currentId);
+                await store.loadUserContent();
+            }
+        }
+        fetchData();
+    }, [currentId]);
+
+    let viewingOwnPage = false;
+    let shownMaps = [];
+    let shownTilesets = [];
+
+    if (auth.user && auth.user._id === currentId) {
+        console.log("viewing own page");
+        viewingOwnPage = true;
+        shownMaps = userMaps;
+        shownTilesets = userTilesets;
+    } else {
+        viewingOwnPage = false;
+        auth.getAUser(currentId).then((publicInfo) => {
+            setUsername(publicInfo.username);
+            setJoinDate(new Date(publicInfo.joinDate)
+            .toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'}));
+        });
+        shownMaps = store.publicMaps.filter((map) => map.owner === currentId);
+        shownTilesets = store.publicTilesets.filter((tileset) => tileset.owner === currentId);
+    }
+
+    console.log("viewingOwnPage", viewingOwnPage);
+
     const getUserCommentsFromMapsAndTilesets = () => {
         const comments = [];
         if (userMaps) {
@@ -109,10 +161,6 @@ export default function Profile() {
             setEditing((prev) => "");
         }
     };
-
-    console.log("rendering profile", store.userMaps, store.userTilesets);
-    userMaps = store.userMaps;
-    userTilesets = store.userTilesets;
 
     return (
         <>
@@ -163,16 +211,16 @@ export default function Profile() {
 
                     {/* Column 2: Create Map/Tileset Buttons Area */}
                     <div className="col-auto grid grid-cols-2 pt-3 text-2xl gap-12" style={{"color": "white"}}>
-                        <div className="col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer" onClick={() => setModalOpen8(!modalOpen8)}>Create Map</div>
-                        <div className="col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer" onClick={() => setTilesetModal(!tilesetModal)}>Create Tilesets</div>
+                        <div className={"col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer " + (viewingOwnPage ? "visible" : "invisible")} onClick={() => setModalOpen8(!modalOpen8)}>Create Map</div>
+                        <div className={"col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer " + (viewingOwnPage ? "visible" : "invisible")} onClick={() => setTilesetModal(!tilesetModal)}>Create Tilesets</div>
                     </div>
                 {/* Row 3 */}
                     {/* Column 1: Item Cards for List */}
                     <div className="col-span-2 bg-dark-green-lighter rounded-md">
                         <div className="snap-y h-[64rem] overflow-y-auto p-8 space-y-2">
                             {
-                                (currentTab === "Maps" && userMaps) ? userMaps.map((m, i) => <ItemCard key={i} inProfile={true} map={m} />)
-                                : (currentTab === "Tilesets" && userTilesets) ? userTilesets.map((t, i) => <ItemCard key={i} inProfile={true} tileset={t} />)
+                                (currentTab === "Maps" && shownMaps) ? shownMaps.map((m, i) => <ItemCard key={i} inProfile={true} map={m} />)
+                                : (currentTab === "Tilesets" && shownTilesets) ? shownTilesets.map((t, i) => <ItemCard key={i} inProfile={true} tileset={t} />)
                                     : getUserCommentsFromMapsAndTilesets()
                             }
                         </div>

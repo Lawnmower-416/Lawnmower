@@ -216,7 +216,7 @@ function GlobalStoreContextProvider(props) {
                 });
             }
         } catch (error) {
-            console.log("Error loading content: ", error)
+            console.log("Error loading content. This can be bc no user is logged in");
         }
     }
     // gets every single PUBLIC content and puts then into store.publicMaps and store.publicTilesets
