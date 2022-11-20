@@ -24,7 +24,6 @@ createMap = async (body, userId) => {
 
         if(!updatedMap) return null;
 
-
         user.maps.push(updatedMap._id);
         await user.save().catch(err => {return null;});
 

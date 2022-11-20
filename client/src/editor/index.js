@@ -1,7 +1,8 @@
 import {createContext, useEffect, useState} from 'react';
-import {getTilesetImage, updateTileset, uploadTilesetImage} from "../../src/requests/tileset-editor-api";
-import {getTilesetById} from "../requests/store-request";
+import {getTileset, getTilesetImage, updateTileset, uploadTilesetImage} from "../../src/requests/tileset-editor-api";
+import {getMapById, getTilesetById} from "../requests/store-request";
 import jsTPS from "../transactions/jsTPS";
+import {getAllTilesets, getLayer, getProperty, updateMap} from "../requests/map-editor-api";
 
 
 export const EditorContext = createContext();
@@ -23,6 +24,10 @@ export const EditorActionType = {
     CHANGE_SETTINGS: "CHANGE_SETTINGS",
     DOWNLOAD_OLD_VERSION: "DOWNLOAD_OLD_VERSION",
     IMPORT_TILESET: "IMPORT_TILESET",
+
+    SET_MAP: "SET_MAP",
+
+
     SET_TILESET: "SET_TILESET",
     SET_COLOR: "SET_COLOR",
     LOAD_COLORS: "LOAD_COLORS",
@@ -50,7 +55,7 @@ const tps = new jsTPS();
 function EditorContextProvider(props) {
     const [ store, setStore ] = useState({
         map: null,
-        map_tilesets: [],
+        mapTilesets: [],
         current_layer: 0,
         layers: [],
 
@@ -83,6 +88,15 @@ function EditorContextProvider(props) {
                     ...store,
                     currentTool: payload.tool,
                     selectedPixels: payload.selectedPixels || [],
+                });
+                break;
+
+            case EditorActionType.SET_MAP:
+                setStore({
+                    ...store,
+                    map: payload.map,
+                    layers: payload.layers,
+                    mapTilesets: payload.mapTilesets,
                 });
                 break;
 
@@ -300,6 +314,59 @@ function EditorContextProvider(props) {
     // handles importing a tileset
     store.importTileset = async (tilesetId) => {
 
+    }
+
+    store.addTilesetToMap = async (tileset) => {
+        const updatedMap = {...store.map, tilesets: [...store.map.tilesets, tileset._id]};
+        await updateMap(store.map._id, updatedMap);
+        await store.setMap(store.map._id);
+    }
+
+    store.setMap = async (mapId) => {
+        const res = await getMapById(mapId);
+
+        if (res.status === 200) {
+            const {map} = res.data;
+
+            //TODO: Error handling
+
+            const layerPromises = [];
+            for (let i = 0; i < map.layers.length; i++) {
+                layerPromises.push(getLayer(map.layers[i]));
+            }
+            const layers = await Promise.all(layerPromises);
+
+            for(let i = 0; i < layers.length; i++) {
+                const layer = layers[i];
+
+                let propertyPromises = [];
+                if(layer.properties) {
+                    for(let j = 0; j < layer.properties.length; j++) {
+                        propertyPromises.push(getProperty(layer.properties[j]));
+                    }
+                    layer.properties = await Promise.all(propertyPromises);
+                }
+            }
+
+            let mapTilesets = [];
+            if(map.tilesets.length > 0) {
+                //TODO: Error Handling
+                mapTilesets = (await getAllTilesets(map._id)).data.tilesets;
+                for (let i = 0; i < mapTilesets.length; i++) {
+                    const image = JSON.parse(mapTilesets[i].image);
+                    mapTilesets[i].imageData = image
+                }
+            }
+
+            storeReducer({
+                type: EditorActionType.SET_MAP,
+                payload: {
+                    map,
+                    layers,
+                    mapTilesets
+                }
+            });
+        }
     }
 
 // -------------------TILESET EDITING--------------------- //

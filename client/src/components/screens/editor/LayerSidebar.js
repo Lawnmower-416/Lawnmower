@@ -1,5 +1,13 @@
 import { LockClosedIcon, LockOpenIcon, ChevronLeftIcon, EyeSlashIcon, EyeIcon } from '@heroicons/react/24/outline'
-function LayerSidebar(props) {
+import {useContext} from "react";
+import EditorContext from "../../../editor";
+import {PlusCircleIcon} from "@heroicons/react/24/solid";
+function LayerSidebar() {
+
+    const { store } = useContext(EditorContext);
+
+    const layers = store.layers;
+
     function displayLockIcon(isLocked) {
         if (isLocked) {
             return <LockClosedIcon className="h-6 w-6 text-white" aria-hidden="true" />
@@ -24,7 +32,7 @@ function LayerSidebar(props) {
                             <ChevronLeftIcon className="h-10 w-10 text-white"/>
                         </div>
                         <div className="mt-5 flex-1 px-2 bg-editor-background space-y-1">
-                            {props.layers.map((item) => (
+                            {layers.map((item) => (
                                 <div
                                     key={item.name}
                                     className={
@@ -41,6 +49,12 @@ function LayerSidebar(props) {
                                     </div>
                                 </div>
                             ))}
+                            <div className="flex justify-center">
+                                <PlusCircleIcon
+                                    className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer"
+                                    onClick={() => {}}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

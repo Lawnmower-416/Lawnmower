@@ -10,6 +10,13 @@ module.exports.getTilesetsForMapById = async (mapId) => {
         const tileset = await Tileset.findOne({ _id: map.tilesets[i] }).catch(err => {return null;});
         tilesetList.push(tileset);
     }
+
+    for (let i = 0; i < tilesetList.length; i++) {
+        const data = await getData(tilesetList[i].owner, tilesetList[i]._id, false);
+        tilesetList[i].image = data;
+        console.log(JSON.parse(data))
+    }
+
     return tilesetList;
 }
 

@@ -1,15 +1,24 @@
 import Toolbar from './Toolbar';
-import { useRef, useEffect } from 'react';
+import {useRef, useEffect, useContext} from 'react';
+import {useParams} from "react-router-dom";
+import EditorContext from "../../../editor";
+
 function MainEditor(props) {
+
+    const { store } = useContext(EditorContext);
+
+
+
     const ref = useRef(null);
     useEffect(() => {
             const context = ref.current.getContext('2d');
             const img = new Image();
-            img.src = "https://upload.wikimedia.org/wikipedia/commons/f/fe/Celeste_screenshot_02.png"
             img.onload = () => {
                 context.drawImage(img, 0,0, 1024, 576)
             }
     })
+
+
     
     return (
         <main className="flex flex-col w-full bg-white overflow-x-hidden overflow-y-auto mb-14">

@@ -1,63 +1,79 @@
 /* Axios Library used to send HTTP requests to our back-end API
     The baseURL should be modified to fit the ec2 backe-end instead of localhost */
 
-    import axios from 'axios';
-    axios.defaults.withCredentials = false;
-    const api = axios.create({
-        baseURL: 'https://ec2-3-94-193-80.compute-1.amazonaws.com:3000'
-    });
+import axios from 'axios';
+import {baseAPI} from "./index";
 
-    export const getMap = (mapId) => {
-        return api.get(`/map/${mapId}`)
-    }
 
-    export const placeTiles = (mapId, layerId, tileId, positions) => {
-        return api.put(`/tile/map/${mapId}/layer/${layerId}/tile/${tileId}`, positions)
-    }
+export const getMap = (mapId) => {
+    return baseAPI.get(`/editor/map/${mapId}`)
+}
 
-    export const addLayer = (mapId, layerId) => {
-        return api.post(`/layer/map/${mapId}/layer/${layerId}`)
-    }
-    
-    export const deleteLayer = (mapId, layerId) => {
-        return api.delete(`/map/${mapId}/layer/${layerId}`)
-    }
+export const updateMap = (mapId, map) => {
+    return baseAPI.put(`/editor/map/${mapId}`, map, {withCredentials: true});
+}
 
-    export const addProperty = (mapId, layerId, Property) => {
-        return api.post(`/map/${mapId}/layer/${layerId}/property`, Property)
-    }
+export const getAllTilesets = (mapId) => {
+    return baseAPI.get(`/editor/map/${mapId}/tilesets`, {withCredentials: true});
+}
 
-    export const updateProperty = (mapId, layerId, propertyId, Property) => {
-        return api.put(`/map/${mapId}/layer/${layerId}/property/${propertyId}`, Property)
-    }
+export const placeTiles = (mapId, layerId, tileId, positions) => {
+    return baseAPI.put(`/editor/tile/map/${mapId}/layer/${layerId}/tile/${tileId}`, positions)
+}
 
-    export const deleteProperty = (mapId, layerId, propertyId) => {
-        return api.delete(`/map/${mapId}/layer/${layerId}/property/${propertyId}`)
-    }
+export const getLayer = (layerId) => {
+    return baseAPI.get(`/editor/layer/${layerId}`)
+}
 
-    export const changeSettings = (mapId, title, length, width) => {
-        return api.put(`/map/${mapId}/settings`, {title, length, width})
-    }
+export const addLayer = (mapId, layerId) => {
+    return baseAPI.post(`/editor/layer/map/${mapId}/layer/${layerId}`)
+}
 
-    export const importTileset = (mapId, tileset) => {
-        return api.put(`/tileset/map/${mapId}`, tileset)
-    }
+export const deleteLayer = (mapId, layerId) => {
+    return baseAPI.delete(`/editor/map/${mapId}/layer/${layerId}`)
+}
 
-    export const exportVersion = (mapId, versionId) => {
-        return api.get(`/map/${mapId}/version/${versionId}`)
-    }
+export const getProperty = (propertyId) => {
+    return baseAPI.get(`/editor/property/${propertyId}`);
+}
 
-    const apis = {
-        getMap,
-        placeTiles,
-        addLayer,
-        deleteLayer,
-        addProperty,
-        updateProperty,
-        deleteProperty,
-        changeSettings,
-        importTileset,
-        exportVersion
-    }
+export const addProperty = (mapId, layerId, Property) => {
+    return baseAPI.post(`/editor/map/${mapId}/layer/${layerId}/property`, Property)
+}
 
-    export default apis;
+export const updateProperty = (mapId, layerId, propertyId, Property) => {
+    return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}/property/${propertyId}`, Property)
+}
+
+export const deleteProperty = (mapId, layerId, propertyId) => {
+    return baseAPI.delete(`/editor/map/${mapId}/layer/${layerId}/property/${propertyId}`)
+}
+
+export const changeSettings = (mapId, title, length, width) => {
+    return baseAPI.put(`/editor/map/${mapId}/settings`, {title, length, width})
+}
+
+export const importTileset = (mapId, tileset) => {
+    return baseAPI.put(`/editor/tileset/map/${mapId}`, tileset)
+}
+
+export const exportVersion = (mapId, versionId) => {
+    return baseAPI.get(`/editor/map/${mapId}/version/${versionId}`)
+}
+
+const apis = {
+    getMap,
+    getAllTilesets,
+    placeTiles,
+    getLayer,
+    addLayer,
+    deleteLayer,
+    addProperty,
+    updateProperty,
+    deleteProperty,
+    changeSettings,
+    importTileset,
+    exportVersion
+}
+
+export default apis;
