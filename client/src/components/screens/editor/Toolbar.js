@@ -110,7 +110,7 @@ function Toolbar() {
                         tile: pixel.tile
                     }));
                 }
-                
+
                 store.addTransaction(
                     new BulkTileChangeTransaction(
                         oldData,
