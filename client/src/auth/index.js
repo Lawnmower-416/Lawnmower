@@ -254,6 +254,26 @@ function AuthContextProvider(props) {
         });
     }
 
+    auth.getAUser = async (userId) => {
+        try {
+            const response = await api.getAUser(userId);
+            if (response.status === 200) {
+                return response.data;
+            }
+        } catch (error) {
+            console.log("Error in getting a user's public details");
+        }
+    }
+
+    auth.wipeErrorMessage = () => {
+        authReducer({
+            type: AuthActionType.ERROR_MESSAGE,
+            payload: {
+                errorMessage: null
+            }
+        });
+    }
+
     return (
         <AuthContext.Provider value={{
             auth
