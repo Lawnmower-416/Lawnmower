@@ -40,7 +40,7 @@ function App() {
               <Route path="/tilesetEditor/:tilesetId" exact element={<TilesetEditor/>} />
               <Route path="/community" exact element={<CommunityScreen/>} />
               <Route path="/change-password" exact element={<PasswordChange/>} />
-              <Route path="/expandedcommunity" component={() => { window.location.href = 'https://ephemeral-vacherin-baeb54.netlify.app/expandedcommunity'; return null;} }/>
+              <Route path="/expandedcommunity" component={() => { window.location.replace('https://ephemeral-vacherin-baeb54.netlify.app/expandedcommunity'); } }/>
               <Route path="/verified-account" exact element={<VerifiedAccountScreen/>} />
               <Route path="/verified-password-change" exact element={<PasswordChangedScreen/>} />
               <Route path="*" element={
