@@ -98,7 +98,7 @@ function EditorContextProvider(props) {
                 setStore({
                     ...store,
                     currentTool: payload.tool,
-                    selectedPixels: payload.selectedPixels || [],
+                    selectedPixels: [],
                 });
                 break;
 
@@ -232,24 +232,10 @@ function EditorContextProvider(props) {
      * @param tool {EditorTool}
      */
     store.setCurrentTool = (tool) => {
-        let selectedPixels;
-
-        switch (tool) {
-            case EditorTool.PAINT:
-                selectedPixels = store.selectedPixels;
-                break;
-            case EditorTool.FILL:
-                selectedPixels = store.selectedPixels;
-                break;
-            default:
-                selectedPixels = [];
-        }
-
         storeReducer({
             type: EditorActionType.SET_CURRENT_TOOL,
             payload: {
-                tool: tool,
-                selectedPixels: selectedPixels,
+                tool: tool
             }
         });
     }
@@ -294,14 +280,20 @@ function EditorContextProvider(props) {
 
     }
 
-    store.placeTile = async (x, y) => {
+    store.placeTile = (x, y, tile) => {
         const layers = [...store.layers];
         const layer = layers[store.currentLayer];
 
-        layer.data[y * store.map.width + x] = store.currentTileIndex;
+        layer.data[y * store.map.width + x] = tile || store.currentTileIndex;
+        console.log(layer.data[y * store.map.width + x])
 
-        const res = await updateLayer(store.map._id, layer._id, layer);
-        return null;
+        //const res = await updateLayer(store.map._id, layer._id, layer);
+        storeReducer({
+            type: EditorActionType.UPDATE_LAYERS,
+            payload: {
+                layers
+            }
+        });
     }
 
     /**
@@ -347,7 +339,7 @@ function EditorContextProvider(props) {
 
         layer.data = data;
 
-        await updateLayer(store.map._id, layer._id, layer);
+        //await updateLayer(store.map._id, layer._id, layer);
 
         storeReducer({
             type: EditorActionType.UPDATE_LAYERS,
@@ -816,22 +808,33 @@ function EditorContextProvider(props) {
         const ret = [];
         for (let i = 0; i < store.selectedPixels.length; i++) {
             const {x, y} = store.selectedPixels[i];
-            const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
-            const greenIndex = redIndex + 1;
-            const blueIndex = redIndex + 2;
-            const alphaIndex = redIndex + 3;
-            const tile = store.tilesetImage.tiles[store.currentTileIndex].data;
-            //Subtract by min to find relative position
-            ret.push({
-                x: x - minX,
-                y: y - minY,
-                color: {
-                    red: tile[redIndex],
-                    green: tile[greenIndex],
-                    blue: tile[blueIndex],
-                    alpha: tile[alphaIndex]
-                }
-            });
+            if(store.tileset) {
+                const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
+                const greenIndex = redIndex + 1;
+                const blueIndex = redIndex + 2;
+                const alphaIndex = redIndex + 3;
+                const tile = store.tilesetImage.tiles[store.currentTileIndex].data;
+                //Subtract by min to find relative position
+                ret.push({
+                    x: x - minX,
+                    y: y - minY,
+                    color: {
+                        red: tile[redIndex],
+                        green: tile[greenIndex],
+                        blue: tile[blueIndex],
+                        alpha: tile[alphaIndex]
+                    }
+                });
+            } else { //map case
+                const currentLayer = store.layers[store.currentLayer];
+
+                ret.push({
+                    x: x - minX,
+                    y: y - minY,
+                    tile: currentLayer.data[y * store.map.tileSize + x]
+                });
+            }
+
         }
         return ret;
     }
@@ -847,8 +850,13 @@ function EditorContextProvider(props) {
         const minY = store.selectedPixels[0].y;
 
         for (let i = 0; i < pixels.length; i++) {
-            const {x, y, color} = pixels[i];
-            store.editTile(x + minX, y + minY, color);
+            if(store.tileset) {
+                const {x, y, color} = pixels[i];
+                store.editTile(x + minX, y + minY, color);
+            } else { //map case
+                const {x, y, tile} = pixels[i];
+                store.placeTile(x + minX, y + minY, tile);
+            }
         }
     }
 
@@ -858,8 +866,13 @@ function EditorContextProvider(props) {
      */
     store.pasteDataActual = (pixels) => {
         for (let i = 0; i < pixels.length; i++) {
-            const {x, y, color} = pixels[i];
-            store.editTile(x, y, color);
+            if(store.tileset) {
+                const {x, y, color} = pixels[i];
+                store.editTile(x, y, color);
+            } else { //map case
+                const {x, y, tile} = pixels[i];
+                store.placeTile(x, y, tile);
+            }
         }
     }
 
