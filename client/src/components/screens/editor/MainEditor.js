@@ -21,7 +21,7 @@ function MainEditor(props) {
     const ref = useRef(null);
     useEffect(() => {
         drawMap();
-    }, [currentLayer.visible]);
+    }, [currentLayer && currentLayer.visible]);
 
     const drawMap = () => {
         const mapHeight = store.map.height;
@@ -37,12 +37,10 @@ function MainEditor(props) {
         context.clearRect(0, 0, canvasWidth, canvasHeight);
         //context.translate(innerWidth / 2, innerHeight / 2);
         context.scale(cameraZoom, cameraZoom);
-        let count = 0
 
         for(let i = 0; i < layers.length; i++) {
             const layer = layers[i];
             if(!layer.visible) continue;
-            console.log(layer);
             for(let j = 0; j < mapHeight; j++) {
                 for(let i = 0; i < mapWidth; i++) {
                     const index = j * mapWidth + i;
@@ -50,7 +48,6 @@ function MainEditor(props) {
                     if(tileIndex === -1) continue;
                     const tile = store.tiles[tileIndex];
                     const colorData = new Uint8ClampedArray(Object.values(tile.data));
-                    count += 1
                     for(let y = 0; y < tileSize; y++) {
                         for(let x = 0; x < tileSize; x++) {
                             const index = (y * tileSize + x) * 4;
@@ -61,7 +58,6 @@ function MainEditor(props) {
                 }
             }
         }
-        console.log(count);
     }
 
     const redrawCoordinate = (i,j) => {

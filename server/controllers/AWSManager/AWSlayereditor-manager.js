@@ -13,7 +13,7 @@ module.exports.createLayer = async (layerName, mapId) => {
     if (!fetchedMap) return null;
 
     for (let i = 0; i < fetchedMap.width * fetchedMap.height; i++) {
-        savedLayer.data.push(0);
+        savedLayer.data.push(-1);
     }
     await savedLayer.save();
 
