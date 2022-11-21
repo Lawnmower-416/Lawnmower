@@ -31,7 +31,7 @@ const ErrorModal = () => {
                             />
                             <div className="rounded-lg bg-dark-green text-white text-center py-3 px-3">
                                 <h4 className="text-[22px] font-bold text-white">
-                                    Error
+                                    Whoops!
                                 </h4>
                                 <div>
                                     {auth.errorMessage}

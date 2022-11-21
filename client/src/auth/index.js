@@ -72,7 +72,7 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: payload.user,
                     loggedInBool: false,
-                    errorMessage: null,
+                    errorMessage: payload.message,
                     guestMode: auth.guestMode
                 })
             }
@@ -133,7 +133,7 @@ function AuthContextProvider(props) {
     auth.login = async (username, password) => {
         const response = await api.login(username, password).catch((error) => {
             let message = error.message;
-            if(error.response && error.response.data && error.response.data.message) {
+            if(error.response && error.response.data && error.response.data.errorMessage) {
                 message = error.response.data.errorMessage;
             }
             authReducer({
@@ -142,9 +142,10 @@ function AuthContextProvider(props) {
                     errorMessage: message
                 }
             });
+            console.log(error.response);
+            return;
         });
-
-        if (response.status === 200) {
+        if (response && response.status === 200) {
             console.log("response", response);
             authReducer({
                 type: AuthActionType.LOGIN,
@@ -153,14 +154,6 @@ function AuthContextProvider(props) {
                 }
             });
             history('/profile/' + response.data.user._id);
-        } else {
-            authReducer({
-                type: AuthActionType.ERROR_MESSAGE,
-                payload: {
-                    errorMessage: response.data.errorMessage
-                }
-            }
-        )
         }
     }
     auth.logout = async () => {
@@ -186,24 +179,16 @@ function AuthContextProvider(props) {
                 }
             });
         });
-
-        if (response.status === 200) {
+        if (response && response.status === 200) {
             authReducer({
                 type: AuthActionType.REGISTER,
                 payload: {
-                    user: null
+                    user: null,
+                    message: response.data.message
                 }
             });
             // a registered user is NOT automatically logged in. They must login after verifying their email
             history('/login');
-        } else {
-            authReducer({
-                type: AuthActionType.ERROR_MESSAGE,
-                payload: {
-                    errorMessage: response.data.errorMessage
-                }
-            }
-        )
         }
     }
     // changing password should logout user (this can be done on the backend OR just calling logout here)
@@ -228,7 +213,6 @@ function AuthContextProvider(props) {
     }
     auth.deleteAccount = async (username, password) => {
         try {
-        
             const response = await api.deleteAccount(username, password)
             if (response.status === 200) {
                 authReducer({
