@@ -84,7 +84,7 @@ export default function Home() {
 
   return (
     <div>
-    <a target="_blank" href="https://demo-lawnmower.netlify.app/">Expanded Community</a>
+    <a target="_blank" href="https://demo-lawnmower.netlify.app/">Expanded Community (Click here) </a>
     </div>
     /*
     <div>
