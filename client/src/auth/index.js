@@ -80,7 +80,7 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: null,
                     loggedInBool: false,
-                    errorMessage: null
+                    errorMessage: payload.message
                 })
             }
             case AuthActionType.DELETE_ACCOUNT: {
@@ -198,9 +198,11 @@ function AuthContextProvider(props) {
         if (response.status === 200) {
             authReducer({
                 type: AuthActionType.CHANGE_PASSWORD,
-                payload: { }
+                payload: {
+                    message: response.data.message
+                }
             });
-            history('/');
+            history('/login');
         } else {
             authReducer({
                 type: AuthActionType.ERROR_MESSAGE,

@@ -294,7 +294,7 @@ changePassword = async (req, res) => {
                 });
         });
 
-        const sentMail = SendEmailTo(existingUser.key, existingUser.email, "Verify Your Account", "/auth/verify");
+        const sentMail = SendEmailTo(existingUser.key, existingUser.email, "Change Password Verification", "/auth/verify");
         console.log("Sent Mail?!");
 
         if (sentMail.isError) { // Something went wrong...
@@ -334,10 +334,11 @@ verify = async (req, res) => {
         if (existingUser.changingPassword == "") { // User wants to verify their account
             existingUser.isVerified = true;
             await existingUser.save();
-            return res.status(200).json({
-                success: true,
-                message: "Verified Account!"
-            });
+            // return res.status(200).json({
+            //     success: true,
+            //     message: "Verified Account!"
+            // });
+            return res.redirect('http://34.193.24.27/verified-account');
         } else {
             const password = existingUser.changingPassword;
             const saltRounds = 10;
@@ -347,10 +348,11 @@ verify = async (req, res) => {
 
             await User.findOneAndUpdate({ email: email }, { passwordHash: passwordHash, changingPassword: "" , key: newKey });
 
-            return res.status(200).json({
-                success: true,
-                message: "Login Again with the New Password!"
-            });
+            return res.redirect('http://34.193.24.27/verified-password-change');
+            // return res.status(200).json({
+            //     success: true,
+            //     message: "Password Changed! Login Again with the New Password!"
+            // });
         }
 
         // if (existingUser.changingPassword == "") {
