@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
+import { serverUrl } from '../../constants'
 import NavBar from '../NavBar'
 import PostBody from '../PostBody'
 import PostComments from '../PostComments'
@@ -27,7 +28,9 @@ export default function Home() {
       const randomNumber = Math.round(Math.random() * 1000000)
       const username = 'user__'+randomNumber
 
-      fetch('http://34.193.24.27/user/create', {
+      console.log({serverUrl})
+
+      fetch(`${serverUrl}/user/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -51,7 +54,7 @@ export default function Home() {
 
 
   const createUniqueView = async() => {
-    fetch("http://34.193.24.27/post/createView", {
+    fetch(`${serverUrl}/post/createView`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -71,7 +74,7 @@ export default function Home() {
     createUserAndUniqueView()   
     createUniqueView()
 
-    fetch('http://34.193.24.27/post/get-all')
+    fetch(`${serverUrl}/post/get-all`)
       .then(res => res.json())
       .then(result => {
         setCurrentPost(result[0])
