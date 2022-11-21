@@ -34,7 +34,7 @@ function MainEditor(props) {
 
         const context = ref.current.getContext('2d');
 
-        context.clearRect(0, 0, canvasHeight, canvasWidth);
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
         //context.translate(innerWidth / 2, innerHeight / 2);
         context.scale(cameraZoom, cameraZoom);
         let count = 0
@@ -42,6 +42,7 @@ function MainEditor(props) {
         for(let i = 0; i < layers.length; i++) {
             const layer = layers[i];
             if(!layer.visible) continue;
+            console.log(layer);
             for(let j = 0; j < mapHeight; j++) {
                 for(let i = 0; i < mapWidth; i++) {
                     const index = j * mapWidth + i;
@@ -86,15 +87,27 @@ function MainEditor(props) {
     }
 
     const handleClick = (e) => {
+        const rect = ref.current.getBoundingClientRect();
+        const x = Math.floor((e.clientX - rect.left) / store.map.tileSize);
+        const y = Math.floor((e.clientY - rect.top) / store.map.tileSize);
         switch(store.currentTool) {
             case EditorTool.PAINT:
-                const rect = ref.current.getBoundingClientRect();
-                const x = Math.floor((e.clientX - rect.left) / store.map.tileSize);
-                const y = Math.floor((e.clientY - rect.top) / store.map.tileSize);
                 store.placeTile(x, y).then(() => {
                     redrawCoordinate(x,y);
                 });
             break;
+
+            case EditorTool.FILL:
+                store.mapFloodFill(x, y).then((rerenderList) => {
+                    for (let i = 0; i < rerenderList.length; i++) {
+                        redrawCoordinate(rerenderList[i].x, rerenderList[i].y);
+                    }
+                });
+            break;
+
+            default:
+                console.log("Not implemented");
+                break;
         }
     }
 

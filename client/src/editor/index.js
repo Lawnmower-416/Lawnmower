@@ -304,6 +304,61 @@ function EditorContextProvider(props) {
         return null;
     }
 
+    /**
+     * Flood fill a map with a tile starting at a given coordinate
+     * @param startX {number} x-coordinate
+     * @param startY {number} y-coordinate
+     */
+    store.mapFloodFill = async (startX, startY) => {
+        const layers = [...store.layers];
+        const layer = layers[store.currentLayer];
+        const data = layer.data;
+
+        const mapWidth = store.map.width;
+        const mapHeight = store.map.height;
+
+        const tileToReplace = data[startY * mapWidth + startX];
+
+        const queue = [[startX, startY]];
+        const rerenderList = [];
+
+        while (queue.length > 0) {
+            const [x, y] = queue.pop();
+            const tileIndex = y * (mapWidth) + x;
+
+            if (data[tileIndex] === tileToReplace) {
+                data[tileIndex] = store.currentTileIndex;
+                rerenderList.push({x, y});
+
+                if (x > 0) {
+                    queue.push([x - 1, y]);
+                }
+                if (x < mapWidth - 1) {
+                    queue.push([x + 1, y]);
+                }
+                if (y > 0) {
+                    queue.push([x, y - 1]);
+                }
+                if (y < mapHeight - 1) {
+                    queue.push([x, y + 1]);
+                }
+            }
+        }
+
+        layer.data = data;
+
+        await updateLayer(store.map._id, layer._id, layer);
+
+        storeReducer({
+            type: EditorActionType.UPDATE_LAYERS,
+            payload: {
+                layers: layers,
+            }
+        });
+
+        return rerenderList;
+    }
+
     // handles selecting a layer
     store.selectLayer = (layerIndex) => {
         storeReducer({
