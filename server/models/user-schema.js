@@ -9,6 +9,7 @@ const UserSchema = new Schema(
         username: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         passwordHash: { type: String, required: true },
+        isVerified: { type: Boolean, default: false },
         joinDate: { type: Date, default: Date.now },
         maps: [{ type: ObjectId, ref: 'Map' }],
         tilesets: [{ type: ObjectId, ref: 'Tileset' }],

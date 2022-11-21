@@ -71,8 +71,8 @@ function AuthContextProvider(props) {
             case AuthActionType.REGISTER: {
                 return setAuth({
                     user: payload.user,
-                    loggedInBool: true,
-                    errorMessage: null,
+                    loggedInBool: false,
+                    errorMessage: payload.message,
                     guestMode: auth.guestMode
                 })
             }
@@ -113,15 +113,19 @@ function AuthContextProvider(props) {
     }
 
     auth.loggedIn = async () => {
-        const response = await api.loggedIn();
-        if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.GET_LOGGED_IN,
-                payload: {
-                    user: response.data.user,
-                    loggedInBool: response.data.loggedIn
-                }
-            });
+        try {
+            const response = await api.loggedIn();
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.GET_LOGGED_IN,
+                    payload: {
+                        user: response.data.user,
+                        loggedInBool: response.data.loggedIn
+                    }
+                });
+            }
+        } catch (error) {
+            console.log("Error in loggedIn");
         }
     }
     // setting to username, password. Requires changes in backend
@@ -129,7 +133,7 @@ function AuthContextProvider(props) {
     auth.login = async (username, password) => {
         const response = await api.login(username, password).catch((error) => {
             let message = error.message;
-            if(error.response && error.response.data && error.response.data.message) {
+            if(error.response && error.response.data && error.response.data.errorMessage) {
                 message = error.response.data.errorMessage;
             }
             authReducer({
@@ -138,9 +142,10 @@ function AuthContextProvider(props) {
                     errorMessage: message
                 }
             });
+            console.log(error.response);
+            return;
         });
-
-        if (response.status === 200) {
+        if (response && response.status === 200) {
             console.log("response", response);
             authReducer({
                 type: AuthActionType.LOGIN,
@@ -148,15 +153,7 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
-            history('/profile');
-        } else {
-            authReducer({
-                type: AuthActionType.ERROR_MESSAGE,
-                payload: {
-                    errorMessage: response.data.errorMessage
-                }
-            }
-        )
+            history('/profile/' + response.data.user._id);
         }
     }
     auth.logout = async () => {
@@ -182,24 +179,16 @@ function AuthContextProvider(props) {
                 }
             });
         });
-
-        if (response.status === 200) {
+        if (response && response.status === 200) {
             authReducer({
                 type: AuthActionType.REGISTER,
                 payload: {
-                    user: response.data.user
+                    user: null,
+                    message: response.data.message
                 }
             });
-            // a registered user is automatically logged in
-            history('/profile');
-        } else {
-            authReducer({
-                type: AuthActionType.ERROR_MESSAGE,
-                payload: {
-                    errorMessage: response.data.errorMessage
-                }
-            }
-        )
+            // a registered user is NOT automatically logged in. They must login after verifying their email
+            history('/login');
         }
     }
     // changing password should logout user (this can be done on the backend OR just calling logout here)
@@ -224,7 +213,6 @@ function AuthContextProvider(props) {
     }
     auth.deleteAccount = async (username, password) => {
         try {
-        
             const response = await api.deleteAccount(username, password)
             if (response.status === 200) {
                 authReducer({
@@ -250,6 +238,26 @@ function AuthContextProvider(props) {
             type: AuthActionType.ERROR_MESSAGE,
             payload: {
                 errorMessage: errorMessage
+            }
+        });
+    }
+
+    auth.getAUser = async (userId) => {
+        try {
+            const response = await api.getAUser(userId);
+            if (response.status === 200) {
+                return response.data;
+            }
+        } catch (error) {
+            console.log("Error in getting a user's public details");
+        }
+    }
+
+    auth.wipeErrorMessage = () => {
+        authReducer({
+            type: AuthActionType.ERROR_MESSAGE,
+            payload: {
+                errorMessage: null
             }
         });
     }

@@ -3,7 +3,7 @@ import Header from './Header';
 import { BsFilter } from 'react-icons/bs';
 import { Menu } from '@headlessui/react';
 import ItemCard from '../ItemCard';
-import ModalTwo from '../modals/TagModal/ModalTwo';
+import TagModal from '../modals/TagModal';
 import { generateRandomMaps } from '../../utils/mockData/ItemCard_MockData';
 import { getMaps, getTilesets } from '../../requests/store-request';
 import GlobalStoreContext from "../../store"
@@ -33,7 +33,7 @@ export default function CommunityScreen() {
     }
 
     // copied directly from website and it worked somehow
-    const [modalOpen2, setModalOpen2] = React.useState(false);
+    const [tagModalOpen, setTagModalOpen] = React.useState(false);
 
     useEffect(() => {
         async function getTheContent() {
@@ -159,7 +159,7 @@ export default function CommunityScreen() {
                                 <Menu.Item>
                                     {({ active }) => (
                                         <button className="block px-4 py-2 text-md hover:bg-darker-gray rounded-b-xl w-full"
-                                        onClick={() => setModalOpen2(!modalOpen2)}>Tags                                            
+                                        onClick={() => setTagModalOpen(!tagModalOpen)}>Tags                                            
                                         </button>
                                     )}
                                 </Menu.Item>
@@ -192,7 +192,7 @@ export default function CommunityScreen() {
                     </div>
                 </div>
             </div>
-            <ModalTwo modalOpen={modalOpen2} setModalOpen={setModalOpen2} />
+            <TagModal modalOpen={tagModalOpen} setModalOpen={setTagModalOpen} />
         </div>
     );
 }

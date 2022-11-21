@@ -1,6 +1,6 @@
 import React from "react";
-import search from "./search.png";
-const ModalTwo = ({ modalOpen, setModalOpen }) => {
+import search from "./images/search.png";
+const TagModal = ({ modalOpen, setModalOpen }) => {
 	return (
 		<>
 			<div
@@ -70,4 +70,4 @@ const ModalTwo = ({ modalOpen, setModalOpen }) => {
 	);
 };
 
-export default ModalTwo;
+export default TagModal;

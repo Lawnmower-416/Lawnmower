@@ -5,7 +5,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import { useLocation } from "react-router-dom";
 import { Menu } from '@headlessui/react';
-import ModalEight from "../modals/CreateMapModal/CreateMap";
+import CreateMapModal from "../modals/CreateMapModal";
 import CreateTilesetModal from "../modals/CreateTilesetModal";
 
 import AuthContext from "../../auth";
@@ -15,7 +15,7 @@ import GlobalStoreContext from "../../store";
 const Header = () => {
   const { auth } = useContext(AuthContext);
   const { store } = useContext(GlobalStoreContext);
-  const [modalOpen8, setModalOpen8] = useState(false);
+  const [openCreateMapModal, setCreateMapModal] = useState(false);
   const [tilesetModal, setTilesetModal] = useState(false);
   const [sidebar, setSidebar] = useState(false);
   let navArray = [
@@ -55,7 +55,7 @@ const Header = () => {
         </Link>
       </div>;
   if (auth.loggedInBool) {
-    profileReroute = "/profile"
+    profileReroute = "/profile/" + auth.user._id;
     topRightMenu = 
     <Menu as="div" className="relative -translate-x-16">
       <Menu.Button>
@@ -63,14 +63,14 @@ const Header = () => {
       </Menu.Button>
       <Menu.Items className="absolute -translate-x-12 bg-darker-gray rounded-xl shadow-lg">
         <Menu.Item>
-          <Link to="/profile" className="block px-4 py-2 text-white text-md text-center hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Profile</Link>
+          <Link to={profileReroute} className="block px-4 py-2 text-white text-md text-center hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Profile</Link>
         </Menu.Item>
         <Menu.Item>
           <Link to="/community" className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Community</Link>
         </Menu.Item>
         <Menu.Item>
 
-        <button onClick={() => setModalOpen8(!modalOpen8)} 
+        <button onClick={() => setCreateMapModal(!openCreateMapModal)} 
           className="block px-4 py-2 text-white text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray">Create Map</button>
         </Menu.Item>
         <Menu.Item>
@@ -128,7 +128,7 @@ const Header = () => {
       }
       
       </div>
-      <ModalEight setModalOpen={setModalOpen8} modalOpen={modalOpen8} />
+      <CreateMapModal setModalOpen={setCreateMapModal} modalOpen={openCreateMapModal} />
       <CreateTilesetModal setModalOpen={setTilesetModal} modalOpen={tilesetModal} />
 
 

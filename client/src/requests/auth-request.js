@@ -41,6 +41,10 @@ export const deleteAccount = (username, password) => {
     }, {withCredentials: true});
 }
 
+export const getAUser = (userId) => {
+    return baseAPI.get(`/auth/users/${userId}`);
+}   
+
 export const MapVerify = (mapId) => baseAPI.get(`/map/${mapId}/verify/`);
 
 export const TilesetVerify = (tilesetId) => baseAPI.get(`/tileset/${tilesetId}/verify/`);
@@ -52,6 +56,7 @@ const apis = {
     register,
     changePassword,
     deleteAccount,
+    getAUser,
     MapVerify,
     TilesetVerify
 }

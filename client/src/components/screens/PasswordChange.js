@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "./Input";
 import Header from "./Header";
+import ErrorModal from "../modals/ErrorModal";
 import AuthContext from "../../auth";
 
 const PasswordChange = () => {
@@ -60,11 +61,12 @@ const PasswordChange = () => {
   }
 
   // console.log(values);
-  const credentialError = <div className="absolute text-red font-inter font-bold">{auth.errorMessage}</div>;
+  // const credentialError = <div className="absolute text-red font-inter font-bold">{auth.errorMessage}</div>;
   return (
     <div>
       <Header/>
-    <div className="relative main-background min-h-screen pt-20">
+      <ErrorModal />
+    <div className="main-background min-h-screen pt-20">
       <div className="my-container flex flex-col lg:grid grid-cols-1 lg:grid-cols-2 items-center ">
         <div className="mx-auto">
           <p className="font-inter font-bold text-4xl xl:text-5xl text-center">
@@ -73,9 +75,9 @@ const PasswordChange = () => {
           <img src="./contactus.png" alt="#" className="w-96 lg:w-full" />
         </div>
         <div className=" max-w-lg w-full">
-          {
+          {/* {
             credentialError
-          }
+          } */}
           {inputs.map((el, i) => (
             <Input {...el} key={i} value={values["size"]} onChange={onChange} />
           ))}

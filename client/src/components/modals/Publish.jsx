@@ -1,6 +1,6 @@
 import React from "react";
 
-const ModalFive = ({ modalOpen, setModalOpen }) => {
+const PublishModal = ({ modalOpen, setModalOpen }) => {
 	return (
 		<>
 			<div
@@ -16,15 +16,22 @@ const ModalFive = ({ modalOpen, setModalOpen }) => {
 					<div className="modal-content duration-500 rounded-2xl bg-gradient-green p-6 sm:p-10 w-full max-w-md relative z-10 sm:pt-5 sm:pb-6">
 						<div className=" mb-5">
 							<h4 className="text-[32px] text-center font-bold leading-tight mb-1">
-								Request to be an editor?
+								Are You Sure You Want to Publish?
 							</h4>
+							<h6
+								className="text-[20px] text-center font-bold leading-tight mb-1 text-red"
+								style={{ fontStyle: `italic` }}
+							>
+								Note: Once You Publish, You Can’t Set the Visibility to
+								Private.
+							</h6>
 						</div>
 						<div className="flex justify-evenly gap-4">
 							<button
 								className="rounded-lg py-3 px-6 text-white cursor-pointer duration-300 bg-purple text-[18px] font-bold flex-grow"
 								onClick={() => setModalOpen(!modalOpen)}
 							>
-								Accept
+								Publish
 							</button>
 							<button
 								className="rounded-lg py-3 px-6 text-white cursor-pointer duration-300 bg-dark-green text-[18px] font-bold flex-grow"
@@ -40,4 +47,4 @@ const ModalFive = ({ modalOpen, setModalOpen }) => {
 	);
 };
 
-export default ModalFive;
+export default PublishModal;

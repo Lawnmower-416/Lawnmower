@@ -1,7 +1,7 @@
 import React from "react";
-import checkIcon from "./draw-check-mark.png";
+import checkIcon from "./images/draw-check-mark.png";
 /* Reports User Modal */
-const ModalThree = ({ modalOpen, setModalOpen }) => {
+const ReportModal = ({ modalOpen, setModalOpen }) => {
 	return (
 		<>
 			<div
@@ -81,4 +81,4 @@ const ModalThree = ({ modalOpen, setModalOpen }) => {
 	);
 };
 
-export default ModalThree;
+export default ReportModal;
