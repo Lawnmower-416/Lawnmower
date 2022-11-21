@@ -72,7 +72,7 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: payload.user,
                     loggedInBool: false,
-                    errorMessage: null,
+                    errorMessage: payload.message,
                     guestMode: auth.guestMode
                 })
             }
@@ -183,7 +183,8 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.REGISTER,
                 payload: {
-                    user: null
+                    user: null,
+                    message: response.data.message
                 }
             });
             // a registered user is NOT automatically logged in. They must login after verifying their email
