@@ -83,7 +83,9 @@ export default function Home() {
   }, [currentPost])
 
   return (
-    <a target="_blank" href="https://ephemeral-vacherin-baeb54.netlify.app/expandedcommunity">Expanded Community</a>
+    <div>
+    <a target="_blank" href="https://demo-lawnmower.netlify.app/">Expanded Community</a>
+    </div>
     /*
     <div>
       <NavBar/>
