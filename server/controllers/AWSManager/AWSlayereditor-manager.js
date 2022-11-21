@@ -1,15 +1,22 @@
 const Layer = require("../../models/layer-schema");
 const Map = require("../../models/map-schema");
+const {save} = require("debug");
 
 module.exports.createLayer = async (layerName, mapId) => {
     if (!layerName) return null;
 
-    const newLayer = new Layer(layerName);
+    const newLayer = new Layer({name: layerName});
     const savedLayer = await newLayer.save();
 
     // Save into map
     const fetchedMap = await Map.findById(mapId);
     if (!fetchedMap) return null;
+
+    for (let i = 0; i < fetchedMap.width * fetchedMap.height; i++) {
+        savedLayer.data.push(0);
+    }
+    await savedLayer.save();
+
     fetchedMap.layers.push(savedLayer);
     await fetchedMap.save();
     return savedLayer;

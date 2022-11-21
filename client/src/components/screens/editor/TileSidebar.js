@@ -24,6 +24,7 @@ function TileSidebar({ tiles, openDeleteTileModal }) {
                                     tile={tile}
                                     index={tileIndex}
                                     openDeleteTileModal={openDeleteTileModal}
+                                    tileSize={store.tileset.tileSize}
                                 />
                             ))}
                         </div>
@@ -41,7 +42,7 @@ function TileSidebar({ tiles, openDeleteTileModal }) {
     )
 }
 
-function Tile({ tile, index, openDeleteTileModal }) {
+export function Tile({ tile, index, openDeleteTileModal, tileSize }) {
     const ref = useRef(null);
 
     const { store } = useContext(EditorContext);
@@ -54,7 +55,6 @@ function Tile({ tile, index, openDeleteTileModal }) {
     useEffect(() => {
         if(ref) {
             const data = tile.data;
-            const tileSize = store.tileset.tileSize;
             const context = ref.current.getContext('2d');
             const pixelSize = Math.ceil(60 / tileSize);
             for(let y = 0; y < tileSize; y++) {
@@ -76,7 +76,7 @@ function Tile({ tile, index, openDeleteTileModal }) {
             className="m-0"
             onClick={setCurrentTile}
             onDoubleClick={() => {
-                if(store.tilesetImage.tiles.length > 1) {
+                if(store.tilesetImage && store.tilesetImage.tiles.length > 1) {
                     openDeleteTileModal();
                 }
             }}
