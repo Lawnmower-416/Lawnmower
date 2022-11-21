@@ -377,6 +377,13 @@ function EditorContextProvider(props) {
     
     }
 
+    store.saveMap = async () => {
+        const layerPromises = store.layers.map(layer => updateLayer(store.map._id, layer._id, layer));
+        await Promise.all(layerPromises);
+
+        await store.setMap(store.map._id);
+    }
+
     store.renameLayer = async (newName) => {
         const layers = [...store.layers];
         const layer = layers[store.currentLayer];

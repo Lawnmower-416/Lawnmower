@@ -38,7 +38,13 @@ function Headerbar({title, setSettingsOpen, setHistoryOpen, setExportOpen, setSh
                                 <Cog6ToothIcon className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer" onClick={() => setSettingsOpen(true)}/>
                                 <CloudIcon className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer" onClick={() => setHistoryOpen(true)}/>
                                 <ArrowDownTrayIcon className="h-10 w-10 text-white hover:text-editor-highlight" onClick={() => setExportOpen(true)} />
-                                <RocketLaunchIcon className="h-10 w-10 text-white hover:text-editor-highlight" onClick={() => store.saveTileset()} />
+                                <RocketLaunchIcon className="h-10 w-10 text-white hover:text-editor-highlight" onClick={() => {
+                                    if(store.tileset) {
+                                        store.saveTileset()
+                                    } else {
+                                        store.saveMap();
+                                    }
+                                }} />
 
                             </div>
                         </div>
