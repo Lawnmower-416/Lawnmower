@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Input from "./Input";
 import Header from "./Header";
 import AuthContext from "../../auth";
+import ErrorModal from "../modals/ErrorModal";
 
 const RegisterScreen = () => {
   const { auth } = useContext(AuthContext)
@@ -86,11 +87,10 @@ const RegisterScreen = () => {
     auth.register(firstname, lastname, username, email, password, verifypassword);
   };
 
-  const credentialError = <div className="absolute text-red font-inter font-bold">{auth.errorMessage}</div>;
-
   return (
     <div>
       <Header />
+      <ErrorModal/>
     <div className="main-background min-h-screen pt-20">
       <div className="my-container flex flex-col lg:grid grid-cols-1 lg:grid-cols-2 items-center lg:items-start ">
         <div className="mx-auto pt-20">
@@ -99,12 +99,7 @@ const RegisterScreen = () => {
           </p>
           <img src="./contactus.png" alt="#" className="w-96 lg:w-full" />
         </div>
-
         <div>
-          {
-            credentialError
-          }
-
         <div className=" max-w-lg w-full">
           {inputs.map((el, i) => (
             <Input {...el} key={i} value={values["size"]} onChange={onChange} />

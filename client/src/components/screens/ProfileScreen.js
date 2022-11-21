@@ -8,7 +8,7 @@ import { useLocation } from "react-router-dom";
 import AuthContext from "../../auth";
 import { useNavigate } from "react-router-dom";
 
-import ModalEight from "../modals/CreateMapModal/CreateMap";
+import CreateMapModal from "../modals/CreateMapModal";
 import CreateTilesetModal from "../modals/CreateTilesetModal";
 import DeleteAccount from "../modals/DeleteAccount";
 import GlobalStoreContext from "../../store";
@@ -49,7 +49,7 @@ export default function Profile() {
     const [userLogo, setUserLogo] = useState([]);
     const [imageURL, setImageURL] = useState("");
 
-    const [modalOpen8, setModalOpen8] = useState(false);
+    const [openCreateMapModal, setCreateMapModal] = useState(false);
     const [tilesetModal, setTilesetModal] = useState(false);
     const [deleteAccountModal, setDeleteAccountModal] = useState(false);
 
@@ -73,7 +73,7 @@ export default function Profile() {
         fetchData();
     }, [auth.user]);
 
-        userMaps = store.userMaps;
+    userMaps = store.userMaps;
     userTilesets = store.userTilesets;
 
 
@@ -205,7 +205,8 @@ export default function Profile() {
 
                     {/* Column 2: Create Map/Tileset Buttons Area */}
                     <div className="col-auto grid grid-cols-2 pt-3 text-2xl gap-12" style={{"color": "white"}}>
-                        <div className={"col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer " + (viewingOwnPage ? "visible" : "invisible")} onClick={() => setModalOpen8(!modalOpen8)}>Create Map</div>
+
+                        <div className={"col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer " + (viewingOwnPage ? "visible" : "invisible")} onClick={() => setCreateMapModal(!openCreateMapModal)}>Create Map</div>
                         <div className={"col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer " + (viewingOwnPage ? "visible" : "invisible")} onClick={() => setTilesetModal(!tilesetModal)}>Create Tilesets</div>
                     </div>
                 {/* Row 3 */}
@@ -225,7 +226,7 @@ export default function Profile() {
                         <button className="bg-dark-green-lighter text-red font-bold rounded-md p-3" onClick={() => setDeleteAccountModal((prev) => !prev)} >Delete Account</button>
                     </div>
             </div>
-            <ModalEight setModalOpen={setModalOpen8} modalOpen={modalOpen8} />
+            <CreateMapModal setModalOpen={setCreateMapModal} modalOpen={openCreateMapModal} />
             <CreateTilesetModal setModalOpen={setTilesetModal} modalOpen={tilesetModal} />
         </>
     );

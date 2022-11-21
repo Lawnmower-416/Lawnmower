@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from "react";
 import EditHistoryModal from "../modals/EditHistoryModal";
 import ExportModal from "../modals/Export";
-import ShareModal from "../modals/ShareModal/Share";
+import ShareModal from "../modals/ShareModal";
 import TilesetSettingsModal from "../modals/TilesetSettingsModal";
 import ColorSidebar from "./editor/ColorSidebar";
 import Headerbar from "./editor/Headerbar";

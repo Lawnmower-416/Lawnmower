@@ -1,11 +1,8 @@
-import React, {useContext, useRef, useState} from "react";
-import avatar from "./avatar.png";
-
-import user_add from "./add-user.svg";
-import downArrow from "./down-arrow.png";
-import user from "./user.png";
-import AuthContext from "../../../auth";
-import EditorContext from "../../../editor";
+import React, {useContext, useState} from "react";
+import avatar from "./images/avatar.png";
+import user_add from "./images/add-user.svg";
+import AuthContext from "../../auth";
+import EditorContext from "../../editor";
 
 const ShareModal = ({ modalOpen, setModalOpen }) => {
 	const { auth } = useContext(AuthContext);

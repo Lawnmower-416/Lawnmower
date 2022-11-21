@@ -269,6 +269,15 @@ function AuthContextProvider(props) {
         }
     }
 
+    auth.wipeErrorMessage = () => {
+        authReducer({
+            type: AuthActionType.ERROR_MESSAGE,
+            payload: {
+                errorMessage: null
+            }
+        });
+    }
+
     return (
         <AuthContext.Provider value={{
             auth
