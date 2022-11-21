@@ -2,7 +2,15 @@ import {createContext, useEffect, useState} from 'react';
 import {getTileset, getTilesetImage, updateTileset, uploadTilesetImage} from "../../src/requests/tileset-editor-api";
 import {getMapById, getTilesetById} from "../requests/store-request";
 import jsTPS from "../transactions/jsTPS";
-import {getAllTilesets, getLayer, getProperty, updateMap} from "../requests/map-editor-api";
+import {
+    addLayer,
+    addProperty,
+    getAllTilesets,
+    getLayer,
+    getProperty,
+    updateLayer,
+    updateMap, updateProperty
+} from "../requests/map-editor-api";
 
 
 export const EditorContext = createContext();
@@ -26,6 +34,8 @@ export const EditorActionType = {
     IMPORT_TILESET: "IMPORT_TILESET",
 
     SET_MAP: "SET_MAP",
+    SET_CURRENT_LAYER: "SET_CURRENT_LAYER",
+    UPDATE_LAYERS: "UPDATE_LAYERS",
 
 
     SET_TILESET: "SET_TILESET",
@@ -56,8 +66,9 @@ function EditorContextProvider(props) {
     const [ store, setStore ] = useState({
         map: null,
         mapTilesets: [],
-        current_layer: 0,
+        currentLayer: 0,
         layers: [],
+        tiles: [],
 
         tileset: null,
         tilesetImage: null,
@@ -92,11 +103,13 @@ function EditorContextProvider(props) {
                 break;
 
             case EditorActionType.SET_MAP:
+                console.log(payload.tiles)
                 setStore({
                     ...store,
                     map: payload.map,
                     layers: payload.layers,
                     mapTilesets: payload.mapTilesets,
+                    tiles: payload.tiles
                 });
                 break;
 
@@ -186,6 +199,28 @@ function EditorContextProvider(props) {
                 });
                 break;
 
+            case EditorActionType.ADD_LAYER:
+                setStore({
+                    ...store,
+                    layers: [...store.layers, payload.layer],
+                    currentLayer: store.layers.length,
+                });
+                break;
+
+            case EditorActionType.SET_CURRENT_LAYER:
+                setStore({
+                    ...store,
+                    currentLayer: payload.index,
+                });
+                break;
+
+            case EditorActionType.UPDATE_LAYERS:
+                setStore({
+                    ...store,
+                    layers: payload.layers,
+                });
+                break;
+
             default:
                 console.error("Unknown action type: " + type);
                 break;
@@ -259,29 +294,89 @@ function EditorContextProvider(props) {
 
     }
 
-    // handles selecting a layer
-    store.selectLayer = (layer) => {
+    store.placeTile = async (x, y) => {
+        const layers = [...store.layers];
+        const layer = layers[store.currentLayer];
 
+        layer.data[y * store.map.width + x] = store.currentTileIndex;
+
+        const res = await updateLayer(store.map._id, layer._id, layer);
+        return null;
+    }
+
+    // handles selecting a layer
+    store.selectLayer = (layerIndex) => {
+        storeReducer({
+            type: EditorActionType.SET_CURRENT_LAYER,
+            payload: {
+                index: layerIndex,
+            }
+        });
     }
     // handles adding a layer
-    store.addLayer = async (layer) => {
+    store.addLayer = async () => {
+        const name = "Layer " + (store.layers.length + 1);
+        const layer = (await addLayer(store.map._id, name)).data.layer;
 
+        storeReducer({
+            type: EditorActionType.ADD_LAYER,
+            payload: {
+                layer: layer,
+            }
+        });
     }
     // handles deleting a layer
     store.deleteLayer = async (layer) => {
     
     }
-    // handles locking/unlocking a layer
-    store.toggleLayerLock = (layer) => {
 
+    store.renameLayer = async (newName) => {
+        const layers = [...store.layers];
+        const layer = layers[store.currentLayer];
+        layer.name = newName;
+        await updateLayer(store.map._id, layer._id, layer);
+
+        storeReducer({
+            type: EditorActionType.UPDATE_LAYERS,
+            payload: {
+                layers,
+            }
+        })
+    }
+    // handles locking/unlocking a layer
+    store.toggleLayerLock = (layerIndex) => {
+        const layer = store.layers[layerIndex];
+        layer.locked = !layer.locked;
     }
     // handles showing/hiding a layer
-    store.toggleLayerHide = (layer) => {
+    store.toggleLayerHide = (layerIndex) => {
+        const layers = [...store.layers];
+        const layer = layers[layerIndex];
+        layer.visible = !layer.visible;
 
+        storeReducer({
+            type: EditorActionType.UPDATE_LAYERS,
+            payload: {
+                layers,
+            }
+        });
     }
     // handles adding a new property
-    store.addProp = async (prop) => {
+    store.addProperty = async () => {
+        const layers = [...store.layers];
+        const layer = layers[store.currentLayer];
+        const name = "Property " + (layer.properties.length + 1);
+        const mapId = store.map._id;
+        const layerId = layer._id;
+        const property = (await addProperty(mapId, layerId, name)).data.property;
+        layer.properties.push(property);
 
+        storeReducer({
+            type: EditorActionType.UPDATE_LAYERS,
+            payload: {
+                layers,
+            }
+        });
     }
     // handles renaming a property
     store.renameProp = async (prop) => {
@@ -293,7 +388,17 @@ function EditorContextProvider(props) {
     }
     // handles changing a property's value
     store.changePropValue = async (prop, value) => {
+        const layers = [...store.layers];
+        const layer = layers[store.currentLayer];
+        prop.value = value;
+        await updateProperty(store.map._id, layer._id, prop._id, prop);
 
+        storeReducer({
+            type: EditorActionType.UPDATE_LAYERS,
+            payload: {
+                layers
+            }
+        });
     }
     // handles deleting a property
     store.deleteProp = async (prop) => {
@@ -332,22 +437,34 @@ function EditorContextProvider(props) {
 
             const layerPromises = [];
             for (let i = 0; i < map.layers.length; i++) {
-                layerPromises.push(getLayer(map.layers[i]));
+                layerPromises.push(getLayer(map._id, map.layers[i]));
             }
-            const layers = await Promise.all(layerPromises);
+            const layersResponses = await Promise.all(layerPromises);
+
+            const layers = [];
+            for (let i = 0; i < layersResponses.length; i++) {
+                layers.push(layersResponses[i].data.layer);
+            }
 
             for(let i = 0; i < layers.length; i++) {
                 const layer = layers[i];
-
+                const layerId = layer._id;
                 let propertyPromises = [];
                 if(layer.properties) {
                     for(let j = 0; j < layer.properties.length; j++) {
-                        propertyPromises.push(getProperty(layer.properties[j]));
+                        propertyPromises.push(getProperty(mapId, layerId, layer.properties[j]));
                     }
-                    layer.properties = await Promise.all(propertyPromises);
+                    const propertyResponses = await Promise.all(propertyPromises);
+
+                    const properties = [];
+                    for(let j = 0; j < propertyResponses.length; j++) {
+                        properties.push(propertyResponses[j].data.property);
+                    }
+                    layer.properties = properties;
                 }
             }
 
+            let tiles = [];
             let mapTilesets = [];
             if(map.tilesets.length > 0) {
                 //TODO: Error Handling
@@ -355,6 +472,7 @@ function EditorContextProvider(props) {
                 for (let i = 0; i < mapTilesets.length; i++) {
                     const image = JSON.parse(mapTilesets[i].image);
                     mapTilesets[i].imageData = image
+                    tiles.push(...image.tiles);
                 }
             }
 
@@ -363,7 +481,8 @@ function EditorContextProvider(props) {
                 payload: {
                     map,
                     layers,
-                    mapTilesets
+                    mapTilesets,
+                    tiles
                 }
             });
         }

@@ -21,28 +21,32 @@ export const placeTiles = (mapId, layerId, tileId, positions) => {
     return baseAPI.put(`/editor/tile/map/${mapId}/layer/${layerId}/tile/${tileId}`, positions)
 }
 
-export const getLayer = (layerId) => {
-    return baseAPI.get(`/editor/layer/${layerId}`)
+export const getLayer = (mapId, layerId) => {
+    return baseAPI.get(`/editor/map/${mapId}/layer/${layerId}`, {withCredentials: true});
 }
 
-export const addLayer = (mapId, layerId) => {
-    return baseAPI.post(`/editor/layer/map/${mapId}/layer/${layerId}`)
+export const addLayer = (mapId, layerName) => {
+    return baseAPI.post(`/editor/map/${mapId}/layer`, {name :layerName}, {withCredentials: true});
+}
+
+export const updateLayer = (mapId, layerId, layer) => {
+    return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}`, layer, {withCredentials: true});
 }
 
 export const deleteLayer = (mapId, layerId) => {
     return baseAPI.delete(`/editor/map/${mapId}/layer/${layerId}`)
 }
 
-export const getProperty = (propertyId) => {
-    return baseAPI.get(`/editor/property/${propertyId}`);
+export const getProperty = (mapId, layerId, propertyId) => {
+    return baseAPI.get(`/editor/map/${mapId}/layer/${layerId}/property/${propertyId}`, {withCredentials: true});
 }
 
-export const addProperty = (mapId, layerId, Property) => {
-    return baseAPI.post(`/editor/map/${mapId}/layer/${layerId}/property`, Property)
+export const addProperty = (mapId, layerId, propertyName) => {
+    return baseAPI.post(`/editor/map/${mapId}/layer/${layerId}/property`,{name: propertyName}, {withCredentials: true});
 }
 
-export const updateProperty = (mapId, layerId, propertyId, Property) => {
-    return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}/property/${propertyId}`, Property)
+export const updateProperty = (mapId, layerId, propertyId, property) => {
+    return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}/property/${propertyId}`, property, {withCredentials: true});
 }
 
 export const deleteProperty = (mapId, layerId, propertyId) => {
@@ -67,6 +71,7 @@ const apis = {
     placeTiles,
     getLayer,
     addLayer,
+    updateLayer,
     deleteLayer,
     addProperty,
     updateProperty,

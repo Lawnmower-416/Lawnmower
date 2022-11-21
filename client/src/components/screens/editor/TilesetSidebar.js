@@ -48,6 +48,8 @@ function TilesetSidebar({ setImportOpen }) {
 function TilesetContent({name, current, tiles, tileSize}) {
     const [open, setOpen] = useState(false);
 
+    const { store } = useContext(EditorContext);
+
     return (
         <div className="text-white">
             <div className="bg-editor-secondary" onClick={() => setOpen(!open)}>
@@ -65,6 +67,7 @@ function TilesetContent({name, current, tiles, tileSize}) {
                                 tile={tile}
                                 index={tileIndex}
                                 tileSize={tileSize}
+                                onClick={() => store.setCurrentTile(tileIndex)}
                             />
                         ))}
                     </div>
