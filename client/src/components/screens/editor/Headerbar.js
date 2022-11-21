@@ -10,9 +10,14 @@ import { Disclosure } from '@headlessui/react'
 import { Link } from 'react-router-dom';
 import {useContext} from "react";
 import EditorContext from "../../../editor";
+import AuthContext from "../../../auth";
 
 function Headerbar({title, setSettingsOpen, setHistoryOpen, setExportOpen, setShareOpen}) {
     const { store } = useContext(EditorContext);
+    const { auth } = useContext(AuthContext);
+
+    const userProfileRoute = "/profile/" + auth.user._id;
+
     return (
         <Disclosure as="nav" className="bg-editor-primary h-14">
             {() => (
@@ -21,7 +26,7 @@ function Headerbar({title, setSettingsOpen, setHistoryOpen, setExportOpen, setSh
                         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                             <Link
                                 className="bg-editor-highlight px-2 py-2 rounded-full"
-                                to="/profile"
+                                to={userProfileRoute}
                             >
                                 <HomeIcon className="h-10 w-10 text-white"/>
                             </Link>
