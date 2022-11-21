@@ -26,17 +26,35 @@ function Toolbar() {
     }
 
     const handleCut = () => {
+        const isTileset = store.tileset !== null;
+
         const minX = Math.min(...store.selectedPixels.map(p => p.x));
         const minY = Math.min(...store.selectedPixels.map(p => p.y));
         //Undo subtracting done in copy calculation to get actual position
-        const oldData = store.getCopyData().map(p => {
-            return {
-                x:p.x + minX,
-                y:p.y + minY,
-                color:p.color
-            }
-        });
-        const newData = oldData.map(pixel => ({...pixel, color: {r: 0, g: 0, b: 0, a: 0}}));
+        let oldData;
+        if(isTileset) {
+            oldData = store.getCopyData().map(p => {
+                return {
+                    x:p.x + minX,
+                    y:p.y + minY,
+                    color:p.color
+                }
+            });
+        } else {
+            oldData = store.getCopyData().map(p => {
+                return {
+                    x:p.x + minX,
+                    y:p.y + minY,
+                    tile:p.tile
+                }
+            });
+        }
+
+        let newData = isTileset ?
+            oldData.map(pixel => ({...pixel, color: {r: 0, g: 0, b: 0, a: 0}})) :
+            oldData.map(pixel => ({...pixel, tile: -1}));
+        console.log(oldData);
+        console.log(newData);
         handleCopy();
         store.addTransaction(
             new BulkTileChangeTransaction(
@@ -61,22 +79,38 @@ function Toolbar() {
                     const y = pixels[i].y;
 
                     //Undo subtracting done in copy calculation to get actual position
-                    const oldColor = store.getPixel(x + minX, y + minY);
-                    oldData.push({
-                        x: x + minX,
-                        y: y + minY,
-                        color: oldColor
-                    });
+                    if(store.tileset !== null) {
+                        const oldColor = store.getPixel(x + minX, y + minY);
+                        oldData.push({
+                            x: x + minX,
+                            y: y + minY,
+                            color: oldColor
+                        });
+                    } else {
+                        const oldTile = store.layers[store.currentLayer].data[(y + minY) * store.map.width + (x + minX)];
+                        oldData.push({
+                            x: x + minX,
+                            y: y + minY,
+                            tile: oldTile
+                        });
+                    }
                 }
 
-                const newData = pixels.map(p => {
-                    return {
-                        x:p.x + minX,
-                        y:p.y + minY,
-                        color:p.color
-                    }
-                });
-
+                let newData;
+                if(store.tileset !== null) {
+                    newData = pixels.map(pixel => ({
+                        x: pixel.x + minX,
+                        y: pixel.y + minY,
+                        color: pixel.color
+                    }));
+                } else {
+                    newData = pixels.map(pixel => ({
+                        x: pixel.x + minX,
+                        y: pixel.y + minY,
+                        tile: pixel.tile
+                    }));
+                }
+                
                 store.addTransaction(
                     new BulkTileChangeTransaction(
                         oldData,
