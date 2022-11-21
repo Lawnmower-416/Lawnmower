@@ -7,7 +7,7 @@ import MapSettingsModal from "../modals/MapSettingsModal";
 import ExportModal from "../modals/Export";
 import EditHistoryModal from "../modals/EditHistoryModal";
 import ImportTilesetModal from "../modals/ImportTilesetModal";
-import ShareModal from "../modals/ShareModal/Share";
+import ShareModal from "../modals/ShareModal";
 
 
 function MapEditor() {    

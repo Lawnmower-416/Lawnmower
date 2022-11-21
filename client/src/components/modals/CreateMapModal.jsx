@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
-import GlobalStoreContext from "../../../store";
+import GlobalStoreContext from "../../store";
 
-const ModalEight = ({ modalOpen, setModalOpen }) => {
+const CreateMapModal = ({ modalOpen, setModalOpen }) => {
 	const { store } = useContext(GlobalStoreContext);
 	const [title, setTitle] = useState("Untitled");
 	const [size, setSize] = useState("128");
@@ -87,4 +87,4 @@ const ModalEight = ({ modalOpen, setModalOpen }) => {
 	);
 };
 
-export default ModalEight;
+export default CreateMapModal;
