@@ -1,8 +1,8 @@
 const databaseManager = require('./AWSManager/AWSlayereditor-manager');
 
 function createLayer(req, res) {
-    const name = req.body;
-    if (!name.name) {
+    const { name } = req.body;
+    if (!name) {
         return res.status(400).json({
             success: false,
             error: 'Improperly formatted request',

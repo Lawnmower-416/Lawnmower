@@ -1,11 +1,33 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import {Fragment, useContext, useEffect, useState} from 'react'
+import EditorContext from "../../editor";
+import AuthContext from "../../auth";
+import GlobalStoreContext from "../../store";
 
-function ImportTilesetModal({isOpen, setIsOpen, tilesets}) {
+function ImportTilesetModal({isOpen, setIsOpen}) {
+
+    const { auth } = useContext(AuthContext);
+    const { store: globalStore } = useContext(GlobalStoreContext);
+    const { store } = useContext(EditorContext);
+
+    useEffect(() => {
+        if(!globalStore.userTilesets) {
+            globalStore.loadUserContent();
+        }
+    }, [isOpen]);
+    const tilesets = globalStore.userTilesets;
+
     const [publicTab, setPublicTab] = useState(false);
     const [selectedTileset, setSelectedTileset] = useState(null);
+
   function closeModal() {
-    setIsOpen(false)
+      console.log(selectedTileset);
+      store.addTilesetToMap(selectedTileset);
+      setIsOpen(false);
+  }
+
+  if(!tilesets) {
+        return <div>Loading...</div>
   }
 
   return (
@@ -59,7 +81,14 @@ function ImportTilesetModal({isOpen, setIsOpen, tilesets}) {
                                 </Dialog.Title>
 
                                 <div className="bg-editor-background">
-                                    {publicTab ? <PublicTilesets /> : <UserTilesets tilesets={tilesets} selectedTileset={selectedTileset} setSelectedTileset={setSelectedTileset}/>}
+                                    {publicTab ?
+                                        <PublicTilesets /> :
+                                        <UserTilesets
+                                            tilesets={tilesets}
+                                            selectedTileset={selectedTileset}
+                                            setSelectedTileset={setSelectedTileset}
+                                        />
+                                    }
                                     <div className="pt-4 pb-4 flex items-center justify-center">
                                         <button
                                             type="button"
@@ -98,10 +127,15 @@ function UserTilesets({tilesets, selectedTileset, setSelectedTileset}) {
                 {tilesets.map((tileset) => {
                     return (
                         <div 
-                            className={"p-2 m-2 rounded-full hover:bg-editor-highlight " + (selectedTileset && tileset._id === selectedTileset._id ? "bg-editor-highlight" : "bg-editor-secondary")}
+                            className={
+                                "p-2 m-2 rounded-full hover:bg-editor-highlight " + (
+                                selectedTileset && tileset._id === selectedTileset._id ? "bg-editor-highlight" : "bg-editor-secondary"
+                            )}
+
                             onClick={() => setSelectedTileset(tileset)}
+                            key={tileset._id}
                         >
-                            <div className="text-center text-white">{tileset.name}</div>
+                            <div className="text-center text-white">{tileset.title}</div>
                         </div>
                     )
                 })}

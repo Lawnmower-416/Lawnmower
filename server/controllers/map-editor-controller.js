@@ -3,9 +3,7 @@ const mongooseManager = require("./AWSManager/AWSmongoose-manager");
 
 module.exports.updateMap = async (req, res) => {
     const id = req.params.mapId;
-    const newMap = req.body.map;
-
-    console.log(id)
+    const newMap = req.body;
 
     let mapToUpdate = await mongooseManager.getMapById(id, req.userId);
     //console.log(mapToUpdate); //prints null rn

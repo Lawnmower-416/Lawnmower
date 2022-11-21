@@ -1,7 +1,13 @@
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
-import { useRef, useState, useEffect } from 'react';
-function TilesetSidebar({ tilesets, setImportOpen }) {
+import {useRef, useState, useEffect, useContext} from 'react';
+import EditorContext from "../../../editor";
+import {Tile} from "./TileSidebar";
+function TilesetSidebar({ setImportOpen }) {
+
+    const { store } = useContext(EditorContext);
+
+    const tilesets = store.mapTilesets;
 
     return (
         <div className="bg-editor-primary h-screen w-64">
@@ -17,15 +23,19 @@ function TilesetSidebar({ tilesets, setImportOpen }) {
                         <div>
                             {tilesets.map((tileset) => (
                                 <TilesetContent 
-                                    key={tileset.name}
-                                    name={tileset.name}
+                                    key={tileset._id}
+                                    name={tileset.title}
                                     current={tileset.current}
-                                    imgUrl={tileset.src}
+                                    tiles={tileset.imageData.tiles}
+                                    tileSize={store.map.tileSize}
                                 />
                             ))}
                         </div>
                         <div className="flex justify-center">
-                             <PlusCircleIcon className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer" onClick={() => setImportOpen(true)}/>
+                             <PlusCircleIcon
+                                 className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer"
+                                 onClick={() => setImportOpen(true)}
+                             />
                         </div>
                         </div>
                     </div>
@@ -35,35 +45,36 @@ function TilesetSidebar({ tilesets, setImportOpen }) {
     )
 }
 
-function TilesetContent(props) {
+function TilesetContent({name, current, tiles, tileSize}) {
     const [open, setOpen] = useState(false);
-    const ref = useRef(null);
 
-    useEffect(() => {
-        if(open && ref) {
-            const context = ref.current.getContext('2d');
-            const img = new Image();
-            img.src = props.imgUrl;
-            img.onload = () => {
-                context.drawImage(img, 0,0, 200, 200)
-            }
-        }
-    })
+    const { store } = useContext(EditorContext);
 
     return (
         <div className="text-white">
             <div className="bg-editor-secondary" onClick={() => setOpen(!open)}>
                 <div className="text-white flex items-center">
-                    {props.name}
+                    {name}
                     {open ? <ChevronDownIcon className="h-6 w-6 text-white"/> : <ChevronRightIcon className="h-6 w-6 text-white"/>}
                 </div>
             </div>
-            {open && (
-                <canvas width="200" height="200" ref={ref}/>
-            )}       
+            {
+                open && (
+                    <div className="grid grid-cols-3">
+                        {tiles.map((tile, tileIndex) => (
+                            <Tile
+                                key={tileIndex}
+                                tile={tile}
+                                index={tileIndex}
+                                tileSize={tileSize}
+                                onClick={() => store.setCurrentTile(tileIndex)}
+                            />
+                        ))}
+                    </div>
+                )
+            }
         </div>
     )
-
 }
 
 export default TilesetSidebar;
