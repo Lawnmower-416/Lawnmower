@@ -315,7 +315,7 @@ changePassword = async (req, res) => {
     }
 }
 
-verify = async (req, res) => {
+verifyUserAccount = async (req, res) => {
     try {
         const email = decodeURIComponent(req.query.email);
         const userKey = decodeURIComponent(req.query.key);
@@ -492,7 +492,7 @@ module.exports = {
     logout,
     register,
     changePassword,
-    verify,
+    verifyUserAccount,
     deleteAccount,
     MapVerify,
     TilesetVerify,
