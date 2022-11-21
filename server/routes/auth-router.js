@@ -7,7 +7,7 @@ router.post('/login', AuthController.login)
 router.post('/logout', AuthController.logout)
 router.post('/register', AuthController.register)
 router.put('/changePassword', AuthController.changePassword);
-router.get('/verify', AuthController.verifyUserPassword);
+router.get('/verify', AuthController.verify);
 router.put('/deleteAccount/', AuthController.deleteAccount)
 
 module.exports = router

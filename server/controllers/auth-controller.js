@@ -67,6 +67,8 @@ login = async (req, res) => {
                     errorMessage: "Wrong username or password provided."
                 })
         }
+        
+        if (!existingUser.isVerified) return res.status(401).json({ success: false, errorMessage: "Please Check Your Email and Verify Your Account. Don't See an Email? Check your Spam Folder." });
 
         // LOGIN THE USER
         const token = auth.signToken(existingUser._id);
@@ -169,22 +171,73 @@ register = async (req, res, next) => {
         });
         const savedUser = await newUser.save();
 
-        // LOGIN THE USER
-        const token = auth.signToken(savedUser._id);
+        const response = SendEmailTo(savedUser.key, savedUser.email, "Verify Account", "/auth/verify");
+        if (response.isError) {
+            return res.status(500).json({
+                success: false,
+                errorMessage: response.errorMessage
+            });
+        } else {
+            return res.status(200).json({
+                success: true,
+                message: "Check Your Email to Verify Your Credentials"
+            });
+        }
 
-        await res.cookie("token", token, {
-            httpOnly: false,
-            secure: false,
-            samesite: "lax"
-        }).status(200).json({
-            success: true,
-            user: savedUser
-        });
+        // LOGIN THE USER
+        // const token = auth.signToken(savedUser._id);
+
+        // await res.cookie("token", token, {
+        //     httpOnly: false,
+        //     secure: false,
+        //     samesite: "lax"
+        // }).status(200).json({
+        //     success: true,
+        //     user: savedUser
+        // });
         next();
     } catch (err) {
         console.log(err)
         return res.status(500).json({ success: false, errorMessage: err });
     }
+}
+
+SendEmailTo = (userKey, to, subject, path) => {
+    // Send them an email with a verification code...
+    // const userKey = existingUser.key;
+    const body = "http://34.193.24.27:3000" + path + "?email=" + encodeURIComponent(to) + "&key=" + encodeURIComponent(userKey);
+    // const subject = "Password Reset Link";
+
+    let transporter = Nodemailer.createTransport({
+        host: "smtp-mail.outlook.com", // hostname
+        service: "outlook",
+        secureConnection: false, // TLS requires secureConnection to be false
+        port: 587, // port for secure SMTP
+        tls: {
+        ciphers:'SSLv3'
+        },
+        auth: {
+            user: 'lawnmower416@outlook.com',
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+    const result = {isError: false, errorMessage: ""};
+    transporter.sendMail(
+        {
+            to: to,
+            from: '"Lawnmower" <lawnmower416@outlook.com>', // Make sure you don't forget the < > brackets
+            subject: subject,
+            text: body, // Optional, but recommended
+        }, function (err, response) {
+            if(err) {
+                result.errorMessage = err;
+                result.isError = true;
+            }
+            transporter.close();
+        }
+    );
+
+    return result;
 }
 
 changePassword = async (req, res) => {
@@ -227,7 +280,7 @@ changePassword = async (req, res) => {
                 .json({
                     success: false,
                     errorMessage: "Could not find user to update password."
-                })
+                });
         }
         const userId = existingUser._id;
         // Set the field for changingPassword to be the new password...
@@ -240,46 +293,13 @@ changePassword = async (req, res) => {
                 });
         });
 
-        // User is verified...
-        // Send them an email with a verification code...
-        const userKey = existingUser.key;
-        const body = "http://34.193.24.27:3000/auth/verify?email=" + encodeURIComponent(email) + "&key=" + encodeURIComponent(userKey);
-        const subject = "Password Reset Link";
-
-        let transporter = Nodemailer.createTransport({
-            host: "smtp-mail.outlook.com", // hostname
-            service: "outlook",
-            secureConnection: false, // TLS requires secureConnection to be false
-            port: 587, // port for secure SMTP
-            tls: {
-            ciphers:'SSLv3'
-            },
-            auth: {
-                user: 'lawnmower416@outlook.com',
-                pass: process.env.EMAIL_PASSWORD
-            }
-        });
-        let isError = false;
-        let errorMsg;
-        transporter.sendMail(
-            {
-                to: email,
-                from: '"Lawnmower" <lawnmower416@outlook.com>', // Make sure you don't forget the < > brackets
-                subject: subject,
-                text: body, // Optional, but recommended
-            }, function (err, response) {
-                if(err) {
-                    errorMsg = err;
-                    isError = true;
-                }
-                transporter.close();
-            }
-        );
+        const sentMail = SendEmailTo(existingUser.key, existingUser.email, "Verify Your Account", "/auth/verify");
         console.log("Sent Mail?!");
-        if (isError) { // Something went wrong...
+
+        if (sentMail.isError) { // Something went wrong...
             return res.status(500).json({
                 success: false,
-                "errorMessage": errorMsg
+                errorMessage: sentMail.errorMessage
             });
         } else { // Mail was sent
             // Send 200 back to acknowledge that the email was sent...
@@ -294,7 +314,7 @@ changePassword = async (req, res) => {
     }
 }
 
-verifyUserPassword = async (req, res) => {
+verify = async (req, res) => {
     try {
         const email = decodeURIComponent(req.query.email);
         const userKey = decodeURIComponent(req.query.key);
@@ -307,30 +327,52 @@ verifyUserPassword = async (req, res) => {
                 .json({
                     success: false,
                     errorMessage: "Invalid Credentials"
-                })
+                });
         }
 
-        if (existingUser.changingPassword == "") {
-            return res
-                .status(401)
-                .json({
-                    success: false,
-                    errorMessage: "Invalid. Make sure to go through the reset password screen to reset your password!"
-                }) 
+        if (existingUser.changingPassword == "") { // User wants to verify their account
+            existingUser.isVerified = true;
+            await existingUser.save();
+            return res.status(200).json({
+                success: true,
+                message: "Verified Account!"
+            });
+        } else {
+            const password = existingUser.changingPassword;
+            const saltRounds = 10;
+            const salt = await bcrypt.genSalt(saltRounds);
+            const passwordHash = await bcrypt.hash(password, salt);
+            const newKey = generateRandomKey();
+
+            await User.findOneAndUpdate({ email: email }, { passwordHash: passwordHash, changingPassword: "" , key: newKey });
+
+            return res.status(200).json({
+                success: true,
+                message: "Login Again with the New Password!"
+            });
         }
 
-        const password = existingUser.changingPassword;
-        const saltRounds = 10;
-        const salt = await bcrypt.genSalt(saltRounds);
-        const passwordHash = await bcrypt.hash(password, salt);
-        const newKey = generateRandomKey();
+        // if (existingUser.changingPassword == "") {
+        //     return res
+        //         .status(401)
+        //         .json({
+        //             success: false,
+        //             errorMessage: "Invalid. Make sure to go through the reset password screen to reset your password!"
+        //         }) 
+        // }
 
-        await User.findOneAndUpdate({ email: email }, { passwordHash: passwordHash, changingPassword: "" , key: newKey });
+        // const password = existingUser.changingPassword;
+        // const saltRounds = 10;
+        // const salt = await bcrypt.genSalt(saltRounds);
+        // const passwordHash = await bcrypt.hash(password, salt);
+        // const newKey = generateRandomKey();
 
-        res.status(200).json({
-            success: true,
-            message: "Login Again with the New Password!"
-        });
+        // await User.findOneAndUpdate({ email: email }, { passwordHash: passwordHash, changingPassword: "" , key: newKey });
+
+        // res.status(200).json({
+        //     success: true,
+        //     message: "Login Again with the New Password!"
+        // });
     } catch (err) {
         return res
         .status(500)
@@ -423,7 +465,7 @@ module.exports = {
     logout,
     register,
     changePassword,
-    verifyUserPassword,
+    verify,
     deleteAccount,
     MapVerify,
     TilesetVerify
