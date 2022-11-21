@@ -1,3 +1,3 @@
-const clientUrl = 'http://34.193.24.27/'
+const clientUrl = 'http://localhost:3000'
 
 module.exports = clientUrl;
