@@ -83,8 +83,9 @@ export default function Home() {
   }, [currentPost])
 
   return (
+    <a target="_blank" href="https://ephemeral-vacherin-baeb54.netlify.app/expandedcommunity">Expanded Community</a>
+    /*
     <div>
-      <Link to={{ pathname: "https://ephemeral-vacherin-baeb54.netlify.app/expandedcommunity" }} target="_blank" />
       <NavBar/>
       {
         currentPost ? (
@@ -101,5 +102,6 @@ export default function Home() {
         )
       }
     </div>
+    */
   )
 }
