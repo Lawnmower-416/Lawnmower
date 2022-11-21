@@ -4,9 +4,9 @@ import { TrashIcon } from "@heroicons/react/24/solid";
 import { useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import CommentCard from "./CommentCard";
-import { DeleteMapModal } from "./modals/DeleteMapModal/DeleteMap";
+import { DeleteMapModal } from "./modals/DeleteMapModal";
 import { Menu } from '@headlessui/react';
-import ModalThree from "./modals/ReportModal/Report";
+import ReportModal from "./modals/ReportModal";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
 
@@ -23,7 +23,7 @@ export default function ItemCard(props) {
     const user = auth.user;
     const { store } = useContext(GlobalStoreContext);
     const [deleteMapModal, setDeleteMapModal] = useState(false);
-    const [modalOpen3, setModalOpen3] = useState(false);
+    const [openReportModal, setReportModal] = useState(false);
     const [expandComments , setExpandComments] = useState(false);
 
     const location = useLocation();
@@ -154,7 +154,7 @@ export default function ItemCard(props) {
                                         {/*TODO: this menu is dynamic based on if the user is logged in or not*/}
                                             {({ active }) => (
                                                 <button className="block px-4 py-2 text-md hover:bg-darker-gray rounded-b-xl w-full"
-                                                onClick={() => setModalOpen3(!modalOpen3)}>Report                                            
+                                                onClick={() => setReportModal(!openReportModal)}>Report                                            
                                                 </button>
                                             )}
                                     </Menu.Item>
@@ -196,7 +196,7 @@ export default function ItemCard(props) {
                     : <div></div>
                 }
             </div>
-            <ModalThree modalOpen={modalOpen3} setModalOpen={setModalOpen3} />
+            <ReportModal modalOpen={openReportModal} setModalOpen={setReportModal} />
         </div>
         </>
     )

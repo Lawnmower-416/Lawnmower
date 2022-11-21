@@ -1,23 +1,7 @@
 import React from "react";
-import close from "./close.png";
-import { useContext } from "react";
-import GlobalStoreContext from "../../../store";
+import close from "../images/close.png";
 
-
-export const DeleteMapModal = ({ modalOpen, setModalOpen, content }) => {
-	const { store } = useContext(GlobalStoreContext);
-
-	const handleDeleteContent = () => {
-		setModalOpen(!modalOpen)
-		if (content.tilesets) {
-			console.log("DELETING MAP")
-			store.deleteMap(content._id);
-		} else {
-			console.log("DELETING TILESET")
-			store.deleteTileset(content._id);
-		}
-	}
-
+const DeleteCommentModal = ({ modalOpen, setModalOpen }) => {
 	return (
 		<>
 			<div
@@ -42,16 +26,16 @@ export const DeleteMapModal = ({ modalOpen, setModalOpen, content }) => {
 								Are You Sure?
 							</h4>
 							<div>
-								Are you sure you want to delete your <u>{content.title}</u>? This
+								Are you sure you want to delete your comment? This
 								action cannot be undone.
 							</div>
 						</div>
 						<div className="flex justify-between gap-4 mt-5">
 							<button
 								className="rounded-lg py-[5px] px-6  cursor-pointer duration-300 bg-dark-green text-red text-[16px] font-bold flex-grow max-w-[200px]"
-								onClick={handleDeleteContent}
+								onClick={() => setModalOpen(!modalOpen)}
 							>
-								Delete
+								Delete Comment
 							</button>
 							<button
 								className="rounded-lg py-[5px] px-6 text-white cursor-pointer duration-300 bg-dark-green text-[16px] font-bold flex-grow max-w-[200px]"
@@ -66,3 +50,5 @@ export const DeleteMapModal = ({ modalOpen, setModalOpen, content }) => {
 		</>
 	);
 };
+
+export default DeleteCommentModal;
