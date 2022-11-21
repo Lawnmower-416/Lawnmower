@@ -13,8 +13,6 @@ import CreateTilesetModal from "../modals/CreateTilesetModal";
 import DeleteAccount from "../modals/DeleteAccount";
 import GlobalStoreContext from "../../store";
 
-// import {UserCircleIcon} from "@heroicons/react/24/outline";
-
 export default function Profile() {
 
     const location = useLocation();
@@ -158,10 +156,6 @@ export default function Profile() {
         }
     };
 
-    console.log("rendering profile", store.userMaps, store.userTilesets);
-    userMaps = store.userMaps;
-    userTilesets = store.userTilesets;
-
     return (
         <>
             <Header/>
@@ -211,6 +205,7 @@ export default function Profile() {
 
                     {/* Column 2: Create Map/Tileset Buttons Area */}
                     <div className="col-auto grid grid-cols-2 pt-3 text-2xl gap-12" style={{"color": "white"}}>
+
                         <div className={"col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer " + (viewingOwnPage ? "visible" : "invisible")} onClick={() => setCreateMapModal(!openCreateMapModal)}>Create Map</div>
                         <div className={"col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer " + (viewingOwnPage ? "visible" : "invisible")} onClick={() => setTilesetModal(!tilesetModal)}>Create Tilesets</div>
                     </div>
@@ -219,8 +214,8 @@ export default function Profile() {
                     <div className="col-span-2 bg-dark-green-lighter rounded-md">
                         <div className="snap-y h-[64rem] overflow-y-auto p-8 space-y-2">
                             {
-                                (currentTab === "Maps" && userMaps) ? userMaps.map((m, i) => <ItemCard key={i} inProfile={true} map={m} />)
-                                : (currentTab === "Tilesets" && userTilesets) ? userTilesets.map((t, i) => <ItemCard key={i} inProfile={true} tileset={t} />)
+                                (currentTab === "Maps" && shownMaps) ? shownMaps.map((m, i) => <ItemCard key={i} inProfile={true} map={m} />)
+                                : (currentTab === "Tilesets" && shownTilesets) ? shownTilesets.map((t, i) => <ItemCard key={i} inProfile={true} tileset={t} />)
                                     : getUserCommentsFromMapsAndTilesets()
                             }
                         </div>

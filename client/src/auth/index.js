@@ -71,7 +71,7 @@ function AuthContextProvider(props) {
             case AuthActionType.REGISTER: {
                 return setAuth({
                     user: payload.user,
-                    loggedInBool: true,
+                    loggedInBool: false,
                     errorMessage: null,
                     guestMode: auth.guestMode
                 })
@@ -113,15 +113,19 @@ function AuthContextProvider(props) {
     }
 
     auth.loggedIn = async () => {
-        const response = await api.loggedIn();
-        if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.GET_LOGGED_IN,
-                payload: {
-                    user: response.data.user,
-                    loggedInBool: response.data.loggedIn
-                }
-            });
+        try {
+            const response = await api.loggedIn();
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.GET_LOGGED_IN,
+                    payload: {
+                        user: response.data.user,
+                        loggedInBool: response.data.loggedIn
+                    }
+                });
+            }
+        } catch (error) {
+            console.log("Error in loggedIn");
         }
     }
     // setting to username, password. Requires changes in backend
@@ -148,7 +152,7 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
-            history('/profile');
+            history('/profile/' + response.data.user._id);
         } else {
             authReducer({
                 type: AuthActionType.ERROR_MESSAGE,
@@ -187,11 +191,11 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.REGISTER,
                 payload: {
-                    user: response.data.user
+                    user: null
                 }
             });
-            // a registered user is automatically logged in
-            history('/profile');
+            // a registered user is NOT automatically logged in. They must login after verifying their email
+            history('/login');
         } else {
             authReducer({
                 type: AuthActionType.ERROR_MESSAGE,

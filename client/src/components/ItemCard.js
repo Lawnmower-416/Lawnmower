@@ -34,13 +34,16 @@ export default function ItemCard(props) {
     const currentData = props.map || props.tileset;
 
     const title = currentData.title || "Error Loading Title";
-    const owner = currentData.owner ||"Error Loading Owner";
+    const owner = currentData.owner ||"Error Loading Owner"; //this is owner._id
     const ownerUsername = currentData.ownerUsername || "Error Loading Owner Username";
     const creationDate = new Date(currentData.createdAt).toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'}) || "Error Loading Creation Date";
     const publicStatus = currentData.public || false
     const comments = currentData.comments || "Error Loading Comments";
 
     const thumbnail = currentData.thumbnail || "Error Loading Thumbnail";
+
+    const ownerProfileLink = "/profile/" + owner
+    console.log("ownerProfileLink: " + ownerProfileLink);
 
     let numLikes = 0;
     if (currentData.likedUsers) {
@@ -71,10 +74,14 @@ export default function ItemCard(props) {
     }
     const handleView = () => {
         setExpandComments(!expandComments);
-        if (props.map) {
-            store.updateMapViewCount(currentData._id);
+        if (!user || auth.guestMode) {
+            return;
         } else {
-            store.updateTilesetViewCount(currentData._id);
+            if (props.map) {
+                store.updateMapViewCount(currentData._id);
+            } else {
+                store.updateTilesetViewCount(currentData._id);
+            }
         }
     }
 
@@ -98,7 +105,7 @@ export default function ItemCard(props) {
     }
 
     let trashCanIcon
-    if (path === "/profile") {
+    if (path == "/profile/" + owner) {
         trashCanIcon = <TrashIcon className={`w-12 cursor-pointer fill-red ${(auth.user && user._id !== owner) ? "hidden" : ""}`} 
         onClick={() => setDeleteMapModal((prev) => !prev)} 
         />
@@ -145,7 +152,7 @@ export default function ItemCard(props) {
                                 <Menu.Items className="absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg w-">
                                     <Menu.Item>
                                             {({ active }) => (
-                                                <Link to="/profile" className="block px-4 py-2 text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray" state={{contentBefore: currentData}}
+                                                <Link to={ownerProfileLink} className="block px-4 py-2 text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray" state={{contentBefore: currentData}}
                                                 >Profile                                            
                                                 </Link>
                                             )}

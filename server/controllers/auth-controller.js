@@ -169,18 +169,17 @@ register = async (req, res, next) => {
         });
         const savedUser = await newUser.save();
 
-        // LOGIN THE USER
-        const token = auth.signToken(savedUser._id);
-
-        await res.cookie("token", token, {
+        await res.cookie("token", "", {
             httpOnly: false,
+            expires: new Date(0),
             secure: false,
             samesite: "lax"
-        }).status(200).json({
-            success: true,
-            user: savedUser
-        });
+        })
+        .status(200)
+        .json({ success: true, 
+            user: savedUser  });
         next();
+
     } catch (err) {
         console.log(err)
         return res.status(500).json({ success: false, errorMessage: err });
@@ -390,6 +389,30 @@ deleteAccount = async (req, res, next) => {
     }
 }
 
+getAUser = async (req, res, next) => {
+    try {
+        const userId = req.params.userId
+        const user = await User.findOne({ _id: userId });
+        if (user) {
+            return res.status(200).json({
+                success: true,
+                username: user.username,
+                joinDate: user.joinDate,
+                maps: user.maps,
+                tilesets: user.tilesets,
+            });
+        } else {
+            return res.status(404).json({
+                success: false,
+                errorMessage: "User not found."
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({"success": false, errorMessage: "Something went wrong"});
+    }
+}
+
 MapVerify = async (req, res, next) => {
     const collaborator = auth.verifyUser(req); // Returns the userId
     if (!collaborator) {
@@ -426,5 +449,6 @@ module.exports = {
     verifyUserPassword,
     deleteAccount,
     MapVerify,
-    TilesetVerify
+    TilesetVerify,
+    getAUser
 }
