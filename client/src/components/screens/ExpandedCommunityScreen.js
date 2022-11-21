@@ -84,6 +84,7 @@ export default function Home() {
 
   return (
     <div>
+      <Link to={{ pathname: "https://ephemeral-vacherin-baeb54.netlify.app/expandedcommunity" }} target="_blank" />
       <NavBar/>
       {
         currentPost ? (
