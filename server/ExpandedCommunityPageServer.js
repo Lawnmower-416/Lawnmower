@@ -18,14 +18,13 @@ const cors = require('cors')
 const commentController = require('./controllers/comment.controller')
 const postController = require('./controllers/post.controller')
 const commentService = require('./services/comment.service')
-const { serverUrl } = require('../client/src/constants')
 
 app.use(cors())
 
 const server = http.createServer(app)
 const io = new Server(server, {
   cors: {
-    origin: serverUrl,
+    origin: 'http://34.193.24.27',
     methods: ["GET", "POST"]
   }
 })

@@ -3,11 +3,11 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const dotenv = require('dotenv');
-dotenv.config();
-const clientUrl = process.env.CLIENT_URL;
 
+dotenv.config();
 const app = express();
-const port = 5000;
+const hostname = "0.0.0.0";
+const port = 3000;
 
 const routes = require('./routes');
 const bodyParser = require('body-parser');
@@ -16,15 +16,14 @@ const { Server } = require("socket.io")
 const server = http.createServer(app)
 const io = new Server(server, {
   cors: {
-    origin: clientUrl,
+    origin: "http://34.193.24.27",
     methods: ["GET", "POST"]
   }
 })
 
 
-
 const cors = require('cors');
-app.use(cors({ origin: '*', credentials: true }));
+app.use(cors({ origin: 'http://34.193.24.27', credentials: true }));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({  extended: false }));
@@ -34,24 +33,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-
-app.use(cors({
-  origin: true,
-  methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD','PATCH', 'DELETE'],
-  credentials: true
-}));
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST,PATCH');
-  res.header("Access-Control-Allow-Headers", "Content-Type , Authorization");
-  next();
-});
-app.use(function (err, req, res, next) {
-  console.error(err.message)
-  if (!err.statusCode) err.statusCode = 500
-  res.status(err.statusCode).send(err.message || 'Something went wrong')
-})
-
 
 // For Chat
 io.on('connection', server => {
@@ -121,8 +102,6 @@ io.on('connection', server => {
   })
 })
 
-routes(app)
-
 const authRouter = require('./routes/auth-router');
 const contentRouter = require('./routes/content-router');
 const mapTileRouter = require('./routes/map-tile-router');
@@ -143,7 +122,7 @@ const commentController = require('./controllers/comment.controller');
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 server.listen(port, () => {
-  console.log(`Listening on port ${port} ' client : ${clientUrl}`)
+  console.log(`Listening on port ${port}`)
 });
 
 module.exports = app;

@@ -1,4 +1,3 @@
 import io from 'socket.io-client'
-import { serverUrl } from '../constants'
 
-export const socket = io.connect(serverUrl)
+export const socket = io.connect("http://34.193.24.27")
