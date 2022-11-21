@@ -8,10 +8,6 @@ function LayerSidebar() {
 
     const { store } = useContext(EditorContext);
 
-    useEffect(() => {
-
-    }, [store.layers])
-
     const layers = store.layers;
     const currentLayer = store.layers[store.currentLayer];
 
@@ -127,6 +123,7 @@ function LayerSidebar() {
                         </div>
                     </div>
 
+                {currentLayer !== undefined &&
                     <div className="bg-editor-background overflow-y-auto">
                         <div className="flex items-center flex-shrink-0 px-4 py-2 justify-between bg-editor-primary">
                             <h1 className="text-3xl text-white">Properties</h1>
@@ -155,11 +152,14 @@ function LayerSidebar() {
                             <div className="flex justify-center col-span-2">
                                 <PlusCircleIcon
                                     className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer"
-                                    onClick={() => {store.addProperty()}}
+                                    onClick={() => {
+                                        store.addProperty()
+                                    }}
                                 />
                             </div>
                         </div>
                     </div>
+                }
             </div>
         </div>
     )
