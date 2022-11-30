@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
+import AuthContext from '../auth';
 import { socket } from '../config/SocketIO'; 
 import Comment from './Comment';
 
@@ -9,13 +10,8 @@ export default function PostComments({ userName, currentPost}) {
   const [comments, setComments] = useState([])
   const [inputMessage, setInputMessage] = useState(null)
   
-  function nestComments(commentList) {
-    const commentMap = {};
-  
-    // move all the comments into a map of id => comment
-    commentList.forEach(comment => commentMap[comment.id] = comment);
-  
-  }
+  const { auth } = useContext(AuthContext)
+  console.log("user: ", auth.user)
 
   useEffect(() => {
     console.log("current post: ", currentPost)
@@ -36,18 +32,21 @@ export default function PostComments({ userName, currentPost}) {
   const handleSubmit = async(e) => {
     e.preventDefault()
 
-    socket.emit('send_comment', {username: userName, message: inputMessage, post: currentPost._id})
+    socket.emit('send_comment', {userId:currentPost.owner,username: auth.user.username, message: inputMessage, postId: currentPost._id || null, type: 'tileset'})
     
     document.getElementById('message').value = ''
   }
 
+  /**
+ * frontend5. line 48 css pb-10 added
+ */
   return (
-    <div className='container postcomment__root'>
+    <div className='container postcomment__root pb-10'>
       {
         comments?.map((comment, index) => (
           <div key={index}>
             {
-              !comment?.parent && <Comment comment={comment} userName={userName} currentPost={currentPost}/>
+              !comment?.parent && <Comment comment={comment} userName={auth.user.username} currentPost={currentPost}/>
             }
             
             {/* {

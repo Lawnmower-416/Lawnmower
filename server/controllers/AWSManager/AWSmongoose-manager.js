@@ -124,7 +124,30 @@ deleteTileset = async (tilesetId, userId) => {
 }
 
 getTilesetById = async (tilesetId, userId) => {
-    let tileset = await Tileset.findOne({ _id: tilesetId}).catch(err => {return null;});
+    let tileset = await Tileset.findOne({ _id: tilesetId})
+    .populate({
+        path: 'comments', model: 'Comment',
+        populate: {
+          path: 'children', model: 'Comment',
+          populate: {
+            path: 'children', model: 'Comment',
+            populate: {
+              path: 'children', model: 'Comment',
+              populate: {
+                path: 'children', model: 'Comment',
+                populate: {
+                  path: 'children', model: 'Comment',
+                  populate: {
+                    path: 'children', model: 'Comment',
+                  },
+                },
+              },
+            },
+          },
+        },
+        
+      })
+    .catch(err => {return null;});
     if (!tileset) {
         return null;
     }
