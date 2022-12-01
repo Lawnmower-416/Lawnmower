@@ -25,7 +25,7 @@ const server = http.createServer(app)
  */
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://34.193.24.27",
     methods: ["GET", "POST"]
   }
 })
@@ -34,7 +34,7 @@ const io = new Server(server, {
  * backend4. Update line 36 the origin url from http://34.193.24.27 to http://localhost:3000
  */
 const cors = require('cors');
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: 'http://34.193.24.27', credentials: true }));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({  extended: false }));

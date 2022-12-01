@@ -74,7 +74,7 @@ export default function Home() {
 /**
  * frontend2. Update server url from http://34.193.24.27 to http://localhost:5000
  */
-      fetch('http://localhost:5000/user/create', {
+      fetch('http://34.193.24.27/user/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
