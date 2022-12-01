@@ -4,9 +4,6 @@
 import axios from 'axios';
 axios.defaults.withCredentials = false;
 
-/**
- * frontend7. Update the origin url from http://34.193.24.27 to http://localhost:5000
- */
 export const baseAPI = axios.create({
     baseURL: 'http://34.193.24.27'
 });

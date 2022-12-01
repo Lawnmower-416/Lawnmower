@@ -7,12 +7,10 @@ const TilesetSchema = require('./models/tileset-schema')
 
 dotenv.config();
 const app = express();
-// const hostname = "0.0.0.0";
+const hostname = "0.0.0.0";
 
-/**
- * backend2. Update the port number from 3000 to 5000
- */
-const port = 5000 || process.env.PORT ;
+
+const port = 3000 || process.env.PORT ;
 
 
 const routes = require('./routes');
@@ -20,9 +18,7 @@ const bodyParser = require('body-parser');
 const http = require('http')
 const { Server } = require("socket.io")
 const server = http.createServer(app)
-/**
- * backend3. Update line 27 the origin url from http://34.193.24.27 to http://localhost:3000
- */
+
 const io = new Server(server, {
   cors: {
     origin: "http://34.193.24.27",
@@ -30,9 +26,7 @@ const io = new Server(server, {
   }
 })
 
-/**
- * backend4. Update line 36 the origin url from http://34.193.24.27 to http://localhost:3000
- */
+
 const cors = require('cors');
 app.use(cors({ origin: 'http://34.193.24.27', credentials: true }));
 

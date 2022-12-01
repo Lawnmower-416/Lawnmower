@@ -14,16 +14,12 @@ export default function Home() {
   const [currentPost, setCurrentPost] = useState(null)
   const [userName, setUserName] = useState(null);
 
-  /**
- * frontend*. added
- */
+ 
    const [searchParams, setSearchParams] = useSearchParams();
    const postID = searchParams.get("id")
    const navigate = useNavigate()
 
-  /**
- * frontend*. Update server url from http://34.193.24.27 to http://localhost:5000
- */
+ 
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
   const userTilesets = store.userTilesets
@@ -71,9 +67,7 @@ export default function Home() {
     if( !existUser ){
       const randomNumber = Math.round(Math.random() * 1000000)
       const username = 'user__'+randomNumber
-/**
- * frontend2. Update server url from http://34.193.24.27 to http://localhost:5000
- */
+
       fetch('http://34.193.24.27/user/create', {
         method: 'POST',
         headers: {
