@@ -16,6 +16,7 @@ const { Server } = require("socket.io")
 const server = http.createServer(app)
 const io = new Server(server, {
   cors: {
+    //origin: "http://localhost:3001",
     origin: "http://34.193.24.27",
     methods: ["GET", "POST"]
   }
@@ -23,10 +24,14 @@ const io = new Server(server, {
 
 
 const cors = require('cors');
-app.use(cors({ origin: 'http://34.193.24.27', credentials: true }));
+app.use(cors({
+  //origin: 'http://localhost:3001',
+  origin: 'http://34.193.24.27',
+  credentials: true
+}));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({  extended: false }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({  extended: true, limit: '50mb' }));
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -37,6 +42,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 // For Chat
 io.on('connection', server => {
   console.log('User connected', server.id)
+
+  server.on('join', (data) => {
+    server.join(data.id);
+    server.to(data).emit('newUserJoin', {message: `${data.username} joined`, type: 'info'});
+    server.emit('userConnected', {message: 'Connected', type: 'success'});
+  });
+
+  server.on('place', (data) => {
+    server.to(data).emit('place', data);
+  });
   
   
   server.on('send_comment', async(data) => {

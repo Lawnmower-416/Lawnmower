@@ -17,6 +17,14 @@ export const getAllTilesets = (mapId) => {
     return baseAPI.get(`/editor/map/${mapId}/tilesets`, {withCredentials: true});
 }
 
+export const addCollaborator = (mapId, collaboratorUsername) => {
+    return baseAPI.post(`/editor/map/${mapId}/collaborator`, {username: collaboratorUsername}, {withCredentials: true});
+}
+
+export const getCollaborators = (mapId) => {
+    return baseAPI.get(`/editor/map/${mapId}/collaborators`, {withCredentials: true});
+}
+
 export const placeTiles = (mapId, layerId, tileId, positions) => {
     return baseAPI.put(`/editor/tile/map/${mapId}/layer/${layerId}/tile/${tileId}`, positions)
 }

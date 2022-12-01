@@ -132,7 +132,6 @@ getTilesetById = async (tilesetId, userId) => {
     //     return tileset;
     // }
     return tileset;
-    return null;
 }
 
 // getTilesets returns all tilesets that are set to public for community page viewing
@@ -142,6 +141,16 @@ getTilesets = async () => {
 
 updateTilesetGeneral = async (updatedTileset) => {
     return await Tileset.findOneAndUpdate({ _id: updatedTileset.tileset._id}, updatedTileset.tileset, {new: true});
+}
+
+getUserByUsername = async (username) => {
+    let user = await User.findOne({ username: username }).catch(err => {return null;});
+
+    if (!user) {
+        return null;
+    }
+
+    return user;
 }
 
 module.exports = {
@@ -154,5 +163,6 @@ module.exports = {
     deleteTileset,
     getTilesetById,
     getTilesets,
-    updateTilesetGeneral
+    updateTilesetGeneral,
+    getUserByUsername
 }

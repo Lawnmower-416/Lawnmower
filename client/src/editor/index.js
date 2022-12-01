@@ -3,9 +3,10 @@ import {getTileset, getTilesetImage, updateTileset, uploadTilesetImage} from "..
 import {getMapById, getTilesetById} from "../requests/store-request";
 import jsTPS from "../transactions/jsTPS";
 import {
+    addCollaborator,
     addLayer,
     addProperty,
-    getAllTilesets,
+    getAllTilesets, getCollaborators,
     getLayer,
     getProperty,
     updateLayer,
@@ -50,6 +51,8 @@ export const EditorActionType = {
     ADD_TILE: "ADD_TILE",
     SET_CURRENT_TILE: "SET_CURRENT_TILE",
     DELETE_TILE: "DELETE_TILE",
+
+    SET_COLLABORATORS: "SET_COLLABORATORS",
 }
 
 export const EditorTool = {
@@ -81,6 +84,9 @@ function EditorContextProvider(props) {
         transactionStack: [],
         selectedTiles: [],
         selectedPixels: [],
+
+        notification: null,
+        collaborators: [],
     });
 
     useEffect(() => {
@@ -221,10 +227,86 @@ function EditorContextProvider(props) {
                 });
                 break;
 
+            case EditorActionType.SET_COLLABORATORS:
+                setStore({
+                    ...store,
+                    collaborators: payload.collaborators,
+                });
+                break;
+
             default:
                 console.error("Unknown action type: " + type);
                 break;
         }
+    }
+
+    store.setNotification = (notification) => {
+        setStore({
+            ...store,
+            notification: notification,
+        });
+    }
+
+    store.addCollaborator = (collaborator) => {
+        addCollaborator(store.map._id, collaborator).then((response) => {
+            if (response.status === 200) {
+                store.setNotification({
+                    type: "success",
+                    message: "Collaborator added successfully!",
+                });
+            } else {
+                store.setNotification({
+                    type: "error",
+                    message: "Failed to add collaborator!",
+                });
+            }
+        }).catch((error) => {
+            let errorMessage;
+
+            if (error.response) {
+                errorMessage = error.response.data.errorMessage;
+            } else {
+                errorMessage = "Failed to add collaborator!";
+            }
+
+            store.setNotification({
+                type: "error",
+                message: errorMessage,
+            });
+        });
+
+        storeReducer({
+            type: EditorActionType.SET_MAP,
+            payload: {
+                map: store.map,
+                layers: store.layers,
+                mapTilesets: store.mapTilesets,
+                tiles: store.tiles,
+            }
+        })
+    }
+
+    store.loadCollaborators = () => {
+        getCollaborators(store.map._id).then((response) => {
+            if (response.status === 200) {
+                storeReducer({
+                    type: EditorActionType.SET_COLLABORATORS,
+                    payload: {
+                        collaborators: response.data.collaborators,
+                    }
+                });
+            } else {
+                store.setNotification({
+                    type: "error",
+                    message: "Failed to load collaborators!",
+                });
+            }
+        }).catch((error) => {
+            store.setNotification({
+                type: "error",
+                message: "Failed to load collaborators!",
+            });
+        });
     }
 
     /**
@@ -285,7 +367,6 @@ function EditorContextProvider(props) {
         const layer = layers[store.currentLayer];
 
         layer.data[y * store.map.width + x] = tile || store.currentTileIndex;
-        console.log(layer.data[y * store.map.width + x])
 
         //const res = await updateLayer(store.map._id, layer._id, layer);
         storeReducer({
@@ -301,7 +382,7 @@ function EditorContextProvider(props) {
      * @param startX {number} x-coordinate
      * @param startY {number} y-coordinate
      */
-    store.mapFloodFill = async (startX, startY) => {
+    store.mapFloodFill = (startX, startY) => {
         const layers = [...store.layers];
         const layer = layers[store.currentLayer];
         const data = layer.data;
@@ -335,6 +416,7 @@ function EditorContextProvider(props) {
                     queue.push([x, y + 1]);
                 }
             }
+            console.log(queue.length)
         }
 
         layer.data = data;
@@ -497,7 +579,9 @@ function EditorContextProvider(props) {
 
             const layers = [];
             for (let i = 0; i < layersResponses.length; i++) {
-                layers.push(layersResponses[i].data.layer);
+                const layer = layersResponses[i].data.layer;
+                //layer.data = new Int16Array(layer.data);
+                layers.push(layer);
             }
 
             for(let i = 0; i < layers.length; i++) {
