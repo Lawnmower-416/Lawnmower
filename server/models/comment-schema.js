@@ -26,7 +26,14 @@ const commentSchema = mongoose.Schema({
     ],
     likes: [
         {
-            type: String,            
+            type: ObjectId,
+            ref: 'Comment',           
+        }
+    ],
+    dislikes: [
+        {
+            type: ObjectId,
+            ref: 'Comment',           
         }
     ],
     isDeleted: {
