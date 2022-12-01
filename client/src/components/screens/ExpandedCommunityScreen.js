@@ -68,7 +68,7 @@ export default function Home() {
       const randomNumber = Math.round(Math.random() * 1000000)
       const username = 'user__'+randomNumber
 
-      fetch('http://34.193.24.27/user/create', {
+      fetch('http://34.193.24.27:3000/user/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
