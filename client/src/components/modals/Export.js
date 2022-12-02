@@ -22,6 +22,7 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
         let exportTilesets = []
 
         let gottenLayers = store.getLayersForExport()
+        console.log("gottenLayers", gottenLayers)
         
         for (let i = 0; i < gottenLayers.length; i++) {
             let layer = gottenLayers[i]
@@ -37,6 +38,7 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
 
 
         let gottenTilesets = store.getMapsTilesetsForExport()
+        console.log("gottenTilesets", gottenTilesets)
         for (let i = 0; i < gottenTilesets.length; i++) {
             let tileset = gottenTilesets[i]
             exportTilesets.push({
@@ -96,16 +98,16 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
 
         const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
 
-        const a = document.createElement("a");
-        a.download = map.title+".json";
-        a.href = URL.createObjectURL(blob);
+        const t = document.createElement("a");
+        t.download = gottenTileset.title+".json";
+        t.href = URL.createObjectURL(blob);
         const clickEvt = new MouseEvent("click", {
             view: window,
             bubbles: false,
             cancelable: true
         });
-        a.dispatchEvent(clickEvt);
-        a.remove();
+        t.dispatchEvent(clickEvt);
+        t.remove();
         setIsOpen(false)
         setIsOpen(false)
     }
