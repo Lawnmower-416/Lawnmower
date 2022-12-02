@@ -10,6 +10,7 @@ import TileSidebar from "./editor/TileSidebar";
 import {useParams} from "react-router-dom";
 import EditorContext from "../../editor";
 import DeleteTileModal from "../modals/DeleteTileModal";
+import NotificationHandler from "./editor/NotificationHandler";
 
 function TilesetEditor() {
     const { tilesetId } = useParams();
@@ -19,6 +20,9 @@ function TilesetEditor() {
     useEffect(() => {
         store.setTileset(tilesetId);
 
+        return () => {
+            store.reset();
+        }
     }, [tilesetId]);
 
     const tileset = store.tileset;
@@ -37,6 +41,7 @@ function TilesetEditor() {
 
     return (
         <div>
+            <NotificationHandler />
             <TilesetSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen} />
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
             <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} />
