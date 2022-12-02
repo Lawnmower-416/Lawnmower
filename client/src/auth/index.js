@@ -15,6 +15,7 @@ export const AuthActionType = {
     DELETE_ACCOUNT: 'DELETE_ACCOUNT',
     ERROR_MESSAGE: 'ERROR_MESSAGE',
     GUEST_MODE: 'GUEST_MODE',
+    UPDATE_AVATAR: 'UPDATE_AVATAR',
 }
 /*
     errorMessage:
@@ -105,6 +106,14 @@ function AuthContextProvider(props) {
                     loggedInBool: false,
                     errorMessage: null,
                     guestMode: true
+                })
+            }
+            case AuthActionType.UPDATE_AVATAR: {
+                return setAuth({
+                    user: payload.user,
+                    loggedInBool: auth.loggedInBool,
+                    errorMessage: auth.errorMessage,
+                    guestMode: auth.guestMode
                 })
             }
             default:
@@ -262,6 +271,28 @@ function AuthContextProvider(props) {
                 errorMessage: null
             }
         });
+    }
+
+    auth.updateAvatar = async (avatorString) => {
+        //possible avatar strings are: "black, red, green, blue, alien, monkey, pirate, poro"
+        try {
+            console.log(auth.user)
+            const userId = auth.user._id;
+            const response = await api.updateAvatar(userId, avatorString);
+            if (response.status === 200) {
+                let updatedUser = auth.user
+                updatedUser.avatar = avatorString;
+                console.log("updated user", updatedUser)
+                authReducer({
+                    type: AuthActionType.UPDATE_AVATAR,
+                    payload: {
+                        user: updatedUser
+                    }
+                });
+            }
+        } catch (error) {
+            console.log("Error in updating avatar");
+        }
     }
 
     return (

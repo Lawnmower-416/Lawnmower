@@ -10,5 +10,6 @@ router.put('/changePassword', AuthController.changePassword);
 router.get('/verify', AuthController.verifyUserAccount);
 router.put('/deleteAccount/', AuthController.deleteAccount)
 router.get('/users/:userId', AuthController.getAUser)
+router.put('/users/:userId/avatar', AuthController.updateAvatar)
 
 module.exports = router
