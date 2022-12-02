@@ -53,6 +53,8 @@ export const EditorActionType = {
     DELETE_TILE: "DELETE_TILE",
 
     SET_COLLABORATORS: "SET_COLLABORATORS",
+
+    CLEAR_ALL: "CLEAR_ALL",
 }
 
 export const EditorTool = {
@@ -234,10 +236,41 @@ function EditorContextProvider(props) {
                 });
                 break;
 
+            case EditorActionType.CLEAR_ALL:
+                setStore({
+                    map: null,
+                    mapTilesets: [],
+                    currentLayer: 0,
+                    layers: [],
+                    tiles: [],
+
+                    tileset: null,
+                    tilesetImage: null,
+                    currentColor: {red: 0, green: 0, blue: 0, alpha: 255},
+                    colors: [],
+                    currentTileIndex: 0,
+
+                    currentTool: EditorTool.SELECT,
+                    currentItem: null,
+                    transactionStack: [],
+                    selectedTiles: [],
+                    selectedPixels: [],
+
+                    notification: null,
+                    collaborators: [],
+                });
+                break;
+
             default:
                 console.error("Unknown action type: " + type);
                 break;
         }
+    }
+
+    store.reset = () => {
+        storeReducer({
+            type: EditorActionType.CLEAR_ALL,
+        });
     }
 
     store.setNotification = (notification) => {
@@ -248,7 +281,14 @@ function EditorContextProvider(props) {
     }
 
     store.addCollaborator = (collaborator) => {
-        addCollaborator(store.map._id, collaborator).then((response) => {
+        const isTileset = store.tileset !== null;
+        let id;
+        if(isTileset) {
+            id = store.tileset._id
+        } else {
+            id = store.map._id;
+        }
+        addCollaborator(id, collaborator, isTileset).then((response) => {
             if (response.status === 200) {
                 store.setNotification({
                     type: "success",
@@ -287,7 +327,14 @@ function EditorContextProvider(props) {
     }
 
     store.loadCollaborators = () => {
-        getCollaborators(store.map._id).then((response) => {
+        const isTileset = store.tileset !== null;
+        let id;
+        if(isTileset) {
+            id = store.tileset._id
+        } else {
+            id = store.map._id;
+        }
+        getCollaborators(id, isTileset).then((response) => {
             if (response.status === 200) {
                 storeReducer({
                     type: EditorActionType.SET_COLLABORATORS,

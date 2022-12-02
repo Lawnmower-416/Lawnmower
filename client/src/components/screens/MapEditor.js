@@ -21,6 +21,10 @@ function MapEditor() {
 
     useEffect(() => {
         store.setMap(mapId);
+
+        return () => {
+            store.reset();
+        }
     }, [mapId]);
 
     const map = store.map;

@@ -17,12 +17,19 @@ export const getAllTilesets = (mapId) => {
     return baseAPI.get(`/editor/map/${mapId}/tilesets`, {withCredentials: true});
 }
 
-export const addCollaborator = (mapId, collaboratorUsername) => {
-    return baseAPI.post(`/editor/map/${mapId}/collaborator`, {username: collaboratorUsername}, {withCredentials: true});
+//TODO: Refactor below
+export const addCollaborator = (id, collaboratorUsername, isTileset) => {
+    if(isTileset) {
+        return baseAPI.post(`/editor/tileset/${id}/collaborator`, {username: collaboratorUsername}, {withCredentials: true});
+    }
+    return baseAPI.post(`/editor/map/${id}/collaborator`, {username: collaboratorUsername}, {withCredentials: true});
 }
 
-export const getCollaborators = (mapId) => {
-    return baseAPI.get(`/editor/map/${mapId}/collaborators`, {withCredentials: true});
+export const getCollaborators = (id, isTileset) => {
+    if(isTileset) {
+        return baseAPI.get(`/editor/tileset/${id}/collaborators`, {withCredentials: true});
+    }
+    return baseAPI.get(`/editor/map/${id}/collaborators`, {withCredentials: true});
 }
 
 export const placeTiles = (mapId, layerId, tileId, positions) => {
