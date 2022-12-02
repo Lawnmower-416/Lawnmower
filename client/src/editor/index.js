@@ -372,12 +372,20 @@ function EditorContextProvider(props) {
     /**
      * Set current tile
      * @param tileIndex {number}
+     * @param tilesetOffset {number}
      */
-    store.setCurrentTile = (tileIndex) => {
+    store.setCurrentTile = (tileIndex, tilesetOffset) => {
+        let fullId = tileIndex;
+        if(tilesetOffset !== undefined) {
+            for (let i = 0; i < tilesetOffset; i++) {
+                const tilesetLength = store.mapTilesets[i].imageData.tiles.length;
+                fullId += tilesetLength;
+            }
+        }
         storeReducer({
             type: EditorActionType.SET_CURRENT_TILE,
             payload: {
-                index: tileIndex,
+                index: fullId,
             }
         });
     }

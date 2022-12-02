@@ -25,13 +25,14 @@ function TilesetSidebar({ setImportOpen }) {
                         <div className="mt-5 flex-1 bg-editor-background">
                             
                         <div>
-                            {tilesets.map((tileset) => (
+                            {tilesets.map((tileset, index) => (
                                 <TilesetContent 
                                     key={tileset._id}
                                     name={tileset.title}
                                     current={tileset.current}
                                     tiles={tileset.imageData.tiles}
                                     tileSize={store.map.tileSize}
+                                    tilesetOffset={index}
                                 />
                             ))}
                         </div>
@@ -49,10 +50,12 @@ function TilesetSidebar({ setImportOpen }) {
     )
 }
 
-function TilesetContent({name, current, tiles, tileSize}) {
+function TilesetContent({name, current, tiles, tileSize, tilesetOffset}) {
     const [open, setOpen] = useState(false);
 
     const { store } = useContext(EditorContext);
+
+    console.log(tilesetOffset)
 
     return (
         <div className="text-white">
@@ -67,11 +70,12 @@ function TilesetContent({name, current, tiles, tileSize}) {
                     <div className="grid grid-cols-3">
                         {tiles.map((tile, tileIndex) => (
                             <Tile
-                                key={tileIndex}
+                                key={tilesetOffset + "-" + tileIndex}
                                 tile={tile}
-                                index={tileIndex}
                                 tileSize={tileSize}
-                                onClick={() => store.setCurrentTile(tileIndex)}
+                                clickHandler={() => {
+                                    store.setCurrentTile(tileIndex, tilesetOffset);
+                                }}
                             />
                         ))}
                     </div>

@@ -22,9 +22,12 @@ function TileSidebar({ tiles, openDeleteTileModal }) {
                                 <Tile 
                                     key={tileIndex}
                                     tile={tile}
-                                    index={tileIndex}
                                     openDeleteTileModal={openDeleteTileModal}
                                     tileSize={store.tileset.tileSize}
+                                    clickHandler={() => {
+                                        store.setCurrentTile(tileIndex);
+                                        store.clearTransactions();
+                                    }}
                                 />
                             ))}
                         </div>
@@ -42,15 +45,10 @@ function TileSidebar({ tiles, openDeleteTileModal }) {
     )
 }
 
-export function Tile({ tile, index, openDeleteTileModal, tileSize }) {
+export function Tile({ tile, openDeleteTileModal, tileSize, clickHandler }) {
     const ref = useRef(null);
 
     const { store } = useContext(EditorContext);
-
-    const setCurrentTile = () => {
-        store.setCurrentTile(index);
-        store.clearTransactions();
-    }
 
     useEffect(() => {
         if(ref) {
@@ -74,7 +72,7 @@ export function Tile({ tile, index, openDeleteTileModal, tileSize }) {
             height="60"
             ref={ref}
             className="m-0"
-            onClick={setCurrentTile}
+            onClick={clickHandler}
             onDoubleClick={() => {
                 if(store.tilesetImage && store.tilesetImage.tiles.length > 1) {
                     openDeleteTileModal();
