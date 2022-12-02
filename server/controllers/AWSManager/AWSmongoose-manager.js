@@ -182,6 +182,7 @@ updateReport = async (reportId, body) => {
 
 deleteReport = async (reportId) => {
     return await Report.findOneAndDelete({_id: reportId}).catch(err => null);
+}
 
 getUserByUsername = async (username) => {
     let user = await User.findOne({ username: username }).catch(err => {return null;});
