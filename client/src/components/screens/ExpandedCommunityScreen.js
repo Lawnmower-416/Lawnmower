@@ -42,6 +42,9 @@ export default function Home() {
 
   }, [socket])
 
+
+  // 
+
 /**
  * frontend*. added
  */
@@ -61,38 +64,38 @@ export default function Home() {
   
   
 
-  const createUserAndUniqueView = async() => {
-    const existUser = await localStorage.getItem('userName')
-    setUserName(existUser)
-    if( !existUser ){
-      const randomNumber = Math.round(Math.random() * 1000000)
-      const username = 'user__'+randomNumber
+  // const createUserAndUniqueView = async() => {
+  //   const existUser = await localStorage.getItem('userName')
+  //   setUserName(existUser)
+  //   if( !existUser ){
+  //     const randomNumber = Math.round(Math.random() * 1000000)
+  //     const username = 'user__'+randomNumber
 
-      fetch('http://34.193.24.27/user/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({name: username})
+  //     fetch('http://34.193.24.27/user/create', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify({name: username})
         
-      }).then(res => res.json())
-      .then( async result => {   
-        console.log(result)     
-        setUserName(result.name)
-        await localStorage.setItem('userName', result.name)
-        await localStorage.setItem('userID', result._id)
-      })
+  //     }).then(res => res.json())
+  //     .then( async result => {   
+  //       console.log(result)     
+  //       setUserName(result.name)
+  //       await localStorage.setItem('userName', result.name)
+  //       await localStorage.setItem('userID', result._id)
+  //     })
 
-    }else{
-      console.log('exist user')
-    }
+  //   }else{
+  //     console.log('exist user')
+  //   }
     
-  }
+  // }
 
-  useEffect(() => {    
-    createUserAndUniqueView()   
-    // createUniqueView()
-  }, [currentPost])
+  // useEffect(() => {    
+  //   createUserAndUniqueView()   
+  //   // createUniqueView()
+  // }, [currentPost])
 
   /**
  * frontend6. line 93 css bg-gradient-to-t from-[#54c941] to-[#c9e8b1] added
