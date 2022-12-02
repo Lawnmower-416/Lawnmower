@@ -362,13 +362,39 @@ function EditorContextProvider(props) {
 
     }
 
-    store.placeTile = (x, y, tile) => {
+    store.placeTile = (x, y, tile, layerId, isDuplicate) => {
         const layers = [...store.layers];
-        const layer = layers[store.currentLayer];
+
+        let layer;
+
+        if(layerId) {
+            layer = layers.find((layer) => layer._id === layerId);
+        } else {
+            layer = layers[store.currentLayer];
+        }
 
         layer.data[y * store.map.width + x] = tile || store.currentTileIndex;
 
-        //const res = await updateLayer(store.map._id, layer._id, layer);
+        if(!isDuplicate) {
+            updateLayer(store.map._id, layer._id, layer).then((response) => {
+                if (response.status === 200) {
+                    // store.setNotification({
+                    //     type: "success",
+                    //     message: "Tile placed successfully!",
+                    // });
+                } else {
+                    store.setNotification({
+                        type: "error",
+                        message: "Failed to place tile!",
+                    });
+                }
+            }).catch(() => {
+                store.setNotification({
+                    type: "error",
+                    message: "Failed to place tile!",
+                });
+            });
+        }
         storeReducer({
             type: EditorActionType.UPDATE_LAYERS,
             payload: {

@@ -44,13 +44,19 @@ io.on('connection', server => {
   console.log('User connected', server.id)
 
   server.on('join', (data) => {
+    server.username = data.username;
+    server.editorId = data.id;
     server.join(data.id);
-    server.to(data).emit('newUserJoin', {message: `${data.username} joined`, type: 'info'});
+    server.to(data.id).emit('newUserJoin', {message: `${data.username} joined`, type: 'info'});
     server.emit('userConnected', {message: 'Connected', type: 'success'});
   });
 
   server.on('place', (data) => {
-    server.to(data).emit('place', data);
+    server.to(server.editorId).emit('place', data);
+  });
+
+  server.on('disconnect', () => {
+      server.to(server.editorId).emit('userLeft', {message: `${server.username} left`, type: 'info'});
   });
   
   

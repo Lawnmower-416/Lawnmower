@@ -9,8 +9,10 @@ const ShareModal = ({ modalOpen, setModalOpen }) => {
 	const { store } = useContext(EditorContext);
 
 	useEffect(() => {
-		store.loadCollaborators();
-	}, [store.map && store.map._id, store.tileset && store.tileset._id]);
+		if(store.collaborators.length === 0) {
+			store.loadCollaborators();
+		}
+	}, [modalOpen]);
 
 	useEffect(() => {
 
@@ -42,6 +44,7 @@ const ShareModal = ({ modalOpen, setModalOpen }) => {
 	let collaborators;
 
 	if (store.collaborators && store.collaborators.length > 0) {
+		console.log(store.collaborators);
 		collaborators = store.collaborators.map((collaborator) => {
 			return (
 				<div

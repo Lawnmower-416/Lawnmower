@@ -38,7 +38,9 @@ function MainEditor() {
 
         socket.on("place", (data) => {
             const {x, y, tileIndex, layerId} = data;
-            console.log("RECEIVED", data);
+            store.placeTile(x, y, tileIndex, layerId, true);
+            const layer = store.layers.find(layer => layer._id === layerId);
+            worker.postMessage({type: 'redrawCoordinate', data: {x, y, currentLayer: layer, tiles: store.tiles}});
         });
 
         socket.on("disconnect", () => {
@@ -52,6 +54,10 @@ function MainEditor() {
             store.setNotification(data);
         });
 
+        socket.on("userLeft", (data) => {
+            store.setNotification(data);
+        });
+
         socket.on("userConnected", (data) => {
             store.setNotification(data);
         });
@@ -62,7 +68,11 @@ function MainEditor() {
         });
 
         setSocket(socket);
-    }, []);
+
+        return () => {
+            socket.disconnect();
+        }
+    }, [worker]);
 
     useEffect(() => {
         const canvas = ref.current;
@@ -106,8 +116,8 @@ function MainEditor() {
         };
     }, [store.mapHeight]);
 
+
     useEffect(() => {
-        console.log(layers)
         if (worker) {
             worker.postMessage({type: 'drawMap', data: {layers, tiles: store.tiles, cameraZoom}});
         }
@@ -144,6 +154,12 @@ function MainEditor() {
             case EditorTool.PAINT:
                 store.placeTile(x, y)
                 worker.postMessage({type: 'redrawCoordinate', data: {x, y, currentLayer, tiles: store.tiles}});
+                socket.emit("place", {
+                    x,
+                    y,
+                    tileIndex: store.currentTileIndex,
+                    layerId: currentLayer._id
+                });
             break;
 
             case EditorTool.FILL:
