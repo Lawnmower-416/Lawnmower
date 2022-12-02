@@ -2,20 +2,29 @@ import Toolbar from './Toolbar';
 import {useRef, useEffect, useContext, useState} from 'react';
 import EditorContext, {EditorTool} from "../../../editor";
 
-function MainEditor(props) {
+import { io } from "socket.io-client";
+import AuthContext from "../../../auth";
+
+
+function MainEditor() {
     const { store } = useContext(EditorContext);
+    const { auth } = useContext(AuthContext);
+
+    const [socket, setSocket] = useState(null);
 
     const [dragStart, setDragStart] = useState(null);
     const [lastHoverTile, setLastHoverTile] = useState(null);
+    const [worker, setWorker] = useState(null);
 
     const layers = store.layers;
     const currentLayer = store.layers[store.currentLayer];
 
     let cameraOffset = {x: window.innerWidth / 2, y: window.innerHeight / 2};
     let cameraZoom = 1;
-    const MAX_ZOOM = 4;
-    const MIN_ZOOM = 0.25;
-    const ZOOM_SPEED = 0.1;
+    let isDragging = false;
+    const MAX_ZOOM = 5;
+    const MIN_ZOOM = 0.01;
+    const ZOOM_SPEED = 0.0005;
 
     const canvasHeight = 576;
     const canvasWidth = 1024;
@@ -23,72 +32,100 @@ function MainEditor(props) {
 
     const ref = useRef(null);
     const highlightRef = useRef(null);
+
     useEffect(() => {
-        drawMap();
-    }, [layers, currentLayer && currentLayer.data, currentLayer && currentLayer.visible]);
+        const socket = io("http://localhost:3000");
+
+        socket.on("place", (data) => {
+            const {x, y, tileIndex, layerId} = data;
+            store.placeTile(x, y, tileIndex, layerId, true);
+            const layer = store.layers.find(layer => layer._id === layerId);
+            worker.postMessage({type: 'redrawCoordinate', data: {x, y, currentLayer: layer, tiles: store.tiles}});
+        });
+
+        socket.on("disconnect", () => {
+            store.setNotification({
+                message: "Disconnected from server",
+                type: "error"
+            });
+        });
+
+        socket.on("newUserJoin", (data) => {
+            store.setNotification(data);
+        });
+
+        socket.on("userLeft", (data) => {
+            store.setNotification(data);
+        });
+
+        socket.on("userConnected", (data) => {
+            store.setNotification(data);
+        });
+
+        socket.emit("join", {
+            id:store.map._id,
+            username: auth.user.username
+        });
+
+        setSocket(socket);
+
+        return () => {
+            socket.disconnect();
+        }
+    }, [worker]);
+
+    useEffect(() => {
+        const canvas = ref.current;
+        const offscreenCanvas = canvas.transferControlToOffscreen();
+
+        const worker = new Worker(new URL('../../../canvasWorker/worker.js', import.meta.url), {type: 'module'});
+        setWorker(worker);
+        worker.onmessage = (e) => {
+            console.log(e.data);
+        }
+
+        worker.postMessage({type: 'INIT', data: {
+            canvas: offscreenCanvas,
+            mapHeight: store.map.height,
+            mapWidth: store.map.width,
+            tileSize: store.map.tileSize,
+            canvasWidth: canvasWidth,
+            canvasHeight: canvasHeight,
+            layers: layers,
+            tiles: store.tiles
+        }}, [offscreenCanvas]);
+
+        const handleScroll = event => {
+            //const timer = setTimeout(() => {
+                cameraZoom += event.deltaY * ZOOM_SPEED;
+                cameraZoom = Math.min(cameraZoom, MAX_ZOOM);
+                cameraZoom = Math.max(cameraZoom, MIN_ZOOM);
+                worker.postMessage({type: 'drawMap', data: {
+                    layers: layers,
+                    tiles: store.tiles,
+                    cameraZoom: cameraZoom
+               }});
+            //}, 3000);
+        };
+
+        //window.addEventListener('wheel', handleScroll);
+
+        return () => {
+            //window.removeEventListener('wheel', handleScroll);
+            worker.terminate();
+        };
+    }, [store.mapHeight]);
+
+
+    useEffect(() => {
+        if (worker) {
+            worker.postMessage({type: 'drawMap', data: {layers, tiles: store.tiles, cameraZoom}});
+        }
+    }, [currentLayer, currentLayer.visible]);
 
     useEffect(() => {
         highlightPixels();
     }, [store.selectedPixels]);
-
-    const drawMap = () => {
-        const mapHeight = store.map.height;
-        const mapWidth = store.map.width;
-        const tileSize = store.map.tileSize;
-
-        // number of tiles that can fix in the canvas
-        const tilesPerRow = Math.floor(canvasWidth / tileSize);
-        const tilesPerColumn = Math.floor(canvasHeight / tileSize);
-
-        const context = ref.current.getContext('2d');
-
-        context.clearRect(0, 0, canvasWidth, canvasHeight);
-        console.log("cleared")
-        //context.translate(innerWidth / 2, innerHeight / 2);
-        context.scale(cameraZoom, cameraZoom);
-
-        for(let i = 0; i < layers.length; i++) {
-            const layer = layers[i];
-            if(!layer.visible) continue;
-            for(let j = 0; j < mapHeight; j++) {
-                for(let i = 0; i < mapWidth; i++) {
-                    const index = j * mapWidth + i;
-                    const tileIndex = layer.data[index];
-                    if(tileIndex === -1) continue;
-                    const tile = store.tiles[tileIndex];
-                    const colorData = new Uint8ClampedArray(Object.values(tile.data));
-                    for(let y = 0; y < tileSize; y++) {
-                        for(let x = 0; x < tileSize; x++) {
-                            const index = (y * tileSize + x) * 4;
-                            context.fillStyle = `rgba(${colorData[index]}, ${colorData[index+1]}, ${colorData[index+2]}, ${colorData[index+3]})`;
-                            context.fillRect(x + (i * tileSize), y + (j * tileSize), 1, 1);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    const redrawCoordinate = (i,j) => {
-        const mapHeight = store.map.height;
-        const mapWidth = store.map.width;
-        const tileSize = store.map.tileSize;
-        const context = ref.current.getContext('2d');
-        const layer = layers[store.currentLayer];
-        const index = j * mapWidth + i;
-        const tileIndex = layer.data[index];
-        context.clearRect(i*tileSize, j*tileSize, tileSize, tileSize);
-        if(tileIndex === -1) return;
-        const tile = store.tiles[tileIndex];
-        const colorData = new Uint8ClampedArray(Object.values(tile.data));
-        for(let y = 0; y < tileSize; y++) {
-            for(let x = 0; x < tileSize; x++) {
-                const index = (y * tileSize + x) * 4;
-                context.fillStyle = `rgba(${colorData[index]}, ${colorData[index+1]}, ${colorData[index+2]}, ${colorData[index+3]})`;
-                context.fillRect(x + (i * tileSize), y + (j * tileSize), 1, 1);
-            }
-        }
-    }
 
     const highlightPixels = () => {
         const selectedPixels = store.selectedPixels;
@@ -115,17 +152,25 @@ function MainEditor(props) {
                 break;
 
             case EditorTool.PAINT:
-                store.placeTile(x, y).then(() => {
-                    redrawCoordinate(x,y);
+                store.placeTile(x, y)
+                worker.postMessage({type: 'redrawCoordinate', data: {x, y, currentLayer, tiles: store.tiles}});
+                socket.emit("place", {
+                    x,
+                    y,
+                    tileIndex: store.currentTileIndex,
+                    layerId: currentLayer._id
                 });
             break;
 
             case EditorTool.FILL:
-                store.mapFloodFill(x, y).then((rerenderList) => {
+                const rerenderList = store.mapFloodFill(x, y);
+                if (rerenderList.length > 100) {
+                    worker.postMessage({type: 'drawMap', data: {layers, tiles: store.tiles, cameraZoom}});
+                } else{
                     for (let i = 0; i < rerenderList.length; i++) {
-                        redrawCoordinate(rerenderList[i].x, rerenderList[i].y);
+                        worker.postMessage({type: 'redrawCoordinate', data: {x: rerenderList[i].x, y: rerenderList[i].y, currentLayer, tiles: store.tiles}});
                     }
-                });
+                }
             break;
 
             default:
@@ -145,8 +190,10 @@ function MainEditor(props) {
             if(store.selectedPixels.length >= 2) {
                 if(x >= store.selectedPixels[0].x && x <= store.selectedPixels[store.selectedPixels.length - 1].x && y >= store.selectedPixels[0].y && y <= store.selectedPixels[store.selectedPixels.length - 1].y) return;
             }
-            highlight.clearRect(lastHoverTile.x * tileSize, lastHoverTile.y * tileSize, tileSize, tileSize);
+            //highlight.clearRect(lastHoverTile.x * tileSize, lastHoverTile.y * tileSize, tileSize, tileSize);
+            highlight.clearRect(0, 0, canvasWidth, canvasHeight);
         }
+        highlightPixels();
         highlight.fillStyle = "rgba(255, 255, 255, 0.5)";
         highlight.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
         setLastHoverTile({x, y});
@@ -178,7 +225,6 @@ function MainEditor(props) {
         for(let i = minX; i <= maxX; i++) {
             for(let j = minY; j <= maxY; j++) {
                 selectedTiles.push({x: i, y: j});
-                console.log(store.layers[store.currentLayer].data[j * store.map.width + i]);
             }
         }
         store.setSelectedPixels(selectedTiles);

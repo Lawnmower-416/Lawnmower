@@ -10,6 +10,7 @@ import ImportTilesetModal from "../modals/ImportTilesetModal";
 import {useParams} from "react-router-dom";
 import EditorContext from "../../editor";
 import ShareModal from "../modals/ShareModal";
+import NotificationHandler from "./editor/NotificationHandler";
 
 
 
@@ -37,6 +38,7 @@ function MapEditor() {
 
     return (
         <div>
+            <NotificationHandler />
             <MapSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen}/>
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
             <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} />
