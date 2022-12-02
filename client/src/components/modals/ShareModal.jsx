@@ -44,7 +44,6 @@ const ShareModal = ({ modalOpen, setModalOpen }) => {
 	let collaborators;
 
 	if (store.collaborators && store.collaborators.length > 0) {
-		console.log(store.collaborators);
 		collaborators = store.collaborators.map((collaborator) => {
 			return (
 				<div

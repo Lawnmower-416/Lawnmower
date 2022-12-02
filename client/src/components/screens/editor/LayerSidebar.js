@@ -8,6 +8,10 @@ function LayerSidebar() {
 
     const { store } = useContext(EditorContext);
 
+    useEffect(() => {
+
+    }, [store.layers]);
+
     const layers = store.layers;
     const currentLayer = store.layers[store.currentLayer];
 

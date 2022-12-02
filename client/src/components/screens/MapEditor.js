@@ -20,6 +20,7 @@ function MapEditor() {
     const { store } = useContext(EditorContext);
 
     useEffect(() => {
+        store.reset();
         store.setMap(mapId);
 
         return () => {

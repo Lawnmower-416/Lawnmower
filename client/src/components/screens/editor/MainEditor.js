@@ -121,7 +121,7 @@ function MainEditor() {
         if (worker) {
             worker.postMessage({type: 'drawMap', data: {layers, tiles: store.tiles, cameraZoom}});
         }
-    }, [currentLayer, currentLayer.visible]);
+    }, [currentLayer && currentLayer.visible]);
 
     useEffect(() => {
         highlightPixels();
