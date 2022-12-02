@@ -1,17 +1,115 @@
 import { Dialog, Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useContext } from 'react'
+import EditorContext from "../../editor";
 
-function ExportModal({isOpen, setIsOpen}) {
+
+function ExportModal({isOpen, setIsOpen, map, tileset}) {
     const [selected, setSelected] = useState('json')
+    const { store } = useContext(EditorContext);
+
 
     const exportOptions = [
         { name: 'Export as PNG', value: 'png' },
         { name: 'Export as JPG', value: 'jpg' },
         { name: 'Export as JSON', value: 'json' },
     ]
-  function closeModal() {
-    setIsOpen(false)
+  const closeModal = (e) => {
+    e.preventDefault();
+
+    if (map) {
+        let exportLayers = []
+        let exportTilesets = []
+
+        let gottenLayers = store.getLayersForExport()
+        
+        for (let i = 0; i < gottenLayers.length; i++) {
+            let layer = gottenLayers[i]
+            exportLayers.push({
+                name: layer.name,
+                locked: layer.locked,
+                properties: layer.properties,
+                height: layer.height,
+                width: layer.width,
+                data: layer.data,
+            })
+        }
+
+
+        let gottenTilesets = store.getMapsTilesetsForExport()
+        for (let i = 0; i < gottenTilesets.length; i++) {
+            let tileset = gottenTilesets[i]
+            exportTilesets.push({
+                name: tileset.title,
+                tilewidth: tileset.tileSize,
+                tileheight: tileset.tileSize,
+                tilecount: tileset.tileCount,
+                image: tileset.image,
+                imageheight: tileset.imageHeight,
+                imagewidth: tileset.imageWidth,
+            }
+            )
+        }
+
+        let exportMap = {
+            height: map.height,
+            layers: exportLayers,
+            tilesets: exportTilesets,
+            nextobjectid: 1,
+            orientation: "isometric",
+            tileheight: map.tileSize,
+            tilewidth: map.tileSize,
+            version: 1,
+            tiledversion: "1.7.2",
+            width: map.width
+        }
+
+        const blob = new Blob([JSON.stringify(exportMap)], {type: "text/json"});
+
+        const a = document.createElement("a");
+        a.download = map.title+".json"; //filename
+        a.href = URL.createObjectURL(blob);
+        const clickEvt = new MouseEvent("click", {
+            view: window,
+            bubbles: false,
+            cancelable: true
+        });
+        a.dispatchEvent(clickEvt);
+        a.remove();
+        setIsOpen(false)
+    }
+    if (tileset) {
+        
+        let gottenTileset = store.getTilesetForExport()
+
+
+        let exportTileset = {
+                name: gottenTileset.title,
+                tilewidth: gottenTileset.tileSize,
+                tileheight: gottenTileset.tileSize,
+                tilecount: gottenTileset.tileCount,
+                image: gottenTileset.image,
+                imageheight: gottenTileset.imageHeight,
+                imagewidth: gottenTileset.imageWidth,
+            }
+        
+
+        const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
+
+        const a = document.createElement("a");
+        a.download = map.title+".json";
+        a.href = URL.createObjectURL(blob);
+        const clickEvt = new MouseEvent("click", {
+            view: window,
+            bubbles: false,
+            cancelable: true
+        });
+        a.dispatchEvent(clickEvt);
+        a.remove();
+        setIsOpen(false)
+        setIsOpen(false)
+    }
+
   }
 
   return (
