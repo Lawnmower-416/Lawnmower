@@ -38,6 +38,16 @@ export const updateMapGeneral = (mapId, map) => {
     });
 }
 
+export const forkMap = (map, owner, ownerUsername) => {
+    return api.post(`/map/fork`, {
+        map: map,
+        owner: owner,
+        ownerUsername: ownerUsername
+    }, {
+        withCredentials: true
+    });
+}
+
 export const createTileset = (owner, ownerUsername, title, tileSize) => {
     return api.post(`/tileset/`, {
         owner : owner,
@@ -60,6 +70,15 @@ export const updateTilesetGeneral = (tilesetId, tileset) => {
         tileset: tileset
     });
 }
+export const forkTileset = (tileset, owner, ownerUsername) => {
+    return api.post(`/tileset/fork`, {
+        tileset: tileset,
+        owner: owner,
+        ownerUsername: ownerUsername
+    }, {
+        withCredentials: true
+    });
+}
 
 const apis = {
     createMap,
@@ -72,7 +91,9 @@ const apis = {
     getTilesetById,
     getTilesets,
     updateTilesetGeneral,
-    reportUser
+    reportUser,
+    forkMap,
+    forkTileset
 }
 
 export default apis;
