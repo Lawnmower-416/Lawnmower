@@ -208,6 +208,6 @@ module.exports = {
     getReport,
     createReport,
     updateReport,
-    deleteReport
+    deleteReport,
     getUserByUsername
 }

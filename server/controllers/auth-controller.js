@@ -534,6 +534,6 @@ module.exports = {
     MapVerify,
     TilesetVerify,
     getAUser,
-    SendEmailTo
+    SendEmailTo,
     updateAvatar
 }
