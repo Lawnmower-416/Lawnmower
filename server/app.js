@@ -21,6 +21,7 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
   cors: {
+    //origin: "http://localhost:3001",
     origin: "http://34.193.24.27",
     methods: ["GET", "POST"]
   }
@@ -28,10 +29,14 @@ const io = new Server(server, {
 
 
 const cors = require('cors');
-app.use(cors({ origin: 'http://34.193.24.27', credentials: true }));
+app.use(cors({
+  //origin: 'http://localhost:3001',
+  origin: 'http://34.193.24.27',
+  credentials: true
+}));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({  extended: false }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({  extended: true, limit: '50mb' }));
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -73,6 +78,22 @@ const getUpdatePost = async(data, server) => {
 // For Chat
 io.on('connection', server => {
   console.log('User connected', server.id)
+
+  server.on('join', (data) => {
+    server.username = data.username;
+    server.editorId = data.id;
+    server.join(data.id);
+    server.to(data.id).emit('newUserJoin', {message: `${data.username} joined`, type: 'info'});
+    server.emit('userConnected', {message: 'Connected', type: 'success'});
+  });
+
+  server.on('place', (data) => {
+    server.to(server.editorId).emit('place', data);
+  });
+
+  server.on('disconnect', () => {
+      server.to(server.editorId).emit('userLeft', {message: `${server.username} left`, type: 'info'});
+  });
   
   
   server.on('send_comment', async(data) => {

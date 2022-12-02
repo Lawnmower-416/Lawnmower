@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import avatar from "./images/avatar.png";
 import user_add from "./images/add-user.svg";
 import AuthContext from "../../auth";
@@ -8,10 +8,21 @@ const ShareModal = ({ modalOpen, setModalOpen }) => {
 	const { auth } = useContext(AuthContext);
 	const { store } = useContext(EditorContext);
 
+	useEffect(() => {
+		if(store.collaborators.length === 0) {
+			store.loadCollaborators();
+		}
+	}, [modalOpen]);
+
+	useEffect(() => {
+
+	}, [store.collaborators]);
+
 	const [isPublic, setVisibility] = useState(store.tileset ? store.tileset.public : (store.map ? store.map.public : false));
 	const [copy, setCopy] = useState(false);
-	//TODO: Allow this to be used for tilesets and maps
-	let link = "http://34.193.24.27/" + (store.tileset ? "tilesetEditor" : "mapEditor") + "/" + (store.tileset ? store.tileset._id : "");
+	const [collaboratorUsername, setCollaboratorUsername] = useState("");
+
+	let link = "http://34.193.24.27/" + (store.tileset ? "tilesetEditor" : "mapEditor") + "/" + (store.tileset ? store.tileset._id : store.map._id);
 
 	const handleCopy = () => {
 		setCopy(true);
@@ -24,6 +35,33 @@ const ShareModal = ({ modalOpen, setModalOpen }) => {
 	const handleSubmit = () => {
 		store.setTilesetVisiblity(isPublic);
 		setModalOpen(false);
+	}
+
+	const addCollaborator = () => {
+		store.addCollaborator(collaboratorUsername);
+	}
+
+	let collaborators;
+
+	if (store.collaborators && store.collaborators.length > 0) {
+		collaborators = store.collaborators.map((collaborator) => {
+			return (
+				<div
+					className="flex justify-between items-center p-1 px-2 border border-white rounded-md bg-editor-tertiary"
+					key={collaborator._id}
+				>
+					<div className="flex items-center">
+						<img className="w-7 mr-1" src={avatar} alt="" />
+						<h5 className="text-[18px] font-medium text-white">
+							{collaborator.username}
+						</h5>
+					</div>
+					<h5 className="text-[18px] font-medium text-white">
+						Editor
+					</h5>
+				</div>
+			);
+		});
 	}
 
 	return (
@@ -100,78 +138,20 @@ const ShareModal = ({ modalOpen, setModalOpen }) => {
 									Owner
 								</h5>
 							</div>
-							{/*
-							<div className="flex justify-between items-center p-1 px-2 border border-white rounded-md">
-								<div className="flex items-center">
-									<img className="w-7 mr-1" src={avatar} alt="" />
-									<h5 className="text-[18px] font-medium text-white">
-										KayyOh
-									</h5>
-								</div>
-								<h5 className="text-[18px] font-medium text-white flex items-center gap-1">
-									<div className="relative">
-										<select className="text-black bg-transparent appearance-none outline-none shadow-none border-none pr-6 pl-1 relative z-10 cursor-pointer">
-											<option className="text-black text-sm">
-												Editor
-											</option>
-											<option className="text-black text-sm">
-												Owner
-											</option>
-										</select>
-										<img
-											className="w-5 cursor-pointer absolute right-0 top-[4px] z-[0]"
-											src={downArrow}
-											alt=""
-										/>
-									</div>
-									<img
-										className="w-6 cursor-pointer"
-										src={user}
-										alt=""
-									/>
-								</h5>
-							</div>
-							<div className="flex justify-between items-center p-1 px-2 border border-white rounded-md">
-								<div className="flex items-center">
-									<img className="w-7 mr-1" src={avatar} alt="" />
-									<h5 className="text-[18px] font-medium text-white">
-										ElevenZ
-									</h5>
-								</div>
-								<h5 className="text-[18px] font-medium text-white flex items-center gap-1">
-									<div className="relative">
-										<select className="text-black bg-transparent appearance-none outline-none shadow-none border-none pr-6 pl-1 relative z-10 cursor-pointer">
-											<option className="text-black text-sm">
-												Editor
-											</option>
-											<option className="text-black text-sm">
-												Owner
-											</option>
-										</select>
-										<img
-											className="w-5 cursor-pointer absolute right-0 top-[4px] z-[0]"
-											src={downArrow}
-											alt=""
-										/>
-									</div>
-									<img
-										className="w-6 cursor-pointer"
-										src={user}
-										alt=""
-									/>
-								</h5>
-							</div>
-							*/}
+							{collaborators}
 						</div>
 						<div className="flex gap-2 flex-grow mt-3">
 							<input
 								type="text"
 								placeholder="Add People by Username"
 								className="h-[42px] px-3 rounded-[6px] white-shade text-black focus:text-black border-none outline-none w-0 flex-grow"
+								value={collaboratorUsername}
+								onChange={(e) => setCollaboratorUsername(e.target.value)}
 							/>
 							<button
 								className={`h-[43px] rounded-5 pl-2 `}
 								type="button"
+								onClick={addCollaborator}
 							>
 								<img src={user_add} className="w-10" alt="" />
 							</button>

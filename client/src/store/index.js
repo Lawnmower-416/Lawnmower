@@ -34,6 +34,7 @@ function GlobalStoreContextProvider(props) {
         currentTilesetEditing: null,
         currentContentCommentsExpanded: null,
     });
+    const [errorMessage, setErrorMessage] = useState("");
     const { auth } = useContext(AuthContext);
 
     const location = useLocation();
@@ -396,7 +397,7 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateMapGeneral(mapId, map)
                 if (responseGeneral.data.success) {
-                    if (path === "/profile") {
+                    if (path.slice(0,8) === "/profile") {
                         store.loadUserContent()
                     }
                     if (path === "/community") {
@@ -425,7 +426,7 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateMapGeneral(mapId, map)
                 if (responseGeneral.data.success) {
-                    if (path === "/profile") {
+                    if (path.slice(0,8) === "/profile") {
                         store.loadUserContent()
                     }
                     if (path === "/community") {
@@ -453,7 +454,7 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateTilesetGeneral(tilesetId, tileset)
                 if (responseGeneral.data.success) {
-                    if (path === "/profile") {
+                    if (path.slice(0,8) === "/profile") {
                         store.loadUserContent()
                     }
                     if (path === "/community") {
@@ -481,7 +482,7 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateTilesetGeneral(tilesetId, tileset)
                 if (responseGeneral.data.success) {
-                    if (path === "/profile") {
+                    if (path.slice(0,8) === "/profile") {
                         store.loadUserContent()
                     }
                     if (path === "/community") {
@@ -597,6 +598,33 @@ function GlobalStoreContextProvider(props) {
         } catch (error) {
             console.log("Error updating tileset view count: ", error);
         }
+    }
+
+    store.reportUser = async (reporter, reportee, reason) => {
+        try {
+            const response = await api.reportUser(reporter, reportee._id, reason);
+            if (!response.data.success) {
+                console.log("Repored User Failed...");
+            } else {
+                // Success
+                // alert("User Reported!");
+                setErrorMessage("Reported User " + reportee.username);
+            }
+        } catch (error) {
+            console.log("Error with reporting user. ", err);
+        }
+    }
+
+    store.wipeErrorMessage = () => {
+        setErrorMessage("");
+    }
+
+    store.getErrorMessage = () => {
+        return errorMessage;
+    }
+
+    store.setErrorMessage = (message) => {
+        setErrorMessage(message);
     }
 
     return (

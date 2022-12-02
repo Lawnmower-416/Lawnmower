@@ -43,6 +43,7 @@ module.exports.getLayer = async (layerId) => {
 
 module.exports.updateLayer = async (layerId, newLayer) => {
     const updatedLayer = await Layer.findOneAndUpdate({_id: layerId}, newLayer, {new: true});
+
     if (!updatedLayer) return null;
     return updatedLayer;
 };

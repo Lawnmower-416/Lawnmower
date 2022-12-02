@@ -1,6 +1,7 @@
 const Map =require('../../models/map-schema');
 const Tileset = require('../../models/tileset-schema');
 const User = require('../../models/user-schema');
+const Report = require('../../models/report-schema');
 const { createCanvas } = require('canvas');
 const { uploadData } = require('./AWS-S3-manager');
 // content-controller-generalized.js is a generalization of database interactions
@@ -155,7 +156,6 @@ getTilesetById = async (tilesetId, userId) => {
     //     return tileset;
     // }
     return tileset;
-    return null;
 }
 
 // getTilesets returns all tilesets that are set to public for community page viewing
@@ -165,6 +165,33 @@ getTilesets = async () => {
 
 updateTilesetGeneral = async (updatedTileset) => {
     return await Tileset.findOneAndUpdate({ _id: updatedTileset.tileset._id}, updatedTileset.tileset, {new: true});
+}
+
+getReport = async (reportId) => {
+    return await Report.findOne({ _id: reportId}).catch(err => null);
+}
+
+createReport = async (body) => {
+    const newReport = new Report(body);
+    return await newReport.save().catch(err => null);
+}
+
+updateReport = async (reportId, body) => {
+    return await Report.findOneAndUpdate({_id: reportId}, body, {new: true}).catch(err => null);
+}
+
+deleteReport = async (reportId) => {
+    return await Report.findOneAndDelete({_id: reportId}).catch(err => null);
+}
+
+getUserByUsername = async (username) => {
+    let user = await User.findOne({ username: username }).catch(err => {return null;});
+
+    if (!user) {
+        return null;
+    }
+
+    return user;
 }
 
 module.exports = {
@@ -177,5 +204,10 @@ module.exports = {
     deleteTileset,
     getTilesetById,
     getTilesets,
-    updateTilesetGeneral
+    updateTilesetGeneral,
+    getReport,
+    createReport,
+    updateReport,
+    deleteReport,
+    getUserByUsername
 }

@@ -16,6 +16,11 @@ router.put('/map/:mapId', AuthController.MapVerify, MapEditorController.updateMa
 // Gets all tilesets for the maps
 router.get('/map/:mapId/tilesets', AuthController.MapVerify, TilesetEditorController.getTilesetsForMapById);
 
+//Adds a collaborator to a map
+router.post('/map/:mapId/collaborator', AuthController.MapVerify, MapEditorController.addCollaborator);
+// Gets all collaborators for a map
+router.get('/map/:mapId/collaborators', AuthController.MapVerify, MapEditorController.getCollaborators);
+
 // Layer Routes
 router.post('/map/:mapId/layer', AuthController.MapVerify, LayerEditorController.createLayer);
 router.get('/map/:mapId/layer/:layerId', AuthController.MapVerify, LayerEditorController.getLayer);

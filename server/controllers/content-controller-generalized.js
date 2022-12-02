@@ -1,4 +1,5 @@
 const databaseManager= require('../controllers/AWSManager/AWSmongoose-manager');
+const { SendEmailTo } = require('./auth-controller');
 // this controller is generalized to work with any db
 
 function createMap(req, res) {
@@ -189,6 +190,43 @@ function updateTilesetGeneral(req, res) {
     });
 }
 
+function getReport(req, res) { // todo: check body
+    const reportId = req.params.reportId;
+    databaseManager.getReport(reportId).then(report => {
+        return res.status(200).json({ success: true, report: report });
+    }).catch(err => {
+        return res.status(500).json({ success: true, report: report });
+    });
+}
+
+function createReport(req, res) {
+    if (!req.body)
+    return res.status(400).json({ success: true, errorMessage: "Something went wrong..." });
+    databaseManager.createReport(req.body).then(report => {
+        const response = SendEmailTo(null, "lawnmower416@outlook.com", `Report Generated for ${report._id}`, null, JSON.stringify(report));
+        if (response.isError) return res.status(400).json({ success: false, errorMessage: "Couldn't send email to admin..." });
+        return res.status(200).json({ success: true, report: report });
+    }).catch(err => {return res.status(500).json({ success: true, errorMessage: "Something went wrong..."}) });
+}
+
+function updateReport(req, res) {  // todo: check body
+    const reportId = req.params.reportId;
+    databaseManager.updateReport(reportId, body).then(report => {
+        return res.status(200).json({ success: true, report: report });
+    }).catch(err => {
+        return res.status(500).json({ success: true, errorMessage: "Something went wrong..." });
+    });
+}
+
+function deleteReport(req, res) { // todo: check body
+    const reportId = req.params.reportId;
+    databaseManager.deleteReport(reportId, body).then(report => {
+        return res.status(200).json({ success: true, report: report });
+    }).catch(err => {
+        return res.status(500).json({ success: true, errorMessage: "Something went wrong..." });
+    });
+}
+
 module.exports = {
     createMap,
     deleteMap,
@@ -199,5 +237,9 @@ module.exports = {
     deleteTileset,
     getTilesetById,
     getTilesets,
-    updateTilesetGeneral
+    updateTilesetGeneral,
+    getReport,
+    createReport,
+    updateReport,
+    deleteReport
 };

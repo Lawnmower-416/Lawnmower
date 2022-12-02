@@ -43,7 +43,6 @@ export default function ItemCard(props) {
     const thumbnail = currentData.thumbnail || "Error Loading Thumbnail";
 
     const ownerProfileLink = "/profile/" + owner
-    console.log("ownerProfileLink: " + ownerProfileLink);
 
     let numLikes = 0;
     if (currentData.likedUsers) {
@@ -110,7 +109,6 @@ export default function ItemCard(props) {
         onClick={() => setDeleteMapModal((prev) => !prev)} 
         />
     }
-
 
     return (
         <><DeleteMapModal modalOpen={deleteMapModal} setModalOpen={setDeleteMapModal} content={currentData} />
@@ -214,7 +212,7 @@ export default function ItemCard(props) {
                     : <div></div>
                 }
             </div>
-            <ReportModal modalOpen={openReportModal} setModalOpen={setReportModal} />
+            <ReportModal modalOpen={openReportModal} setModalOpen={setReportModal} reporter={{username: user.username, _id: user._id}} reportee={{username: ownerUsername, _id: owner}} />
         </div>
         </>
     )

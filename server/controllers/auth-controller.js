@@ -29,7 +29,8 @@ loggedIn = async (req, res) => {
                 maps: loggedInUser.maps,
                 tilesets: loggedInUser.tilesets,
                 comments: loggedInUser.comments,
-                _id: loggedInUser._id
+                _id: loggedInUser._id,
+                avatar: loggedInUser.avatar,
             }
         })
     } catch (err) {
@@ -205,10 +206,13 @@ register = async (req, res, next) => {
     }
 }
 
-SendEmailTo = (userKey, to, subject, path) => {
+SendEmailTo = (userKey, to, subject, path, content) => {
     // Send them an email with a verification code...
     // const userKey = existingUser.key;
-    const body = "http://34.193.24.27:3000" + path + "?email=" + encodeURIComponent(to) + "&key=" + encodeURIComponent(userKey);
+    let body;
+    // Check if there are any contents we need to supply
+    if (!content) body = "http://34.193.24.27:3000" + path + "?email=" + encodeURIComponent(to) + "&key=" + encodeURIComponent(userKey);
+    else body = content;
     // const subject = "Password Reset Link";
 
     let transporter = Nodemailer.createTransport({
@@ -448,6 +452,37 @@ getAUser = async (req, res, next) => {
                 joinDate: user.joinDate,
                 maps: user.maps,
                 tilesets: user.tilesets,
+                avatar: user.avatar,
+            });
+        } else {
+            return res.status(404).json({
+                success: false,
+                errorMessage: "User not found."
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({"success": false, errorMessage: "Something went wrong"});
+    }
+}
+
+updateAvatar = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const {avatarString} = req.body
+        console.log(userId, avatarString);
+        const user = await User.findOne({ _id: userId });
+        if (user) {
+            await User.findOneAndUpdate({ _id: userId }, { avatar: avatarString }).catch(err => {
+                return res.status(500).json({
+                    success: false,
+                    errorMessage: "Error updating avatar."
+                });
+            });
+
+            return res.status(200).json({
+                success: true,
+                message: "Avatar updated!"
             });
         } else {
             return res.status(404).json({
@@ -498,5 +533,7 @@ module.exports = {
     deleteAccount,
     MapVerify,
     TilesetVerify,
-    getAUser
+    getAUser,
+    SendEmailTo,
+    updateAvatar
 }
