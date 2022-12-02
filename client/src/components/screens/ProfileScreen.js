@@ -1,4 +1,3 @@
-import { DocumentCheckIcon } from "@heroicons/react/24/outline";
 import {PencilIcon, UserCircleIcon} from "@heroicons/react/24/solid";
 import { useState, useContext, useEffect } from "react";
 import { generateRandomMaps, getEmail, getRandomUser } from "../../utils/mockData/ItemCard_MockData";
@@ -6,8 +5,13 @@ import ItemCard from "./../ItemCard";
 import Header from "./Header";
 import { useLocation } from "react-router-dom";
 import AuthContext from "../../auth";
-import { useNavigate } from "react-router-dom";
 
+import alienIcon from "../modals/images/alien.png";
+import monkeyIcon from "../modals/images/monkey.png";
+import pirateIcon from "../modals/images/pirate.png";
+import poroIcon from "../modals/images/poro.png";
+
+import UpdateAvatarModal from "../modals/UpdateAvatarModal";
 import CreateMapModal from "../modals/CreateMapModal";
 import CreateTilesetModal from "../modals/CreateTilesetModal";
 import DeleteAccount from "../modals/DeleteAccount";
@@ -25,14 +29,10 @@ export default function Profile() {
     if (contentBefore) {
         console.log("EXISTS ", contentBefore);
         user = {username: contentBefore.owner};
+    } else {
+        user = auth.user;
     }
-    else user = auth.user;
-    // const user = getRandomUser();
-    // console.log(user);
-    // Get user's stuff
-    // const userMaps = (contentBefore ? [contentBefore] : (user && user.maps)) || [];
 
-    //const userTilesets = (contentBefore ? [contentBefore] : (user && user.tilesets)) || [];
     const userComments = (contentBefore ? [contentBefore] : (user && user.comments)) || [];
 
     const [username, setUsername] = useState(user ? user.username : "");
@@ -40,21 +40,27 @@ export default function Profile() {
     const [joinDate, setJoinDate] = useState(user ?
         new Date(user.joinDate).toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'}) :
         "");
+    const [points, setPoints] = useState(0);
 
-    const [points, setPoints] = useState(user ? user.points : 0);
-
-    const [editing, setEditing] = useState(""); // Username, Email
-    const [change, setChange] = useState(""); // Username, Email
+    // const [points, setPoints] = useState(0);
     const [currentTab, setCurrentTab] = useState("Maps"); // Select: Maps, Tilesets, or Comments
-    const [userLogo, setUserLogo] = useState([]);
-    const [imageURL, setImageURL] = useState("");
+    const [avatar, setAvatar] = useState(user ? user.avatar : "black");
 
     const [openCreateMapModal, setCreateMapModal] = useState(false);
     const [tilesetModal, setTilesetModal] = useState(false);
     const [deleteAccountModal, setDeleteAccountModal] = useState(false);
+    const [updateAvatarModal, setUpdateAvatarModal] = useState(false);
 
     let userMaps = [];
     let userTilesets = [];
+
+    const getTotalPoints = (content) => {
+        let totalPoints = 0;
+        for (let i = 0; i < content.length; i++) {
+            totalPoints += content[i].likes - content[i].dislikes;
+        }
+        return totalPoints;
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -65,7 +71,7 @@ export default function Profile() {
                     new Date(user.joinDate)
                         .toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'})
                 );
-                setPoints(user.points);
+                setAvatar(user.avatar);
                 console.log("auth.user was change so useEffect is called store.loadUserContent", auth.user);
                 await store.loadUserContent();
             }
@@ -94,13 +100,20 @@ export default function Profile() {
                     new Date(user.joinDate)
                         .toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'})
                 );
-                setPoints(user.points);
+                setAvatar(user.avatar);
                 console.log("ID profile was changed", currentId);
                 await store.loadUserContent();
             }
         }
         fetchData();
     }, [currentId]);
+
+    useEffect(() => {
+        if (auth.user) {
+            setAvatar(auth.user.avatar);
+        }
+    }, [auth.user?auth.user.avatar:""]);
+
 
     let viewingOwnPage = false;
     let shownMaps = [];
@@ -116,9 +129,42 @@ export default function Profile() {
             setUsername(publicInfo.username);
             setJoinDate(new Date(publicInfo.joinDate)
             .toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'}));
+            setAvatar(publicInfo.avatar);
         });
         shownMaps = store.publicMaps.filter((map) => map.owner === currentId);
         shownTilesets = store.publicTilesets.filter((tileset) => tileset.owner === currentId);
+
+    }
+
+
+    let avatarIcon = <UserCircleIcon/>
+    //switch case for avatar
+    switch (avatar) {
+        case "black":
+            avatarIcon = <UserCircleIcon/>
+            break;
+        case "red":
+            avatarIcon = <UserCircleIcon className="text-red"/>
+            break;
+        case "green":
+            avatarIcon = <UserCircleIcon className="text-darker-green"/>
+            break;
+        case "blue":
+            avatarIcon = <UserCircleIcon className="text-[blue]"/>
+            break;
+        case "alien":
+            avatarIcon = <img src={alienIcon} className="w-50 rounded-full scale-125"/>
+            break;
+        case "monkey":
+            avatarIcon = <img src={monkeyIcon} className="w-50 rounded-full"/>
+            break;
+        case "pirate":
+            avatarIcon = <img src={pirateIcon} className="w-50 rounded-full"/>
+            break;
+        case "poro":
+            avatarIcon = <img src={poroIcon} className="w-50 rounded-full pt-2"/>
+            break;
+        default:
     }
 
     const getUserCommentsFromMapsAndTilesets = () => {
@@ -130,31 +176,9 @@ export default function Profile() {
         return comments;
     }
 
-    const handleImage = (e) => {
-        setUserLogo((prev) => {
-            const images = [...e.target.files];
-            setImageURL((prevImgURL) => {
-                return URL.createObjectURL(images[0]);
-            });
-            return [...e.target.files];
-        });
+    const handleUpdateAvatar = () => {
+        setUpdateAvatarModal(!updateAvatarModal)
     }
-
-    const handleChange = (e) => {
-        setChange((prev) => e.target.value);
-        if (editing === "username") {
-            setUsername((prev) => e.target.value);
-        } else if (editing === "email") {
-            // Maybe handle invalid email?
-            setEmail((prev) => e.target.value);
-        }
-    }
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            setEditing((prev) => "");
-        }
-    };
 
     return (
         <>
@@ -166,48 +190,47 @@ export default function Profile() {
                     <div className="col-auto">
                         {/* Left Panel: User Icon and Edit */}
                         <div className="flex flex-col items-center">
-                            <div className="">
-                                {imageURL !== "" ? <img className="max-w-[18rem]" src={imageURL} alt="User Logo" /> : <UserCircleIcon className="text-[blue] w-40" />}
+                            <div className="w-40 h-40 w-fixed">
+                                {avatarIcon}
                             </div>
-                            {/* <label className="w-fit">
-                                <input className="hidden" type={"file"} onChange={handleImage} accept={"image/*"} />
-                                <PencilIcon className="w-12 hover:text-white cursor-pointer" />
-                            </label> */}
-                                
+                            <button 
+                                onClick={handleUpdateAvatar}
+                                className={"w-fit"+ (viewingOwnPage ? "" : "hidden")}>
+                                <PencilIcon className={"w-12" + (viewingOwnPage ? "" : "hidden")}/>
+                            </button>
                         </div>
                     </div>
 
                     {/* Column 2: Right Panel: name, email, date, points */}
                     <div className="col-auto grid grid-rows-4 gap-0 p-5 bg-dark-green-lighter" >
                         <div className={`col-auto grid grid-cols-10 items-center text-2xl text-white`}>
-                            <div className="col-span-8 px-2" >{editing === "username" ? <input className="px-1 text-black" type={"text"} placeholder={username} onChange={handleChange} onKeyDown={handleKeyDown}></input> : username}</div>
-                            {/* <div className={`col-span-2 px-1 content-start ${contentBefore ? "hidden" : ""}`}>
-                                {editing === "username" ? <DocumentCheckIcon className="w-12 cursor-pointer" onClick={() => setEditing(prev => "")} /> : <PencilIcon className={`w-12 cursor-pointer text-black hover:text-white ${editing !== "username"} ? 'disabled disabled:opacity-60' : ""`} onClick={() => setEditing((prev) => {return prev === "" ? "username" : prev})} />}
-                            </div> */}
+                            <div className="col-span-8 px-2" >{username}</div>
                         </div>
                         <div className="col-auto grid grid-cols-10 content-center align-middle items-center text-2xl text-white" >
-                            <div className="col-span-8 px-2" >{editing === "email" ? <input className="px-1 text-black" type={"text"} placeholder={email} onChange={handleChange} onKeyDown={handleKeyDown}></input> : email}</div>
-                            {/* <div className={`col-span-2 px-1 content-start ${contentBefore ? "hidden" : ""}`}>
-                                {editing === "email" ? <DocumentCheckIcon className="w-12 cursor-pointer" onClick={() => setEditing(prev => "")} /> : <PencilIcon className={`w-12 cursor-pointer text-black hover:text-white ${editing !== "email"} ? 'disabled disabled:opacity-60' : ""`} onClick={() => setEditing((prev) => {return prev === "" ? "email" : prev})} />}
-                            </div> */}
+                            <div className="col-span-8 px-2" >{email}</div>
                         </div>
                         <span className="col-auto grid px-2 text-2xl content-center align-middle items-center text-white">Join Date: {joinDate}</span>
-                        <span className="col-auto grid px-2 text-2xl content-center align-middle items-center text-white">Points: {user ? user.points : 0}</span>
+                        <span className="col-auto grid px-2 text-2xl content-center align-middle items-center text-white">Points: {user ? points : 0}</span>
                     </div>
                 
                 {/* Row 2 */}
                     {/* Column 1: Tabs Area */}
                     <div className="col-auto grid grid-cols-4 h-min pt-3 text-2xl gap-0" style={{"color": "white"}}>
-                        <div className={`col-auto grid text-center ${currentTab === 'Maps' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`} onClick={() => setCurrentTab((prev) => "Maps")}>Maps</div>
-                        <div className={`col-auto grid text-center ${currentTab === 'Tilesets' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`} onClick={() => setCurrentTab((prev) => "Tilesets")}>Tilesets</div>
-                        <div className={`col-auto grid text-center ${currentTab === 'Comments' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`} onClick={() => setCurrentTab((prev) => "Comments")}>Comments</div>
+                        <div className={`col-auto grid text-center ${currentTab === 'Maps' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`} 
+                            onClick={() => setCurrentTab((prev) => "Maps")}>Maps</div>
+                        <div className={`col-auto grid text-center ${currentTab === 'Tilesets' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`} 
+                            onClick={() => setCurrentTab((prev) => "Tilesets")}>Tilesets</div>
+                        <div className={`col-auto grid text-center ${currentTab === 'Comments' ? 'bg-dark-green-lighter' : 'bg-dark-green'} p-2 rounded-md cursor-pointer`} 
+                            onClick={() => setCurrentTab((prev) => "Comments")}>Comments</div>
                     </div>
 
                     {/* Column 2: Create Map/Tileset Buttons Area */}
                     <div className="col-auto grid grid-cols-2 pt-3 text-2xl gap-12" style={{"color": "white"}}>
 
-                        <div className={"col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer " + (viewingOwnPage ? "visible" : "invisible")} onClick={() => setCreateMapModal(!openCreateMapModal)}>Create Map</div>
-                        <div className={"col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer " + (viewingOwnPage ? "visible" : "invisible")} onClick={() => setTilesetModal(!tilesetModal)}>Create Tilesets</div>
+                        <div className={"col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer " + (viewingOwnPage ? "visible" : "invisible")} 
+                            onClick={() => setCreateMapModal(!openCreateMapModal)}>Create Map</div>
+                        <div className={"col-auto grid text-center bg-dark-green-lighter p-2 rounded-md cursor-pointer " + (viewingOwnPage ? "visible" : "invisible")} 
+                            onClick={() => setTilesetModal(!tilesetModal)}>Create Tilesets</div>
                     </div>
                 {/* Row 3 */}
                     {/* Column 1: Item Cards for List */}
@@ -228,6 +251,7 @@ export default function Profile() {
             </div>
             <CreateMapModal setModalOpen={setCreateMapModal} modalOpen={openCreateMapModal} />
             <CreateTilesetModal setModalOpen={setTilesetModal} modalOpen={tilesetModal} />
+            <UpdateAvatarModal setModalOpen={setUpdateAvatarModal} modalOpen={updateAvatarModal} />
         </>
     );
 }
