@@ -224,12 +224,8 @@ export default function ItemCard(props) {
                     : <div></div>
                 }
             </div>
-<<<<<<< Updated upstream
-            <ReportModal modalOpen={openReportModal} setModalOpen={setReportModal} reporter={{username: user.username, _id: user._id}} reportee={{username: ownerUsername, _id: owner}} />
-=======
             <ReportModal modalOpen={openReportModal} setModalOpen={setReportModal} />
             <ForkModal modalOpen={openForkModal} setModalOpen={setForkModal} mapId={props.map ? props.map._id : null } tilesetId={props.tileset ? props.tileset._id : null}/>
->>>>>>> Stashed changes
         </div>
         </>
     )

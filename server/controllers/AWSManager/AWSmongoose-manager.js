@@ -200,7 +200,6 @@ updateTilesetGeneral = async (updatedTileset) => {
     return await Tileset.findOneAndUpdate({ _id: updatedTileset.tileset._id}, updatedTileset.tileset, {new: true});
 }
 
-<<<<<<< Updated upstream
 getReport = async (reportId) => {
     return await Report.findOne({ _id: reportId}).catch(err => null);
 }
@@ -228,7 +227,6 @@ getUserByUsername = async (username) => {
     return user;
 }
 
-=======
 forkTileset = async (body, userId) => {
     const {tileset, owner, ownerUsername} = body;
 
@@ -260,7 +258,6 @@ forkTileset = async (body, userId) => {
 }
 
 
->>>>>>> Stashed changes
 module.exports = {
     createMap,
     deleteMap,
@@ -273,14 +270,10 @@ module.exports = {
     getTilesetById,
     getTilesets,
     updateTilesetGeneral,
-<<<<<<< Updated upstream
     getReport,
     createReport,
     updateReport,
     deleteReport,
-    getUserByUsername
+    getUserByUsername,
+    forkTileset,
 }
-=======
-    forkTileset
-}
->>>>>>> Stashed changes

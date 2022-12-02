@@ -81,32 +81,16 @@ export const forkTileset = (tileset, owner, ownerUsername) => {
 }
 
 const apis = {
-<<<<<<< Updated upstream
-    createMap,
-    deleteMap,
-    getMapById,
-    getMaps,
-    updateMapGeneral,
-    createTileset,
-    deleteTileset,
-    getTilesetById,
-    getTilesets,
-    updateTilesetGeneral,
-    reportUser
-=======
 createMap,
 deleteMap,
 getMapById,
 getMaps,
 updateMapGeneral,
-forkMap,
 createTileset,
 deleteTileset,
 getTilesetById,
 getTilesets,
-updateTilesetGeneral,
-forkTileset
->>>>>>> Stashed changes
+updateTilesetGeneral
 }
 
 export default apis;

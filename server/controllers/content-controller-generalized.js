@@ -218,7 +218,6 @@ function updateTilesetGeneral(req, res) {
     });
 }
 
-<<<<<<< Updated upstream
 function getReport(req, res) { // todo: check body
     const reportId = req.params.reportId;
     databaseManager.getReport(reportId).then(report => {
@@ -253,7 +252,6 @@ function deleteReport(req, res) { // todo: check body
         return res.status(200).json({ success: true, report: report });
     }).catch(err => {
         return res.status(500).json({ success: true, errorMessage: "Something went wrong..." });
-=======
 function forkTileset(req, res) {
     const {tileset, owner, ownerUsername} = req.body;
     const body = {tileset, owner, ownerUsername};
@@ -275,9 +273,9 @@ function forkTileset(req, res) {
                 errorMessage: 'Unable to fork tileset'
             });
         }
->>>>>>> Stashed changes
     });
 }
+
 
 module.exports = {
     createMap,
@@ -291,12 +289,9 @@ module.exports = {
     getTilesetById,
     getTilesets,
     updateTilesetGeneral,
-<<<<<<< Updated upstream
     getReport,
     createReport,
     updateReport,
-    deleteReport
-=======
+    deleteReport,
     forkTileset
->>>>>>> Stashed changes
 };

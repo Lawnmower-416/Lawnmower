@@ -600,7 +600,6 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-<<<<<<< Updated upstream
     store.reportUser = async (reporter, reportee, reason) => {
         try {
             const response = await api.reportUser(reporter, reportee._id, reason);
@@ -627,7 +626,6 @@ function GlobalStoreContextProvider(props) {
     store.setErrorMessage = (message) => {
         setErrorMessage(message);
     }
-=======
     store.forkMap = async (mapId) => {
         try {
             const response = await api.getMapById(mapId);
@@ -671,7 +669,6 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
->>>>>>> Stashed changes
 
     return (
         <GlobalStoreContext.Provider value={{
