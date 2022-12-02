@@ -46,7 +46,7 @@ function MapEditor() {
             <NotificationHandler />
             <MapSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen}/>
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
-            <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} />
+            <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} map={map}/>
             <ImportTilesetModal isOpen={importOpen} setIsOpen={setImportOpen} />
             <ShareModal modalOpen={shareOpen} setModalOpen={setShareOpen} />
 
