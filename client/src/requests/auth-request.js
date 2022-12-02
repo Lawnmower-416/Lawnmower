@@ -45,6 +45,12 @@ export const getAUser = (userId) => {
     return baseAPI.get(`/auth/users/${userId}`);
 }   
 
+export const updateAvatar = (userId, avatarString) => {
+    return baseAPI.put(`/auth/users/${userId}/avatar`, {
+        avatarString: avatarString
+    }, {withCredentials: true});
+}
+
 export const MapVerify = (mapId) => baseAPI.get(`/map/${mapId}/verify/`);
 
 export const TilesetVerify = (tilesetId) => baseAPI.get(`/tileset/${tilesetId}/verify/`);
@@ -57,6 +63,7 @@ const apis = {
     changePassword,
     deleteAccount,
     getAUser,
+    updateAvatar,
     MapVerify,
     TilesetVerify
 }

@@ -397,7 +397,7 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateMapGeneral(mapId, map)
                 if (responseGeneral.data.success) {
-                    if (path === "/profile") {
+                    if (path.slice(0,8) === "/profile") {
                         store.loadUserContent()
                     }
                     if (path === "/community") {
@@ -426,7 +426,7 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateMapGeneral(mapId, map)
                 if (responseGeneral.data.success) {
-                    if (path === "/profile") {
+                    if (path.slice(0,8) === "/profile") {
                         store.loadUserContent()
                     }
                     if (path === "/community") {
@@ -454,7 +454,7 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateTilesetGeneral(tilesetId, tileset)
                 if (responseGeneral.data.success) {
-                    if (path === "/profile") {
+                    if (path.slice(0,8) === "/profile") {
                         store.loadUserContent()
                     }
                     if (path === "/community") {
@@ -482,7 +482,7 @@ function GlobalStoreContextProvider(props) {
                 }
                 const responseGeneral = await api.updateTilesetGeneral(tilesetId, tileset)
                 if (responseGeneral.data.success) {
-                    if (path === "/profile") {
+                    if (path.slice(0,8) === "/profile") {
                         store.loadUserContent()
                     }
                     if (path === "/community") {

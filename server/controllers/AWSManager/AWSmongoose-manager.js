@@ -156,7 +156,6 @@ getTilesetById = async (tilesetId, userId) => {
     //     return tileset;
     // }
     return tileset;
-    return null;
 }
 
 // getTilesets returns all tilesets that are set to public for community page viewing
@@ -183,6 +182,15 @@ updateReport = async (reportId, body) => {
 
 deleteReport = async (reportId) => {
     return await Report.findOneAndDelete({_id: reportId}).catch(err => null);
+
+getUserByUsername = async (username) => {
+    let user = await User.findOne({ username: username }).catch(err => {return null;});
+
+    if (!user) {
+        return null;
+    }
+
+    return user;
 }
 
 module.exports = {
@@ -200,4 +208,5 @@ module.exports = {
     createReport,
     updateReport,
     deleteReport
+    getUserByUsername
 }

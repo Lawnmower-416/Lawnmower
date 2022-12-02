@@ -7,6 +7,10 @@ function TilesetSidebar({ setImportOpen }) {
 
     const { store } = useContext(EditorContext);
 
+    useEffect(() => {
+
+    }, [store.mapTilesets]);
+
     const tilesets = store.mapTilesets;
 
     return (

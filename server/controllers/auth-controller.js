@@ -29,7 +29,8 @@ loggedIn = async (req, res) => {
                 maps: loggedInUser.maps,
                 tilesets: loggedInUser.tilesets,
                 comments: loggedInUser.comments,
-                _id: loggedInUser._id
+                _id: loggedInUser._id,
+                avatar: loggedInUser.avatar,
             }
         })
     } catch (err) {
@@ -451,6 +452,37 @@ getAUser = async (req, res, next) => {
                 joinDate: user.joinDate,
                 maps: user.maps,
                 tilesets: user.tilesets,
+                avatar: user.avatar,
+            });
+        } else {
+            return res.status(404).json({
+                success: false,
+                errorMessage: "User not found."
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({"success": false, errorMessage: "Something went wrong"});
+    }
+}
+
+updateAvatar = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const {avatarString} = req.body
+        console.log(userId, avatarString);
+        const user = await User.findOne({ _id: userId });
+        if (user) {
+            await User.findOneAndUpdate({ _id: userId }, { avatar: avatarString }).catch(err => {
+                return res.status(500).json({
+                    success: false,
+                    errorMessage: "Error updating avatar."
+                });
+            });
+
+            return res.status(200).json({
+                success: true,
+                message: "Avatar updated!"
             });
         } else {
             return res.status(404).json({
@@ -503,4 +535,5 @@ module.exports = {
     TilesetVerify,
     getAUser,
     SendEmailTo
+    updateAvatar
 }

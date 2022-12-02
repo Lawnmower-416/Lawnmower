@@ -15,7 +15,8 @@ const UserSchema = new Schema(
         tilesets: [{ type: ObjectId, ref: 'Tileset' }],
         comments: [{ type: ObjectId, ref: 'Comment' }],
         key: { type: String },
-        changingPassword: { type: String, default: "" }
+        changingPassword: { type: String, default: "" },
+        avatar: { type: String, default: "black" },
     },
     { timestamps: true }
 );
