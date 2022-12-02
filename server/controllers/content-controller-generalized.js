@@ -252,6 +252,9 @@ function deleteReport(req, res) { // todo: check body
         return res.status(200).json({ success: true, report: report });
     }).catch(err => {
         return res.status(500).json({ success: true, errorMessage: "Something went wrong..." });
+    });
+}
+
 function forkTileset(req, res) {
     const {tileset, owner, ownerUsername} = req.body;
     const body = {tileset, owner, ownerUsername};
@@ -294,4 +297,4 @@ module.exports = {
     updateReport,
     deleteReport,
     forkTileset
-};
+}
