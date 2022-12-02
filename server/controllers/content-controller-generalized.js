@@ -98,6 +98,34 @@ function updateMapGeneral(req, res) {
     });
 }
 
+function forkMap(req, res) {
+    const {map, owner, ownerUsername} = req.body;
+    const body = {map, owner, ownerUsername};
+    if (!map || !owner || !ownerUsername) {
+        return res.status(400).json({
+            success: false,
+            errorMessage: 'Improperly formatted request'
+        });
+    }
+    let newMap;
+    databaseManager.forkMap(body, req.userId).then((map) =>
+    {
+        newMap = map;
+        if (newMap) {
+            return res.status(201).json({
+                success: true,
+                map: newMap
+            });
+        } else {
+            return res.status(400).json({
+                success: false,
+                errorMessage: 'Unable to fork map'
+            });
+        }
+    }
+    );
+}
+
 function createTileset(req, res) {
     const {owner, ownerUsername,  title, tileSize} = req.body;
     const body = {owner, ownerUsername, title, tileSize};
@@ -190,6 +218,7 @@ function updateTilesetGeneral(req, res) {
     });
 }
 
+<<<<<<< Updated upstream
 function getReport(req, res) { // todo: check body
     const reportId = req.params.reportId;
     databaseManager.getReport(reportId).then(report => {
@@ -224,6 +253,29 @@ function deleteReport(req, res) { // todo: check body
         return res.status(200).json({ success: true, report: report });
     }).catch(err => {
         return res.status(500).json({ success: true, errorMessage: "Something went wrong..." });
+=======
+function forkTileset(req, res) {
+    const {tileset, owner, ownerUsername} = req.body;
+    const body = {tileset, owner, ownerUsername};
+    if (!tileset || !owner || !ownerUsername) {
+        return res.status(400).json({
+            success: false,
+            errorMessage: 'Improperly formatted request'
+        });
+    }
+    databaseManager.forkTileset(body, req.userId).then((forkedTileset) => {
+        if (forkedTileset) {
+            return res.status(201).json({
+                success: true,
+                tileset: forkedTileset
+            });
+        } else {
+            return res.status(400).json({
+                success: false,
+                errorMessage: 'Unable to fork tileset'
+            });
+        }
+>>>>>>> Stashed changes
     });
 }
 
@@ -233,13 +285,18 @@ module.exports = {
     getMapById,
     getMaps,
     updateMapGeneral,
+    forkMap,
     createTileset,
     deleteTileset,
     getTilesetById,
     getTilesets,
     updateTilesetGeneral,
+<<<<<<< Updated upstream
     getReport,
     createReport,
     updateReport,
     deleteReport
+=======
+    forkTileset
+>>>>>>> Stashed changes
 };

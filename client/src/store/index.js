@@ -600,6 +600,7 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+<<<<<<< Updated upstream
     store.reportUser = async (reporter, reportee, reason) => {
         try {
             const response = await api.reportUser(reporter, reportee._id, reason);
@@ -626,6 +627,51 @@ function GlobalStoreContextProvider(props) {
     store.setErrorMessage = (message) => {
         setErrorMessage(message);
     }
+=======
+    store.forkMap = async (mapId) => {
+        try {
+            const response = await api.getMapById(mapId);
+            if (response.data.success) {
+                const map = response.data.map;
+                let owner = auth.user
+                let ownerUsername = auth.user.username
+                let responseFork = await api.forkMap(map, owner, ownerUsername);
+                if (responseFork.data.success) {
+                    // open map editor with newly created map
+                    // handle it differently for now by refreshing user's maps
+                    auth.user.maps.push(responseFork.data.map._id)
+                    store.loadUserContent()
+                    history("/mapEditor/" + responseFork.data.map._id)
+
+                }
+            }
+        } catch (error) {
+            console.log("Error forking map: ", error);
+        }
+    }
+
+    store.forkTileset = async (tilesetId) => {
+        try {
+            const response = await api.getTilesetById(tilesetId);
+            if (response.data.success) {
+                const tileset = response.data.tileset;
+                let owner = auth.user
+                let ownerUsername = auth.user.username
+                let responseFork = await api.forkTileset(tileset, owner, ownerUsername);
+                if (responseFork.data.success) {
+                    // open tileset editor with newly created tileset
+                    // handle it differently for now by refreshing user's tilesets
+                    auth.user.tilesets.push(responseFork.data.tileset._id)
+                    store.loadUserContent()
+                    history("/tilesetEditor/" + responseFork.data.tileset._id)
+                }
+            }
+        } catch (error) {
+            console.log("Error forking tileset: ", error);
+        }
+    }
+
+>>>>>>> Stashed changes
 
     return (
         <GlobalStoreContext.Provider value={{
