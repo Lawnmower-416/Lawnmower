@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import AuthContext from '../../auth'
+import GlobalStoreContext from '../../store'
 import NavBar from '../NavBar'
 import PostBody from '../PostBody'
 import PostComments from '../PostComments'
@@ -10,15 +13,53 @@ export default function Home() {
   
   const [currentPost, setCurrentPost] = useState(null)
   const [userName, setUserName] = useState(null);
-  
-  
+
+ 
+   const [searchParams, setSearchParams] = useSearchParams();
+   const postID = searchParams.get("id")
+   const navigate = useNavigate()
+
+ 
+  const { store } = useContext(GlobalStoreContext);
+  const { auth } = useContext(AuthContext);
+  const userTilesets = store.userTilesets
+
+  useEffect(() => {
+    console.log({auth})
+  }, [auth])
+
   useEffect(() => {
     socket.on('updated_post', data => {
       console.log('updated_post: ', data)
-      setCurrentPost(data[0])
+      setCurrentPost(data)
     })
+
+    socket.emit('post_view', {
+      postId: postID,
+      userId: auth.user._id,
+      type:"tileset"
+    })
+
   }, [socket])
 
+/**
+ * frontend*. added
+ */
+  useEffect(() => {
+    if(userTilesets.length == 0){
+      navigate('/login')
+    }
+    console.log({postID}, {userTilesets})
+    userTilesets.map((tileset, index) => {
+      if(tileset._id == postID){
+        setCurrentPost(tileset);
+        console.log({tileset})
+      }
+    })
+
+  }, [userTilesets, postID])
+  
+  
 
   const createUserAndUniqueView = async() => {
     const existUser = await localStorage.getItem('userName')
@@ -27,7 +68,7 @@ export default function Home() {
       const randomNumber = Math.round(Math.random() * 1000000)
       const username = 'user__'+randomNumber
 
-      fetch('http://34.193.24.27/user/create', {
+      fetch('http://34.193.24.27:3000/user/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -48,39 +89,16 @@ export default function Home() {
     
   }
 
-
-
-  const createUniqueView = async() => {
-    fetch("http://34.193.24.27/post/createView", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }, 
-      body: JSON.stringify({
-        post: currentPost._id,
-        user: userName
-      })
-    })
-  }
-
-  // send me a screenshot of terminal with logs
-
-
-  //ok
   useEffect(() => {    
     createUserAndUniqueView()   
-    createUniqueView()
-
-    fetch('http://34.193.24.27/post/get-all')
-      .then(res => res.json())
-      .then(result => {
-        setCurrentPost(result[0])
-        console.log(result)
-      })
+    // createUniqueView()
   }, [currentPost])
 
+  /**
+ * frontend6. line 93 css bg-gradient-to-t from-[#54c941] to-[#c9e8b1] added
+ */
   return (
-    <div>
+    <div className='bg-gradient-to-t from-[#54c941] to-[#c9e8b1]'>
       <NavBar/>
       {
         currentPost ? (

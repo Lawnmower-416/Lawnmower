@@ -1,20 +1,25 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import moment from 'moment'
 import { socket } from '../config/SocketIO'
+import AuthContext from '../auth'
 
 export default function PostBody({currentPost, userName}) {
 
+  const {auth} = useContext(AuthContext)
+
   const likePost = async() => {
     socket.emit('post_like', {
-      post: currentPost._id,
-      user: userName
+      postId: currentPost._id,
+      userId: auth.user._id,
+      type:"tileset"
     })
   }
 
   const dislikePost = async() => {
     socket.emit('post_dislike', {
-      post: currentPost._id,
-      user: userName
+      postId: currentPost._id,
+      userId: auth.user._id,
+      type:"tileset"
     })
   }
 
@@ -25,7 +30,7 @@ export default function PostBody({currentPost, userName}) {
         <div className="postbody__like_dislike">
           <img onClick={likePost} className='cursor-pointer' src="/assets/like.png" alt="Like" />
           <div className="postbody__counter">
-            <span>{currentPost?.likes.length}</span>
+            <span>{currentPost?.likedUsers?.length - currentPost?.dislikedUsers?.length}</span>
           </div>
           <img onClick={dislikePost} className='cursor-pointer' src="/assets/dislike.png" alt="Dislike" />
         </div>
@@ -35,15 +40,17 @@ export default function PostBody({currentPost, userName}) {
         </div>
 
         <div className="postbody__heading_text">
-          <h1>Outdoor landscape</h1>
-          <p style={{position: 'relative'}}>created <span className='postbody_display_ago'>{moment(currentPost?.createdAt).fromNow()}</span> by <span className='postbody_display_user'>{currentPost?.user}</span>
+          <h1>{currentPost.title}</h1>
+          <p style={{position: 'relative'}}>
+            created <span className='postbody_display_ago'>{moment(currentPost?.updatedAt).fromNow()}</span> 
+            by <span className='postbody_display_user'>{currentPost?.ownerUsername}</span>
             <span>
               <img style={{position: 'absolute', right: '-70px', top: '-50px'}} src="/assets/user.png" alt="" />
             </span>
           </p>
           <p>
-            <span className='postbody_display_comment'>{currentPost?.comments.length} comments</span>
-            <span className='postbody_display_views'>{currentPost?.views.length} views</span>
+            <span className='postbody_display_comment'>{currentPost?.comments?.length} comments</span>
+            <span className='postbody_display_views'>{currentPost?.viewers?.length} views</span>
             <span className='postbody_action_share'>share</span>
             <span className='postbody_action_save'>save</span>
             <span className='postbody_action_edit'>edit</span>
