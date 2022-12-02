@@ -81,16 +81,19 @@ export const forkTileset = (tileset, owner, ownerUsername) => {
 }
 
 const apis = {
-createMap,
-deleteMap,
-getMapById,
-getMaps,
-updateMapGeneral,
-createTileset,
-deleteTileset,
-getTilesetById,
-getTilesets,
-updateTilesetGeneral
+    createMap,
+    deleteMap,
+    getMapById,
+    getMaps,
+    updateMapGeneral,
+    createTileset,
+    deleteTileset,
+    getTilesetById,
+    getTilesets,
+    updateTilesetGeneral,
+    reportUser,
+    forkMap,
+    forkTileset
 }
 
 export default apis;
