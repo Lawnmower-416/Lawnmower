@@ -16,6 +16,8 @@ function MainEditor() {
     const [lastHoverTile, setLastHoverTile] = useState(null);
     const [worker, setWorker] = useState(null);
 
+    const [socketConfigured, setSocketConfigured] = useState(false);
+
     const layers = store.layers;
     const currentLayer = store.layers[store.currentLayer];
 
@@ -36,12 +38,7 @@ function MainEditor() {
     useEffect(() => {
         const socket = io("http://localhost:3000");
 
-        socket.on("place", (data) => {
-            const {x, y, tileIndex, layerId} = data;
-            store.placeTile(x, y, tileIndex, layerId, true);
-            const layer = store.layers.find(layer => layer._id === layerId);
-            worker.postMessage({type: 'redrawCoordinate', data: {x, y, currentLayer: layer, tiles: store.tiles}});
-        });
+
 
         socket.on("disconnect", () => {
             store.setNotification({
@@ -71,6 +68,19 @@ function MainEditor() {
 
         return () => {
             socket.disconnect();
+        }
+    }, [store.map && store.map._id]);
+
+    useEffect(() => {
+        if(socket && worker && !socketConfigured) {
+            socket.on("place", (data) => {
+                console.log(data);
+                const {x, y, tileIndex, layerId} = data;
+                store.placeTile(x, y, tileIndex, layerId, true);
+                const layer = store.layers.find(layer => layer._id === layerId);
+                worker.postMessage({type: 'redrawCoordinate', data: {x, y, currentLayer: layer, tiles: store.tiles}});
+            });
+            setSocketConfigured(true);
         }
     }, [worker]);
 
