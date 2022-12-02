@@ -20,6 +20,10 @@ router.get('/map/:mapId/tilesets', AuthController.MapVerify, TilesetEditorContro
 router.post('/map/:mapId/collaborator', AuthController.MapVerify, MapEditorController.addCollaborator);
 // Gets all collaborators for a map
 router.get('/map/:mapId/collaborators', AuthController.MapVerify, MapEditorController.getCollaborators);
+//Adds a collaborator to a tileset
+router.post('/tileset/:tilesetId/collaborator', AuthController.TilesetVerify, MapEditorController.addCollaboratorForTileset);
+// Gets all collaborators for a tileset
+router.get('/tileset/:tilesetId/collaborators', AuthController.TilesetVerify, MapEditorController.getCollaboratorsForTileset);
 
 // Layer Routes
 router.post('/map/:mapId/layer', AuthController.MapVerify, LayerEditorController.createLayer);
