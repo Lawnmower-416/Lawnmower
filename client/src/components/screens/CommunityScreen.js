@@ -6,6 +6,7 @@ import ItemCard from '../ItemCard';
 import TagModal from '../modals/TagModal';
 import { generateRandomMaps } from '../../utils/mockData/ItemCard_MockData';
 import { getMaps, getTilesets } from '../../requests/store-request';
+import StoreErrorModal from "../modals/StoreErrorModal";
 import GlobalStoreContext from "../../store"
 import AuthContext from '../../auth';
 
@@ -103,6 +104,7 @@ export default function CommunityScreen() {
     return (
         <div>
             <Header/>
+            <StoreErrorModal />
             <div className="main-background min-h-screen flex-col flex items-center">
                 
                 <div className="flex flex-row justify-center w-full">

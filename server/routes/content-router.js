@@ -18,4 +18,9 @@ router.put('/tileset/:tilesetId/general', ContentController.updateTilesetGeneral
 router.get('/maps', ContentController.getMaps)
 router.get('/tilesets', ContentController.getTilesets)
 
+router.get('/report/:reportId', auth.verify, ContentController.getReport);
+router.post('/report', auth.verify, ContentController.createReport);
+router.put('/report/:reportId', auth.verify, ContentController.updateReport);
+router.delete('/report/:reportId', auth.verify, ContentController.deleteReport);
+
 module.exports = router
