@@ -170,6 +170,8 @@ export default function ItemCard(props) {
 
                         <p className="text-xl">Created: {creationDate}</p>
                     </div>
+
+                    
                 {/* Column 4: Public/Private, Views, Delete, Show Comments */}
                     <div className="flex flex-col order-last text-left space-y-3">
                         <p className="text-xl font-bold">
@@ -181,18 +183,27 @@ export default function ItemCard(props) {
                         </p>
                         <p className="text-xl">Views: {numViews}</p>
 
-                        {
-                            trashCanIcon}
+                        { trashCanIcon }
 
-                        {/* Comments Part */}
-                        <p className="font-bold relative bottom-0 cursor-pointer" onClick={handleView}>
+
+
+{/* frontend*2. commentout line 199-206 & addded line 193-197 */}
+
+                        {/* Comments Part */}   
+                        <Link to={`/expandedcommunity?id=${props.tileset?._id}&type=tileset`}>
+                            <p className="font-bold relative bottom-0 cursor-pointer">
+                                Show Comments
+                            </p>
+                        </Link>
+                        
+                        {/* <p className="font-bold relative bottom-0 cursor-pointer" onClick={handleView}>
                             Show Comments
                             {
                                 expandComments 
                                 ? <ChevronDoubleUpIcon className="w-6" style={{"display": "inline"}} /> 
                                 : <ChevronDownIcon className="w-6" style={{"display": "inline"}} />
                             }
-                        </p>
+                        </p> */}
                     </div>
             </div>
             {/* Displaying Comments */}

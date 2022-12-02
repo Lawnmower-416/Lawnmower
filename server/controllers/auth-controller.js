@@ -58,6 +58,8 @@ login = async (req, res) => {
                 })
         }
 
+        console.log({existingUser})
+
         const passwordCorrect = await bcrypt.compare(password, existingUser.passwordHash);
         if (!passwordCorrect) {
             return res

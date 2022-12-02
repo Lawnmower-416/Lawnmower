@@ -1,15 +1,25 @@
 const commentService = require("../services/comment.service");
 const postService = require("../services/post.service");
+const databaseManager = require("../controllers/AWSManager/AWSmongoose-manager");
+const Tileset = require("../models/tileset-schema");
 
 const commentController = {
   createComment: async(data) => {
     try {
       const parent = data.parent || null
 
-      const existPost = await postService.findOnePost({_id: data.post})
-      const postComments = existPost.comments;
+      console.log({data})
+
+      if(data.type == 'tileset' && data.userId != null){
+        
+      
+
+      const existPost = await Tileset.findOne({_id:data.postId});
+      console.log("existPost", existPost);
+      const postComments = existPost?.comments;
 
       const newComment = await commentService.createComment(data)
+      console.log("newComment", newComment);
       
       if(parent){
         const parentComment = await commentService.findOneComment({_id: parent})
@@ -17,18 +27,72 @@ const commentController = {
         children.push(newComment._id)
 
         const updatedParentComment = await commentService.updateOneComment({_id: parent}, {children: children})
-        console.log(updatedParentComment)
+        console.log("updatedParentComment", updatedParentComment);
       
-        const updatedPost = await postService.findOnePost({_id: data.post})
-        return updatedPost
+        const updatedTileset = await Tileset.findOne({_id: data.postId})
+        .populate({
+          path: 'comments', model: 'Comment',
+          populate: {
+            path: 'children', model: 'Comment',
+            populate: {
+              path: 'children', model: 'Comment',
+              populate: {
+                path: 'children', model: 'Comment',
+                populate: {
+                  path: 'children', model: 'Comment',
+                  populate: {
+                    path: 'children', model: 'Comment',
+                    populate: {
+                      path: 'children', model: 'Comment',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          
+        })
+        return updatedTileset
         // res.status(200).send(newComment)        
       }else{
         const updatedPostComments = [...postComments, newComment._id]
-        await postService.updatePost({_id: data.post}, {comments: updatedPostComments})
-        const updatedPost = await postService.findOnePost({_id: data.post})
-        return updatedPost
+        console.log("updatedPostComments", updatedPostComments)
+        const updatedTileset = await Tileset.findOneAndUpdate({_id: data.postId}, {comments: updatedPostComments})
+        .populate({
+          path: 'comments', model: 'Comment',
+          populate: {
+            path: 'children', model: 'Comment',
+            populate: {
+              path: 'children', model: 'Comment',
+              populate: {
+                path: 'children', model: 'Comment',
+                populate: {
+                  path: 'children', model: 'Comment',
+                  populate: {
+                    path: 'children', model: 'Comment',
+                    populate: {
+                      path: 'children', model: 'Comment',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          
+        })
+        console.log('updated tiles: ', updatedTileset)
+        return updatedTileset;
+
+
+        // await postService.updatePost({_id: data.post}, {comments: updatedPostComments})
+        // const updatedPost = await postService.findOnePost({_id: data.post})
+        // return updatedPost
         // res.status(200).send(newComment)
       }
+    }
+
+
+
     } catch (error) {
       console.log(error)
       return error.message
@@ -59,77 +123,88 @@ const commentController = {
 
   likeComment: async(data) => {
     try {
-      const userName = data.user
-      const commentID = data.comment
+      const userId = data.userId
+      const commentId = data.commentId
 
-      console.log({userName}, {commentID})
+      const existComment = await commentService.findOneComment({_id: commentId})
 
-      const existComment = await commentService.findOneComment({_id: commentID})
       if(existComment){
+
         const commentLikes = existComment.likes;
-        console.log({commentLikes})
-        const isAlreadyliked = commentLikes.filter(user => user == userName)
+        const commentDislikes = existComment.dislikes;
+
+        const isAlreadyLiked = commentLikes.filter(existUserId => {if(existUserId == userId){return existUserId}})
         
+        if(isAlreadyLiked == 0){
 
+          const hasInDisliked = commentDislikes.filter(existUserId => {if(existUserId == userId){return existUserId}})
 
-        if(isAlreadyliked.length == 0){
-          const updatedLikes = [...commentLikes, userName]
-          return await commentService.updateOneComment({_id: commentID}, {likes: updatedLikes})
-          // res.status(201).send(updatedComment)
+          if(hasInDisliked != 0){
+            uniqueDislikes = commentDislikes.filter(existUserId =>{if(existUserId != userId){return existUserId}})
+            await commentService.updateOneComment({_id: commentId}, {dislikes: uniqueDislikes})
+          }else{
+            uniqueLikes = [...commentLikes, userId];
+            await commentService.updateOneComment({_id: commentId}, {likes: uniqueLikes})
+          }
+
         }else{
-          console.log('already liked')
+          // console.log('already disliked', {isAlreadydisliked})
+          console.log("likes: ", {commentLikes})
+          console.log("dislikes: ", {commentDislikes})
+
           // res.status(200).send('already liked')
         }
       }
 
     } catch (error) {
-      
+      console.log(error)
     }
   },
 
+ 
   dislikeComment: async(data) => {
     try {
-      const userName = data.user
-      const commentID = data.comment
+      const userId = data.userId
+      const commentId = data.commentId
 
-      console.log({userName}, {commentID})
+      const existComment = await commentService.findOneComment({_id: commentId})
 
-      const existComment = await commentService.findOneComment({_id: commentID})
       if(existComment){
-        const commentLikes = existComment.likes;
-        console.log({commentLikes})
-        const remainLikes = commentLikes.filter(user => user != userName)
 
-        return await commentService.updateOneComment({_id: commentID}, {likes: remainLikes})
-        // res.status(201).send(updatedComment)
+        const commentLikes = existComment.likes;
+        const commentDislikes = existComment.dislikes;
+
+        const isAlreadydisliked = commentDislikes.filter(existUserId => {if(existUserId == userId){return existUserId}})
         
+        if(isAlreadydisliked.length == 0){
+console.log('hit1')
+          const hasInLiked = commentLikes.filter(existUserId => {if(existUserId == userId){return existUserId}})
+
+          if(hasInLiked.length != 0){
+            uniquelikes = commentLikes.filter(existUserId =>{if(existUserId != userId){return existUserId}})
+            console.log('hit2', uniquelikes)
+            await commentService.updateOneComment({_id: commentId}, {likes: uniquelikes})
+          }else{
+            uniqueDislikes = [...commentDislikes, userId];
+            console.log('hit3', uniqueDislikes)
+            await commentService.updateOneComment({_id: commentId}, {dislikes: uniqueDislikes})
+          }
+
+        }else{
+          // console.log('already disliked', {isAlreadydisliked})
+          console.log("likes: ", {commentLikes})
+          console.log("dislikes: ", {commentDislikes})
+
+          // res.status(200).send('already liked')
+        }
       }
 
     } catch (error) {
-      
+      console.log(error)
     }
   },
 
-  // dislikeComment: async(req, res) => {
-  //   try {
-  //     const userID = data.user
-  //     const commentID = data.comment
-
-  //     const existComment = await commentService.findOneComment({_id: commentID})
-  //     console.log({existComment})
-  //     if(existComment){
-  //       const commentLikes = existComment.likes;
-  //       const filterdLikes = commentLikes.filter(user => user != userID)
-            
-  //       const updatedComment = await commentService.updateOneComment({_id: commentID}, {likes: filterdLikes})
-  //       console.log({updatedComment})
-  //       // res.status(201).send(updatedComment)        
-  //     }
-
-  //   } catch (error) {
-      
-  //   }
-  // },
+ 
 
   deleteComment: async(query) => {
     try {

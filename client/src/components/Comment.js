@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import moment from 'moment'
 import { useEffect } from 'react'
 import { socket } from '../config/SocketIO'
+import AuthContext from '../auth'
 
 export default function Comment({comment, userName, currentPost}) {
 
@@ -14,6 +15,8 @@ export default function Comment({comment, userName, currentPost}) {
     dateStyle: "medium",
     timeStyle: "short"
   })
+
+  const {auth} = useContext(AuthContext)
 
   useEffect(() => {
     console.log("comments.like: ", comment.likes)
@@ -38,31 +41,31 @@ export default function Comment({comment, userName, currentPost}) {
 
     switch(actionType){
       case 'reply': 
-        socket.emit('send_comment', {username: userName, message: inputMessage, post: currentPost._id, parent: comment._id})
+        socket.emit('send_comment', {userId:currentPost.owner,username: currentPost.ownerUsername, message: inputMessage, postId: currentPost._id || null, type: 'tileset', parent: comment._id})
       
         document.getElementById('message').value = ''
         setInputExpand(false)
         break;
 
       case 'edit': 
-        socket.emit('edit_comment', {comment: comment._id, message: inputMessage})
+        console.log('Edit');
+        socket.emit('edit_comment', {comment: comment._id, message: inputMessage, postId: currentPost._id})
         setInputExpand(false)
       
         break;
     }
   }
 
-
   const handleDelete = async() => {
-    socket.emit('comment_delete', { comment: comment._id })
+    socket.emit('comment_delete', { commentId: comment._id, postId: currentPost._id })
   }
 
   const handleCreateLike = async() => {
-    socket.emit('comment_like', {user: userName, comment: comment._id})
+    socket.emit('comment_like', { userId: auth.user._id, commentId: comment._id, postId: currentPost._id })
   }
 
   const handleCreateDislike = async() => {
-    socket.emit('comment_dislike', {user: userName, comment: comment._id})
+    socket.emit('comment_dislike', { userId: auth.user._id, commentId: comment._id, postId: currentPost._id })
   }
 
   return (
@@ -71,7 +74,7 @@ export default function Comment({comment, userName, currentPost}) {
       <div className='comment__root'>
         <div className="comment__like_count">
           <img onClick={handleCreateLike} src="/assets/comment_like.png" alt="" />
-          <p>{comment?.likes?.length}</p>
+          <p>{comment?.likes?.length - comment?.dislikes.length}</p>
           <img onClick={handleCreateDislike} src="/assets/comment_dislike.png" alt="" />
         </div>
         <div className="comment__body">
