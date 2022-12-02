@@ -205,10 +205,13 @@ register = async (req, res, next) => {
     }
 }
 
-SendEmailTo = (userKey, to, subject, path) => {
+SendEmailTo = (userKey, to, subject, path, content) => {
     // Send them an email with a verification code...
     // const userKey = existingUser.key;
-    const body = "http://34.193.24.27:3000" + path + "?email=" + encodeURIComponent(to) + "&key=" + encodeURIComponent(userKey);
+    let body;
+    // Check if there are any contents we need to supply
+    if (!content) body = "http://34.193.24.27:3000" + path + "?email=" + encodeURIComponent(to) + "&key=" + encodeURIComponent(userKey);
+    else body = content;
     // const subject = "Password Reset Link";
 
     let transporter = Nodemailer.createTransport({
@@ -498,5 +501,6 @@ module.exports = {
     deleteAccount,
     MapVerify,
     TilesetVerify,
-    getAUser
+    getAUser,
+    SendEmailTo
 }

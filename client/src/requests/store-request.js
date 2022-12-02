@@ -21,6 +21,15 @@ export const getMapById = (mapId) => {
 export const getMaps = () => {
     return api.get(`/maps`);
 }
+export const reportUser = (reporter, reportee, reason) => {
+    return api.post(`/report`, {
+        reporter: reporter,
+        reportee: reportee,
+        reason: reason,
+    }, {
+        withCredentials: true
+    });
+}
 
 
 export const updateMapGeneral = (mapId, map) => {
@@ -53,16 +62,17 @@ export const updateTilesetGeneral = (tilesetId, tileset) => {
 }
 
 const apis = {
-createMap,
-deleteMap,
-getMapById,
-getMaps,
-updateMapGeneral,
-createTileset,
-deleteTileset,
-getTilesetById,
-getTilesets,
-updateTilesetGeneral
+    createMap,
+    deleteMap,
+    getMapById,
+    getMaps,
+    updateMapGeneral,
+    createTileset,
+    deleteTileset,
+    getTilesetById,
+    getTilesets,
+    updateTilesetGeneral,
+    reportUser
 }
 
 export default apis;

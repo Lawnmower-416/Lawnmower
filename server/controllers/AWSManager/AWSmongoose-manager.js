@@ -1,6 +1,7 @@
 const Map =require('../../models/map-schema');
 const Tileset = require('../../models/tileset-schema');
 const User = require('../../models/user-schema');
+const Report = require('../../models/report-schema');
 const { createCanvas } = require('canvas');
 const { uploadData } = require('./AWS-S3-manager');
 // content-controller-generalized.js is a generalization of database interactions
@@ -167,6 +168,23 @@ updateTilesetGeneral = async (updatedTileset) => {
     return await Tileset.findOneAndUpdate({ _id: updatedTileset.tileset._id}, updatedTileset.tileset, {new: true});
 }
 
+getReport = async (reportId) => {
+    return await Report.findOne({ _id: reportId}).catch(err => null);
+}
+
+createReport = async (body) => {
+    const newReport = new Report(body);
+    return await newReport.save().catch(err => null);
+}
+
+updateReport = async (reportId, body) => {
+    return await Report.findOneAndUpdate({_id: reportId}, body, {new: true}).catch(err => null);
+}
+
+deleteReport = async (reportId) => {
+    return await Report.findOneAndDelete({_id: reportId}).catch(err => null);
+}
+
 module.exports = {
     createMap,
     deleteMap,
@@ -177,5 +195,9 @@ module.exports = {
     deleteTileset,
     getTilesetById,
     getTilesets,
-    updateTilesetGeneral
+    updateTilesetGeneral,
+    getReport,
+    createReport,
+    updateReport,
+    deleteReport
 }

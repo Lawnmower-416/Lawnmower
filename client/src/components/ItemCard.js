@@ -214,7 +214,7 @@ export default function ItemCard(props) {
                     : <div></div>
                 }
             </div>
-            <ReportModal modalOpen={openReportModal} setModalOpen={setReportModal} />
+            <ReportModal modalOpen={openReportModal} setModalOpen={setReportModal} reporter={{username: user.username, _id: user._id}} reportee={{username: ownerUsername, _id: owner}} />
         </div>
         </>
     )
