@@ -42,6 +42,9 @@ export default function Home() {
 
   }, [socket])
 
+
+  // 
+
 /**
  * frontend*. added
  */
@@ -73,8 +76,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({name: username})
-        
+        body: JSON.stringify({name: username})     
       }).then(res => res.json())
       .then( async result => {   
         console.log(result)     
