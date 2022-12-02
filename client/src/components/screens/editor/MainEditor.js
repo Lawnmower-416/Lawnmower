@@ -36,7 +36,7 @@ function MainEditor() {
     const highlightRef = useRef(null);
 
     useEffect(() => {
-        const socket = io("http://34.193.24.27"); //"http://localhost:3000");
+        const socket = io("http://34.193.24.27:3000"); //"http://localhost:3000");
 
 
 
