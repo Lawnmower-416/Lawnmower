@@ -63,7 +63,7 @@ function ImportTilesetModal({isOpen, setIsOpen}) {
                                     as="h3"
                                     className="text-3xl font-medium leading-6 text-white bg-editor-primary p-3 flex justify-between items-center"
                                 >
-                                    <div>Settings</div>
+                                    <div>Import Tileset</div>
                                     <div className="grid grid-cols-2">
                                         <div 
                                             className={"text-lg text-center p-1 hover:cursor-pointer hover:opacity-30 " + (publicTab ? "bg-editor-tertiary" : "bg-editor-highlight")}

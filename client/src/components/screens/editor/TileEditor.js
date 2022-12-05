@@ -2,10 +2,18 @@ import Toolbar from './Toolbar';
 import {useRef, useEffect, useContext, useState} from 'react';
 import EditorContext, {EditorTool} from "../../../editor";
 import TileEditTransaction from "../../../transactions/TileEditTransaction";
+import {io} from "socket.io-client";
+import AuthContext from "../../../auth";
+
+import toast from 'react-hot-toast';
+
 function TileEditor() {
     const { store } = useContext(EditorContext);
+    const { auth } = useContext(AuthContext)
 
     const [dragStart, setDragStart] = useState(null);
+
+    const [socket, setSocket] = useState(null);
 
     const ref = useRef(null);
 
@@ -13,6 +21,37 @@ function TileEditor() {
     const pixelSize = Math.ceil(editorSize / store.tileset.tileSize);
 
     const currentTile = store.tilesetImage.tiles[store.currentTileIndex];
+
+    useEffect(() => {
+        const socket = io("http://34.193.24.27:3000");//"http://localhost:3000");
+
+        socket.on("disconnect", () => {
+            toast.error("Disconnected from server");
+        });
+
+        socket.on("newUserJoin", (data) => {
+            toast(data.message);
+        });
+
+        socket.on("userLeft", (data) => {
+            toast(data.message);
+        });
+
+        socket.on("userConnected", (data) => {
+            toast.success(data.message);
+        });
+
+        socket.emit("join", {
+            id:store.tileset._id,
+            username: auth.user.username
+        });
+
+        setSocket(socket);
+
+        return () => {
+            socket.disconnect();
+        }
+    }, [store.tileset && store.tileset._id]);
 
     useEffect(() => {
         if(ref && currentTile) {

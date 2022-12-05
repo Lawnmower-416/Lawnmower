@@ -8,10 +8,11 @@ import {
     addProperty,
     getAllTilesets, getCollaborators,
     getLayer,
-    getProperty,
+    getProperty, placeTileOnLayer,
     updateLayer,
     updateMap, updateProperty
 } from "../requests/map-editor-api";
+import toast from "react-hot-toast";
 
 
 export const EditorContext = createContext();
@@ -55,6 +56,7 @@ export const EditorActionType = {
     SET_COLLABORATORS: "SET_COLLABORATORS",
 
     CLEAR_ALL: "CLEAR_ALL",
+    DATA_PASTED: "DATA_PASTED",
 }
 
 export const EditorTool = {
@@ -80,6 +82,7 @@ function EditorContextProvider(props) {
         currentColor: {red: 0, green: 0, blue: 0, alpha: 255},
         colors: [],
         currentTileIndex: 0,
+        currentTile: null,
 
         currentTool: EditorTool.SELECT,
         currentItem: null,
@@ -87,8 +90,9 @@ function EditorContextProvider(props) {
         selectedTiles: [],
         selectedPixels: [],
 
-        notification: null,
         collaborators: [],
+
+        dataPasted: false,
     });
 
     useEffect(() => {
@@ -186,10 +190,17 @@ function EditorContextProvider(props) {
                 break;
 
             case EditorActionType.SET_CURRENT_TILE:
-                setStore({
-                    ...store,
-                    currentTileIndex: payload.index,
-                });
+                if(payload.tileInfo) {
+                    setStore({
+                        ...store,
+                        currentTile: payload.tileInfo,
+                    });
+                } else {
+                    setStore({
+                        ...store,
+                        currentTileIndex: payload.index,
+                    });
+                }
                 break;
 
             case EditorActionType.ADD_TRANSACTION:
@@ -249,6 +260,7 @@ function EditorContextProvider(props) {
                     currentColor: {red: 0, green: 0, blue: 0, alpha: 255},
                     colors: [],
                     currentTileIndex: 0,
+                    currentTile: null,
 
                     currentTool: EditorTool.SELECT,
                     currentItem: null,
@@ -256,8 +268,14 @@ function EditorContextProvider(props) {
                     selectedTiles: [],
                     selectedPixels: [],
 
-                    notification: null,
                     collaborators: [],
+                });
+                break;
+
+            case EditorActionType.DATA_PASTED:
+                setStore({
+                    ...store,
+                    dataPasted: !store.dataPasted,
                 });
                 break;
 
@@ -273,13 +291,6 @@ function EditorContextProvider(props) {
         });
     }
 
-    store.setNotification = (notification) => {
-        setStore({
-            ...store,
-            notification: notification,
-        });
-    }
-
     store.addCollaborator = (collaborator) => {
         const isTileset = store.tileset !== null;
         let id;
@@ -290,15 +301,9 @@ function EditorContextProvider(props) {
         }
         addCollaborator(id, collaborator, isTileset).then((response) => {
             if (response.status === 200) {
-                store.setNotification({
-                    type: "success",
-                    message: "Collaborator added successfully!",
-                });
+                toast.success("Collaborator added successfully!");
             } else {
-                store.setNotification({
-                    type: "error",
-                    message: "Failed to add collaborator!",
-                });
+                toast.error("Error adding collaborator!");
             }
         }).catch((error) => {
             let errorMessage;
@@ -308,11 +313,7 @@ function EditorContextProvider(props) {
             } else {
                 errorMessage = "Failed to add collaborator!";
             }
-
-            store.setNotification({
-                type: "error",
-                message: errorMessage,
-            });
+            toast.error(errorMessage);
         });
 
         storeReducer({
@@ -343,16 +344,10 @@ function EditorContextProvider(props) {
                     }
                 });
             } else {
-                store.setNotification({
-                    type: "error",
-                    message: "Failed to load collaborators!",
-                });
+                toast.error("Error loading collaborators!");
             }
         }).catch((error) => {
-            store.setNotification({
-                type: "error",
-                message: "Failed to load collaborators!",
-            });
+            toast.error("Error loading collaborators!");
         });
     }
 
@@ -375,19 +370,24 @@ function EditorContextProvider(props) {
      * @param tilesetOffset {number}
      */
     store.setCurrentTile = (tileIndex, tilesetOffset) => {
-        let fullId = tileIndex;
         if(tilesetOffset !== undefined) {
-            for (let i = 0; i < tilesetOffset; i++) {
-                const tilesetLength = store.mapTilesets[i].imageData.tiles.length;
-                fullId += tilesetLength;
-            }
+            storeReducer({
+                type: EditorActionType.SET_CURRENT_TILE,
+                payload: {
+                    tileInfo: {
+                        tilesetIndex: tilesetOffset,
+                        tileIndex,
+                    }
+                }
+            });
+        } else {
+            storeReducer({
+                type: EditorActionType.SET_CURRENT_TILE,
+                payload: {
+                    index: tileIndex,
+                }
+            });
         }
-        storeReducer({
-            type: EditorActionType.SET_CURRENT_TILE,
-            payload: {
-                index: fullId,
-            }
-        });
     }
 
     /**
@@ -427,28 +427,35 @@ function EditorContextProvider(props) {
         } else {
             layer = layers[store.currentLayer];
         }
+        const index = y * store.map.width + x;
+        layer.data[index] = tile || store.currentTile;
 
-        layer.data[y * store.map.width + x] = tile || store.currentTileIndex;
+        let newTile;
+        if(tile) {
+            newTile = tile;
+        } else {
+            newTile = store.currentTile;
+        }
 
         if(!isDuplicate) {
-            updateLayer(store.map._id, layer._id, layer).then((response) => {
+            placeTileOnLayer(store.map._id, layer._id, newTile, index).then((response) => {
                 if (response.status === 200) {
-                    // store.setNotification({
-                    //     type: "success",
-                    //     message: "Tile placed successfully!",
-                    // });
+                    toast.success("Tile placed successfully!");
                 } else {
-                    store.setNotification({
-                        type: "error",
-                        message: "Failed to place tile!",
-                    });
+                    toast.error("Error placing tile!");
                 }
-            }).catch(() => {
-                store.setNotification({
-                    type: "error",
-                    message: "Failed to place tile!",
-                });
+            }).catch((error) => {
+                toast.error("Error placing tile!");
             });
+            // updateLayer(store.map._id, layer._id, layer).then((response) => {
+            //     if (response.status === 200) {
+            //         toast.success("Layer updated successfully!");
+            //     } else {
+            //         toast.error("Failed to place tile!");
+            //     }
+            // }).catch(() => {
+            //     toast.error("Failed to place tile!");
+            // });
         }
         storeReducer({
             type: EditorActionType.UPDATE_LAYERS,
@@ -1022,14 +1029,24 @@ function EditorContextProvider(props) {
         const minY = store.selectedPixels[0].y;
 
         for (let i = 0; i < pixels.length; i++) {
-            if(store.tileset) {
+            if(store.tileset && store.tileset._id) {
                 const {x, y, color} = pixels[i];
                 store.editTile(x + minX, y + minY, color);
             } else { //map case
                 const {x, y, tile} = pixels[i];
-                store.placeTile(x + minX, y + minY, tile);
+                store.placeTile(x + minX, y + minY, tile, true);
             }
         }
+
+        const layer = store.layers[store.currentLayer];
+        updateLayer(store.map._id, layer._id, layer).then(r => {
+            toast.success("Layer updated");
+            storeReducer({
+                type: EditorActionType.DATA_PASTED,
+            })
+        });
+
+
     }
 
     /**
@@ -1038,14 +1055,23 @@ function EditorContextProvider(props) {
      */
     store.pasteDataActual = (pixels) => {
         for (let i = 0; i < pixels.length; i++) {
-            if(store.tileset) {
+            if(store.tileset && store.tileset._id) {
                 const {x, y, color} = pixels[i];
                 store.editTile(x, y, color);
             } else { //map case
                 const {x, y, tile} = pixels[i];
-                store.placeTile(x, y, tile);
+                store.placeTile(x, y, tile, undefined, true);
             }
         }
+        const layer = store.layers[store.currentLayer];
+        updateLayer(store.map._id, layer._id, layer).then(r => {
+            toast.success("Layer updated");
+
+            storeReducer({
+                type: EditorActionType.DATA_PASTED,
+            })
+        });
+
     }
 
     /**

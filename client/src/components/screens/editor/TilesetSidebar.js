@@ -55,8 +55,6 @@ function TilesetContent({name, current, tiles, tileSize, tilesetOffset}) {
 
     const { store } = useContext(EditorContext);
 
-    console.log(tilesetOffset)
-
     return (
         <div className="text-white">
             <div className="bg-editor-secondary" onClick={() => setOpen(!open)}>

@@ -40,3 +40,20 @@ module.exports.updateTilesetImage = async (tilesetId, tilesetImage) => {
     }
     return null;
 }
+
+module.exports.addCollaborator = async (tilesetId, newCollaborator) => {
+    return await Tileset.findOneAndUpdate(
+        { _id: tilesetId},
+        {$push: {collaborators: newCollaborator._id}},
+        {returnOriginal: false});
+}
+
+module.exports.getCollaborators = async (tilesetId) => {
+    const tileset = await Tileset.findOne({_id: tilesetId}).populate("collaborators");
+
+    if(!tileset) {
+        return null;
+    }
+
+    return tileset.collaborators;
+}

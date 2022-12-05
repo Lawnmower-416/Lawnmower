@@ -48,6 +48,10 @@ export const updateLayer = (mapId, layerId, layer) => {
     return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}`, layer, {withCredentials: true});
 }
 
+export const placeTileOnLayer = (mapId, layerId, tile, index) => {
+    return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}/place`, {tile, index}, {withCredentials: true});
+}
+
 export const deleteLayer = (mapId, layerId) => {
     return baseAPI.delete(`/editor/map/${mapId}/layer/${layerId}`)
 }

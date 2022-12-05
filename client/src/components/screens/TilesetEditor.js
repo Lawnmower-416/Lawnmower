@@ -10,7 +10,8 @@ import TileSidebar from "./editor/TileSidebar";
 import {useParams} from "react-router-dom";
 import EditorContext from "../../editor";
 import DeleteTileModal from "../modals/DeleteTileModal";
-import NotificationHandler from "./editor/NotificationHandler";
+
+import {Toaster} from "react-hot-toast";
 
 function TilesetEditor() {
     const { tilesetId } = useParams();
@@ -41,7 +42,10 @@ function TilesetEditor() {
 
     return (
         <div>
-            <NotificationHandler />
+            <Toaster
+                position="top-right"
+                reverseOrder={false}
+            />
             <TilesetSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen} />
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
             <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} />

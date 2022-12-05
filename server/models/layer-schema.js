@@ -9,7 +9,14 @@ const LayerSchema = new Schema(
         properties: [{ type: ObjectId, ref: 'Property' }],
         height: { type: Number },
         width: { type: Number },
-        data: { type: [Number]},
+        data: { type: [
+                {
+                        _id: false,
+                        tilesetIndex: { type: Number },
+                        tileIndex: { type: Number },
+                }
+         ]
+        },
     },
     { timestamps: true }
 );

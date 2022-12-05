@@ -5,10 +5,19 @@ import EditorContext, {EditorTool} from "../../../editor";
 import { io } from "socket.io-client";
 import AuthContext from "../../../auth";
 
+import toast from 'react-hot-toast';
+
 
 function MainEditor() {
     const { store } = useContext(EditorContext);
     const { auth } = useContext(AuthContext);
+
+    const MAX_ZOOM = 5;
+    const MIN_ZOOM = 0.01;
+    const ZOOM_SPEED = 0.005;
+
+    const canvasHeight = 576;
+    const canvasWidth = 1024;
 
     const [socket, setSocket] = useState(null);
 
@@ -18,45 +27,41 @@ function MainEditor() {
 
     const [socketConfigured, setSocketConfigured] = useState(false);
 
+    const [cameraOffset, setCameraOffset] = useState({x: canvasWidth / 2, y: canvasHeight / 2});
+    const [lastPoint , setLastPoint] = useState({x: window.innerWidth / 2, y: window.innerHeight / 2});
+    const [translateDragStart, setTranslateDragStart] = useState(null);
+
+    const [lastRedraw, setLastRedraw] = useState(null);
+
     const layers = store.layers;
     const currentLayer = store.layers[store.currentLayer];
 
-    let cameraOffset = {x: window.innerWidth / 2, y: window.innerHeight / 2};
     let cameraZoom = 1;
     let isDragging = false;
-    const MAX_ZOOM = 5;
-    const MIN_ZOOM = 0.01;
-    const ZOOM_SPEED = 0.0005;
 
-    const canvasHeight = 576;
-    const canvasWidth = 1024;
+
 
 
     const ref = useRef(null);
     const highlightRef = useRef(null);
 
     useEffect(() => {
-        const socket = io("http://34.193.24.27:3000"); //"http://localhost:3000");
-
-
+        const socket = io("http://34.193.24.27:3000");//"http://localhost:3000");
 
         socket.on("disconnect", () => {
-            store.setNotification({
-                message: "Disconnected from server",
-                type: "error"
-            });
+            toast.error("Disconnected from server");
         });
 
         socket.on("newUserJoin", (data) => {
-            store.setNotification(data);
+            toast(data.message);
         });
 
         socket.on("userLeft", (data) => {
-            store.setNotification(data);
+            toast(data.message);
         });
 
         socket.on("userConnected", (data) => {
-            store.setNotification(data);
+            toast.success(data.message);
         });
 
         socket.emit("join", {
@@ -78,7 +83,12 @@ function MainEditor() {
                 const {x, y, tileIndex, layerId} = data;
                 store.placeTile(x, y, tileIndex, layerId, true);
                 const layer = store.layers.find(layer => layer._id === layerId);
-                worker.postMessage({type: 'redrawCoordinate', data: {x, y, currentLayer: layer, tiles: store.tiles}});
+                worker.postMessage({type: 'redrawCoordinate', data: {
+                    x,
+                    y,
+                    currentLayer: layer,
+                    mapTilesets: store.mapTilesets
+                }});
             });
             setSocketConfigured(true);
         }
@@ -101,27 +111,30 @@ function MainEditor() {
             tileSize: store.map.tileSize,
             canvasWidth: canvasWidth,
             canvasHeight: canvasHeight,
-            layers: layers,
-            tiles: store.tiles
         }}, [offscreenCanvas]);
 
         const handleScroll = event => {
             //const timer = setTimeout(() => {
+            const mousex = event.clientX - canvas.offsetLeft;
+            const mousey = event.clientY - canvas.offsetTop;
+
                 cameraZoom += event.deltaY * ZOOM_SPEED;
                 cameraZoom = Math.min(cameraZoom, MAX_ZOOM);
                 cameraZoom = Math.max(cameraZoom, MIN_ZOOM);
+                console.log(cameraZoom);
                 worker.postMessage({type: 'drawMap', data: {
                     layers: layers,
-                    tiles: store.tiles,
-                    cameraZoom: cameraZoom
+                    mapTilesets: store.mapTilesets,
+                    cameraZoom: cameraZoom,
+                    cameraOffset
                }});
             //}, 3000);
         };
 
-        //window.addEventListener('wheel', handleScroll);
+        window.addEventListener('wheel', handleScroll);
 
         return () => {
-            //window.removeEventListener('wheel', handleScroll);
+            window.removeEventListener('wheel', handleScroll);
             worker.terminate();
         };
     }, [store.mapHeight]);
@@ -129,9 +142,25 @@ function MainEditor() {
 
     useEffect(() => {
         if (worker) {
-            worker.postMessage({type: 'drawMap', data: {layers, tiles: store.tiles, cameraZoom}});
+            worker.postMessage({type: 'drawMap', data: {
+                layers,
+                mapTilesets: store.mapTilesets,
+                cameraZoom,
+                cameraOffset
+            }});
         }
     }, [currentLayer && currentLayer.visible]);
+
+    useEffect(() => {
+        if(worker) {
+            worker.postMessage({type: 'drawMap', data: {
+                layers,
+                mapTilesets: store.mapTilesets,
+                cameraZoom,
+                cameraOffset
+            }});
+        }
+    }, [store.dataPasted]);
 
     useEffect(() => {
         highlightPixels();
@@ -163,7 +192,12 @@ function MainEditor() {
 
             case EditorTool.PAINT:
                 store.placeTile(x, y)
-                worker.postMessage({type: 'redrawCoordinate', data: {x, y, currentLayer, tiles: store.tiles}});
+                worker.postMessage({type: 'redrawCoordinate', data: {
+                    x,
+                    y,
+                    currentLayer,
+                    mapTilesets: store.mapTilesets
+                }});
                 socket.emit("place", {
                     x,
                     y,
@@ -175,10 +209,19 @@ function MainEditor() {
             case EditorTool.FILL:
                 const rerenderList = store.mapFloodFill(x, y);
                 if (rerenderList.length > 100) {
-                    worker.postMessage({type: 'drawMap', data: {layers, tiles: store.tiles, cameraZoom}});
+                    worker.postMessage({type: 'drawMap', data: {
+                        layers,
+                        mapTilesets: store.mapTilesets,
+                        cameraZoom
+                    }});
                 } else{
                     for (let i = 0; i < rerenderList.length; i++) {
-                        worker.postMessage({type: 'redrawCoordinate', data: {x: rerenderList[i].x, y: rerenderList[i].y, currentLayer, tiles: store.tiles}});
+                        worker.postMessage({type: 'redrawCoordinate', data: {
+                            x: rerenderList[i].x,
+                            y: rerenderList[i].y,
+                            currentLayer,
+                            mapTilesets: store.mapTilesets
+                        }});
                     }
                 }
             break;
@@ -190,6 +233,23 @@ function MainEditor() {
     }
 
     const handleHover = (e) => {
+        if(translateDragStart !== null) {
+            let x = e.clientX - translateDragStart.x;
+            let y = e.clientY - translateDragStart.y;
+            setCameraOffset({x, y});
+
+            //run this only 5 times per second
+            if(Date.now() - lastRedraw > 200) {
+                worker.postMessage({type: 'drawMap', data: {
+                    layers,
+                    mapTilesets: store.mapTilesets,
+                    cameraZoom,
+                    cameraOffset
+                }});
+                setLastRedraw(Date.now());
+            }
+        }
+
         const tileSize = store.map.tileSize;
         const rect = ref.current.getBoundingClientRect();
         const x = Math.floor((e.clientX - rect.left) / tileSize);
@@ -210,6 +270,11 @@ function MainEditor() {
     }
 
     const handleDragStart = (e) => {
+        if(store.currentTool === EditorTool.SELECT) {
+            let x = e.clientX / cameraZoom - cameraOffset.x;
+            let y = e.clientY / cameraZoom - cameraOffset.y;
+            setTranslateDragStart({x,y});
+        }
         if(store.currentTool !== EditorTool.REGION) return;
 
         const rect = ref.current.getBoundingClientRect();
@@ -219,6 +284,9 @@ function MainEditor() {
     }
 
     const handleDragEnd = (e) => {
+        if(store.currentTool === EditorTool.SELECT) {
+            setTranslateDragStart(null);
+        }
         if(store.currentTool !== EditorTool.REGION) return;
 
         const rect = ref.current.getBoundingClientRect();

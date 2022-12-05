@@ -13,7 +13,7 @@ module.exports.createLayer = async (layerName, mapId) => {
     if (!fetchedMap) return null;
 
     for (let i = 0; i < fetchedMap.width * fetchedMap.height; i++) {
-        savedLayer.data.push(-1);
+        savedLayer.data.push({tilesetIndex: -1, tileIndex: -1});
     }
     await savedLayer.save();
 
@@ -47,3 +47,13 @@ module.exports.updateLayer = async (layerId, newLayer) => {
     if (!updatedLayer) return null;
     return updatedLayer;
 };
+
+module.exports.placeTile = async (layerId, tile, index) => {
+    const layer = await Layer.findById(layerId);
+    if (!layer) return null;
+    if(layer.data.length <= index) return null;
+    layer.data[index] = tile;
+
+    await layer.save();
+    return layer;
+}

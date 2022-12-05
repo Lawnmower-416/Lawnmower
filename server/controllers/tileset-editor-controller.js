@@ -1,4 +1,5 @@
 const databaseManager = require('./AWSManager/AWStileseteditor-manager')
+const mongooseManager = require("./AWSManager/AWSmongoose-manager");
 
 function getTilesetsForMapById(req, res) {
     const body = req.body;
@@ -84,9 +85,96 @@ function uploadTilesetImage(req, res) {
     });
 }
 
+async function addCollaborator(req, res) {
+    const id = req.params.tilesetId;
+    const newCollaborator = req.body;
+
+    if (!newCollaborator || !newCollaborator.username) {
+        return res.status(400).json({
+            success: false,
+            errorMessage: "No collaborator provided"
+        });
+    }
+
+    let tilesetToUpdate = await mongooseManager.getTilesetById(id, req.userId);
+    let userToAdd = await mongooseManager.getUserByUsername(newCollaborator.username);
+
+    if (!tilesetToUpdate) {
+        return res.status(400).json({
+            success: false,
+            errorMessage: "Tileset not found"
+        });
+    }
+
+    if (tilesetToUpdate.collaborators && tilesetToUpdate.collaborators.includes(userToAdd._id)) {
+        return res.status(400).json({
+            success: false,
+            errorMessage: "User already a collaborator"
+        });
+    }
+
+    if (tilesetToUpdate.collaborators && tilesetToUpdate.collaborators.length >= 10) {
+        return res.status(400).json({
+            success: false,
+            errorMessage: "Tileset already has 10 collaborators"
+        });
+    }
+
+    if (!userToAdd) {
+        return res.status(400).json({
+            success: false,
+            errorMessage: "User not found"
+        });
+    }
+
+    databaseManager.addCollaborator(id, userToAdd).then((tilesetToUpdate) => {
+        if (!tilesetToUpdate) {
+            return res.status(400).json({
+                success: false,
+                errorMessage: "Unable to update tileset"
+            });
+        } else {
+            return res.status(200).json({
+                success: true,
+                tileset: tilesetToUpdate
+            });
+        }
+    });
+}
+
+async function getCollaborators(req, res) {
+    const id = req.params.tilesetId;
+
+    let tileset = await mongooseManager.getTilesetById(id, req.userId);
+
+    if (!tileset) {
+        return res.status(400).json({
+            success: false,
+            errorMessage: "Tileset not found"
+        });
+    }
+
+    databaseManager.getCollaborators(id).then((collaborators) => {
+        if (!collaborators) {
+            return res.status(400).json({
+                success: false,
+                errorMessage: "Unable to get collaborators"
+            });
+        } else {
+            return res.status(200).json({
+                success: true,
+                collaborators: collaborators
+            });
+        }
+    });
+}
+
+
 module.exports = {
     getTilesetsForMapById,
     updateTileset,
     getTilesetImage,
-    uploadTilesetImage
+    uploadTilesetImage,
+    addCollaborator,
+    getCollaborators
 }
