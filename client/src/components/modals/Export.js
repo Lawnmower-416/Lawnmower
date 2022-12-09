@@ -17,11 +17,11 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
   const closeModal = (e) => {
     e.preventDefault();
 
-    if (map) {
+    if (map!=null && tileset==null) {
         let exportLayers = []
         let exportTilesets = []
 
-        let gottenLayers = store.getLayersForExport()
+        let gottenLayers = store.getLayersForExport(map)
         console.log("gottenLayers", gottenLayers)
         
         for (let i = 0; i < gottenLayers.length; i++) {
@@ -37,7 +37,7 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
         }
 
 
-        let gottenTilesets = store.getMapsTilesetsForExport()
+        let gottenTilesets = store.getMapsTilesetsForExport(map)
         console.log("gottenTilesets", gottenTilesets)
         for (let i = 0; i < gottenTilesets.length; i++) {
             let tileset = gottenTilesets[i]
@@ -80,11 +80,9 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
         a.remove();
         setIsOpen(false)
     }
-    if (tileset) {
+    if (tileset!= null && map==null) {
         
-        let gottenTileset = store.getTilesetForExport()
-
-
+        let gottenTileset = store.getTilesetForExport(tileset)
         let exportTileset = {
                 name: gottenTileset.title,
                 tilewidth: gottenTileset.tileSize,
@@ -97,7 +95,6 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
         
 
         const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
-
         const t = document.createElement("a");
         t.download = gottenTileset.title+".json";
         t.href = URL.createObjectURL(blob);
@@ -111,7 +108,6 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
         setIsOpen(false)
         setIsOpen(false)
     }
-
   }
 
   return (
@@ -147,7 +143,7 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
                                     as="h3"
                                     className="text-3xl font-medium leading-6 text-white bg-editor-primary p-3"
                                 >
-                                    Export
+                                    Export + {map ? map.title : tileset ? tileset.title : null}
                                 </Dialog.Title>
                                 <div className="bg-editor-background">
                                     <Listbox value={selected} onChange={setSelected} className="relative mt-1" as="div">
