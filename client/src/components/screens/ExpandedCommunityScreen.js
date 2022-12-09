@@ -17,6 +17,7 @@ export default function Home() {
  
    const [searchParams, setSearchParams] = useSearchParams();
    const postID = searchParams.get("id")
+   const postType = searchParams.get("postType")
    const navigate = useNavigate()
 
  
@@ -37,7 +38,7 @@ export default function Home() {
     socket.emit('post_view', {
       postId: postID,
       userId: auth.user._id,
-      type:"tileset"
+      postType: postType
     })
 
   }, [socket])
@@ -71,7 +72,7 @@ export default function Home() {
       const randomNumber = Math.round(Math.random() * 1000000)
       const username = 'user__'+randomNumber
 
-      fetch('http://34.193.24.27:3000/user/create', {
+      fetch('http://localhost:5000/user/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -106,10 +107,10 @@ export default function Home() {
         currentPost ? (
           <>
             <div className="container">
-              <PostBody currentPost={currentPost} userName={userName}/>
+              <PostBody currentPost={currentPost} userName={userName} postType={postType} />
             </div>
             <div className="">
-              <PostComments userName={userName} currentPost={currentPost} />
+              <PostComments userName={userName} currentPost={currentPost} postType={postType} />
             </div>
           </>
         ) : (

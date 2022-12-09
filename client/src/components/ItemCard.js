@@ -30,6 +30,7 @@ export default function ItemCard(props) {
 
     const location = useLocation();
     const path = location.pathname;
+    const postType = props.postType;
 
     // props.map is defined if the item card is being used for maps
     // props.tileset is defined if the item card is being used for tilesets
@@ -200,7 +201,7 @@ export default function ItemCard(props) {
 {/* frontend*2. commentout line 199-206 & addded line 193-197 */}
 
                         {/* Comments Part */}   
-                        <Link to={`/expandedcommunity?id=${props.tileset?._id}&type=tileset`}>
+                        <Link to={`/expandedcommunity?id=${props.tileset?._id || props.map?._id}&postType=${postType}`}>
                             <p className="font-bold relative bottom-0 cursor-pointer">
                                 Show Comments
                             </p>

@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { socket } from '../config/SocketIO'
 import AuthContext from '../auth'
 
-export default function Comment({comment, userName, currentPost}) {
+export default function Comment({comment, userName, currentPost, postType }) {
 
   const [actionType, setActionType] = useState(null)
   const [inputExpand, setInputExpand] = useState(false)
@@ -41,7 +41,14 @@ export default function Comment({comment, userName, currentPost}) {
 
     switch(actionType){
       case 'reply': 
-        socket.emit('send_comment', {userId:currentPost.owner,username: currentPost.ownerUsername, message: inputMessage, postId: currentPost._id || null, type: 'tileset', parent: comment._id})
+        socket.emit('send_comment', {
+          userId:currentPost.owner,
+          username: currentPost.ownerUsername, 
+          message: inputMessage, 
+          postId: currentPost._id || null, 
+          postType: postType, 
+          parent: comment._id
+        })
       
         document.getElementById('message').value = ''
         setInputExpand(false)
@@ -49,7 +56,12 @@ export default function Comment({comment, userName, currentPost}) {
 
       case 'edit': 
         console.log('Edit');
-        socket.emit('edit_comment', {comment: comment._id, message: inputMessage, postId: currentPost._id})
+        socket.emit('edit_comment', {
+          comment: comment._id, 
+          message: inputMessage, 
+          postId: currentPost._id,
+          postType: postType
+        })
         setInputExpand(false)
       
         break;
@@ -57,15 +69,29 @@ export default function Comment({comment, userName, currentPost}) {
   }
 
   const handleDelete = async() => {
-    socket.emit('comment_delete', { commentId: comment._id, postId: currentPost._id })
+    socket.emit('comment_delete', { 
+      commentId: comment._id, 
+      postId: currentPost._id,
+      postType: postType 
+    })
   }
 
   const handleCreateLike = async() => {
-    socket.emit('comment_like', { userId: auth.user._id, commentId: comment._id, postId: currentPost._id })
+    socket.emit('comment_like', { 
+      userId: auth.user._id, 
+      commentId: comment._id, 
+      postId: currentPost._id,
+      postType: postType
+   })
   }
 
   const handleCreateDislike = async() => {
-    socket.emit('comment_dislike', { userId: auth.user._id, commentId: comment._id, postId: currentPost._id })
+    socket.emit('comment_dislike', { 
+      userId: auth.user._id, 
+      commentId: comment._id, 
+      postId: currentPost._id,
+      postType: postType
+   })
   }
 
   return (
@@ -152,7 +178,7 @@ export default function Comment({comment, userName, currentPost}) {
     <div className="comment__nested">
       {
         comment?.children?.map((com, index) => (
-          <Comment comment={com} userName={userName} currentPost={currentPost}/>
+          <Comment comment={com} userName={userName} currentPost={currentPost} postType={postType}/>
         ))
       }
     </div>

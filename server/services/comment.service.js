@@ -5,6 +5,11 @@ const commentService = {
     return await Comment.create(data)
   },
 
+
+  findComments: async(query) => {
+    return await Comment.find(query)
+  },
+
   findOneComment: async(query) => {
     return await Comment.findOne(query)
   },
