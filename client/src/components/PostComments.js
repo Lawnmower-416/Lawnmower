@@ -5,7 +5,7 @@ import AuthContext from '../auth';
 import { socket } from '../config/SocketIO'; 
 import Comment from './Comment';
 
-export default function PostComments({ userName, currentPost}) {
+export default function PostComments({ postType, currentPost}) {
 
   const [comments, setComments] = useState([])
   const [inputMessage, setInputMessage] = useState(null)
@@ -32,7 +32,7 @@ export default function PostComments({ userName, currentPost}) {
   const handleSubmit = async(e) => {
     e.preventDefault()
 
-    socket.emit('send_comment', {userId:currentPost.owner,username: auth.user.username, message: inputMessage, postId: currentPost._id || null, type: 'tileset'})
+    socket.emit('send_comment', {userId:currentPost.owner,username: auth.user.username, message: inputMessage, postId: currentPost._id || null, postType: postType})
     
     document.getElementById('message').value = ''
   }
@@ -46,7 +46,7 @@ export default function PostComments({ userName, currentPost}) {
         comments?.map((comment, index) => (
           <div key={index}>
             {
-              !comment?.parent && <Comment comment={comment} userName={auth.user.username} currentPost={currentPost}/>
+              !comment?.parent && <Comment comment={comment} userName={auth.user.username} currentPost={currentPost} postType={postType} />
             }
             
             {/* {
