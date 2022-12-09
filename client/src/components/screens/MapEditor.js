@@ -60,7 +60,7 @@ function MapEditor() {
             />
             <MapSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen}/>
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
-            <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} map={mapId} tileset={null}/>
+            <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} map={mapId} mapTitle={store.map.title} tileset={null} tilesetTitle={null}/>
             <ImportTilesetModal isOpen={importOpen} setIsOpen={setImportOpen} />
             <ShareModal modalOpen={shareOpen} setModalOpen={setShareOpen} />
 
