@@ -7,7 +7,7 @@ import MapSettingsModal from "../modals/MapSettingsModal";
 import ExportModal from "../modals/Export";
 import EditHistoryModal from "../modals/EditHistoryModal";
 import ImportTilesetModal from "../modals/ImportTilesetModal";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import EditorContext from "../../editor";
 import ShareModal from "../modals/ShareModal";
 
@@ -20,9 +20,19 @@ function MapEditor() {
 
     const { store } = useContext(EditorContext);
 
+    const navigator = useNavigate();
+
     useEffect(() => {
-        store.reset();
-        store.setMap(mapId);
+        async function loadMap() {
+            store.reset();
+            return await store.setMap(mapId);
+        }
+
+        loadMap().then(success => {
+            if(!success) {
+                navigator('/unauthorized');
+            }
+        });
 
         return () => {
             store.reset();

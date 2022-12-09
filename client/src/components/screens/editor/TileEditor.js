@@ -41,6 +41,12 @@ function TileEditor() {
             toast.success(data.message);
         });
 
+        socket.on("place", (data) => {
+            const {x, y, color, tileIndex} = data;
+
+            store.editTile(x, y, color, tileIndex);
+        });
+
         socket.emit("join", {
             id:store.tileset._id,
             username: auth.user.username
@@ -175,6 +181,13 @@ function TileEditor() {
             y,
             store.editTile
         ));
+
+        socket.emit("place", {
+            x,
+            y,
+            tileIndex: store.currentTileIndex,
+            color
+        });
 
         drawTile();
     }

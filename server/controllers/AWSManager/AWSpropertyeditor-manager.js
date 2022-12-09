@@ -2,12 +2,15 @@ const Property = require("../../models/property-schema");
 const Layer = require("../../models/layer-schema");
 
 module.exports.createProperty = async (name, layerId) => {
+    const layer = await Layer.findOne({ _id: layerId });
+    if (!layer) return null;
+
+    if(layer.properties.length >= 10) return null;
+
     const newProperty = new Property({name});
     if (!newProperty) return null;
     await newProperty.save();
 
-    const layer = await Layer.findOne({ _id: layerId });
-    if (!layer) return null;
     layer.properties.push(newProperty);
     await layer.save();
     

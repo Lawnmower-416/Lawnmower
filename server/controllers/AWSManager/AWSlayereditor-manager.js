@@ -5,16 +5,22 @@ const {save} = require("debug");
 module.exports.createLayer = async (layerName, mapId) => {
     if (!layerName) return null;
 
-    const newLayer = new Layer({name: layerName});
-    const savedLayer = await newLayer.save();
-
-    // Save into map
     const fetchedMap = await Map.findById(mapId);
     if (!fetchedMap) return null;
 
-    for (let i = 0; i < fetchedMap.width * fetchedMap.height; i++) {
-        savedLayer.data.push({tilesetIndex: -1, tileIndex: -1});
+    if(fetchedMap.layers.length >= 10) return null;
+
+    const newLayer = new Layer({name: layerName});
+    const savedLayer = await newLayer.save();
+
+    const length = fetchedMap.width * fetchedMap.height;
+    let data = new Array(length);
+    for (let i = 0; i < length; i++) {
+        data[i] = {tilesetIndex: -1, tileIndex: -1};
     }
+
+    savedLayer.data = data;
+
     await savedLayer.save();
 
     fetchedMap.layers.push(savedLayer);

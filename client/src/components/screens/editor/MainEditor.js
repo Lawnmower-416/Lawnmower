@@ -191,6 +191,10 @@ function MainEditor() {
                 break;
 
             case EditorTool.PAINT:
+                if(currentLayer.locked) {
+                    toast.error("This layer is locked");
+                    return;
+                }
                 store.placeTile(x, y)
                 worker.postMessage({type: 'redrawCoordinate', data: {
                     x,
@@ -207,6 +211,10 @@ function MainEditor() {
             break;
 
             case EditorTool.FILL:
+                if(currentLayer.locked) {
+                    toast.error("This layer is locked");
+                    return;
+                }
                 const rerenderList = store.mapFloodFill(x, y);
                 if (rerenderList.length > 100) {
                     worker.postMessage({type: 'drawMap', data: {

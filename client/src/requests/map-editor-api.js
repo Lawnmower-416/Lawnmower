@@ -64,8 +64,8 @@ export const addProperty = (mapId, layerId, propertyName) => {
     return baseAPI.post(`/editor/map/${mapId}/layer/${layerId}/property`,{name: propertyName}, {withCredentials: true});
 }
 
-export const updateProperty = (mapId, layerId, propertyId, property) => {
-    return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}/property/${propertyId}`, property, {withCredentials: true});
+export const updateProperty = (mapId, layerId, property) => {
+    return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}/property/${property._id}`, property, {withCredentials: true});
 }
 
 export const deleteProperty = (mapId, layerId, propertyId) => {

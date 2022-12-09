@@ -7,7 +7,7 @@ import ColorSidebar from "./editor/ColorSidebar";
 import Headerbar from "./editor/Headerbar";
 import TileEditor from "./editor/TileEditor";
 import TileSidebar from "./editor/TileSidebar";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import EditorContext from "../../editor";
 import DeleteTileModal from "../modals/DeleteTileModal";
 
@@ -18,8 +18,18 @@ function TilesetEditor() {
 
     const { store } = useContext(EditorContext);
 
+    const navigator = useNavigate();
+
     useEffect(() => {
-        store.setTileset(tilesetId);
+        async function loadTileset() {
+            return await store.setTileset(tilesetId);
+        }
+
+        loadTileset().then(success => {
+            if(!success) {
+                navigator("/unauthorized");
+            }
+        });
 
         return () => {
             store.reset();

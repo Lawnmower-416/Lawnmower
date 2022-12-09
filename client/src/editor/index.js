@@ -57,6 +57,8 @@ export const EditorActionType = {
 
     CLEAR_ALL: "CLEAR_ALL",
     DATA_PASTED: "DATA_PASTED",
+    UPDATE_PROPERTY: "UPDATE_PROPERTY",
+
 }
 
 export const EditorTool = {
@@ -608,7 +610,28 @@ function EditorContextProvider(props) {
     }
     // handles changing a property's type
     store.changePropType = async (prop, type) => {
-    
+        prop.type = type;
+
+        const currentLayer = store.layers[store.currentLayer];
+        const res = await updateProperty(store.map._id, currentLayer._id, prop).catch(err => {
+            if(err.response && err.response.status === 401) {
+                return err.response;
+            } else {
+                return null;
+            }
+        });
+
+        if(res && res.status === 200) {
+            storeReducer({
+                type: EditorActionType.UPDATE_PROPERTY,
+                payload: {
+                    property: prop
+                }
+            })
+            return true;
+        }
+        return false;
+
     }
     // handles changing a property's value
     store.changePropValue = async (prop, value) => {
@@ -652,9 +675,15 @@ function EditorContextProvider(props) {
     }
 
     store.setMap = async (mapId) => {
-        const res = await getMapById(mapId);
+        const res = await getMapById(mapId).catch(err => {
+            if(err.response && err.response.status === 401) {
+                return err.response;
+            } else {
+                return null;
+            }
+        });
 
-        if (res.status === 200) {
+        if (res && res.status === 200) {
             const {map} = res.data;
 
             //TODO: Error handling
@@ -711,6 +740,18 @@ function EditorContextProvider(props) {
                     tiles
                 }
             });
+            return true;
+        } else {
+            storeReducer({
+                type: EditorActionType.SET_MAP,
+                payload: {
+                    map: null,
+                    layers: [],
+                    mapTilesets: [],
+                    tiles: []
+                }
+            });
+            return false;
         }
     }
 
@@ -740,9 +781,15 @@ function EditorContextProvider(props) {
      * @param tilesetId {string} id of tileset to load
      */
     store.setTileset = async (tilesetId) => {
-        const res = await getTilesetById(tilesetId);
+        const res = await getTilesetById(tilesetId).catch(err => {
+            if(err.response && err.response.status === 401) {
+                return err.response;
+            } else {
+                return null;
+            }
+        });
 
-        if (res.status === 200) {
+        if (res && res.status === 200) {
             const {tileset} = res.data;
 
             //TODO: Error handling
@@ -754,7 +801,17 @@ function EditorContextProvider(props) {
                     tileset: tileset,
                     tilesetImage: imageData,
                 }
-            })
+            });
+            return true;
+        } else {
+            storeReducer({
+                type: EditorActionType.SET_TILESET,
+                payload: {
+                    tileset: null,
+                    tilesetImage: null,
+                }
+            });
+            return false;
         }
     }
 
@@ -844,11 +901,12 @@ function EditorContextProvider(props) {
      * @param y {number} y-coordinate
      * @param color {{red: number, green: number, blue: number, alpha: number}}
      */
-    store.editTile = (x, y, color) => {
+    store.editTile = (x, y, color, tileIndex) => {
         if(x < 0 || y < 0 || x >= store.tileset.tileSize || y >= store.tileset.tileSize) return;
 
         const newImage = { ...store.tilesetImage };
-        const tile = newImage.tiles[store.currentTileIndex].data;
+        const tileIndexToEdit = tileIndex || store.currentTileIndex;
+        const tile = newImage.tiles[tileIndexToEdit].data;
 
         const c = color || store.currentColor
         const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
@@ -866,7 +924,9 @@ function EditorContextProvider(props) {
             payload: {
                 tilesetImage: newImage
             }
-        })
+        });
+
+        //TODO: Update DB after swap from S3 bucket
     }
 
     /**
