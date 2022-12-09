@@ -7,10 +7,11 @@ import MapSettingsModal from "../modals/MapSettingsModal";
 import ExportModal from "../modals/Export";
 import EditHistoryModal from "../modals/EditHistoryModal";
 import ImportTilesetModal from "../modals/ImportTilesetModal";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import EditorContext from "../../editor";
 import ShareModal from "../modals/ShareModal";
-import NotificationHandler from "./editor/NotificationHandler";
+
+import {Toaster} from "react-hot-toast";
 
 
 
@@ -19,9 +20,19 @@ function MapEditor() {
 
     const { store } = useContext(EditorContext);
 
+    const navigator = useNavigate();
+
     useEffect(() => {
-        store.reset();
-        store.setMap(mapId);
+        async function loadMap() {
+            store.reset();
+            return await store.setMap(mapId);
+        }
+
+        loadMap().then(success => {
+            if(!success) {
+                navigator('/unauthorized');
+            }
+        });
 
         return () => {
             store.reset();
@@ -43,7 +54,10 @@ function MapEditor() {
 
     return (
         <div>
-            <NotificationHandler />
+            <Toaster
+                position="top-right"
+                reverseOrder={false}
+            />
             <MapSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen}/>
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
             <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} map={map}/>

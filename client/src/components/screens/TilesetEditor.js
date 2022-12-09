@@ -7,18 +7,29 @@ import ColorSidebar from "./editor/ColorSidebar";
 import Headerbar from "./editor/Headerbar";
 import TileEditor from "./editor/TileEditor";
 import TileSidebar from "./editor/TileSidebar";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import EditorContext from "../../editor";
 import DeleteTileModal from "../modals/DeleteTileModal";
-import NotificationHandler from "./editor/NotificationHandler";
+
+import {Toaster} from "react-hot-toast";
 
 function TilesetEditor() {
     const { tilesetId } = useParams();
 
     const { store } = useContext(EditorContext);
 
+    const navigator = useNavigate();
+
     useEffect(() => {
-        store.setTileset(tilesetId);
+        async function loadTileset() {
+            return await store.setTileset(tilesetId);
+        }
+
+        loadTileset().then(success => {
+            if(!success) {
+                navigator("/unauthorized");
+            }
+        });
 
         return () => {
             store.reset();
@@ -41,7 +52,10 @@ function TilesetEditor() {
 
     return (
         <div>
-            <NotificationHandler />
+            <Toaster
+                position="top-right"
+                reverseOrder={false}
+            />
             <TilesetSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen} />
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
             <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} tileset={tileset}/>

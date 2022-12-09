@@ -20,6 +20,7 @@ import ExpandedCommunityScreen from './components/screens/ExpandedCommunityScree
 import Header from './components/screens/Header';
 import VerifiedAccountScreen from './components/screens/VerifiedAccountScreen';
 import PasswordChangedScreen from "./components/screens/PasswordChangedScreen";
+import UnauthorizedPage from "./components/screens/UnauthorizedPage";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
               <Route path="/expandedcommunity" exact element={<ExpandedCommunityScreen/>} />
               <Route path="/verified-account" exact element={<VerifiedAccountScreen/>} />
               <Route path="/verified-password-change" exact element={<PasswordChangedScreen/>} />
+              <Route path="unauthorized" element={<UnauthorizedPage />} />
               <Route path="*" element={
               <div>
                 <Header />

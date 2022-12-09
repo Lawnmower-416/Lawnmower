@@ -41,7 +41,7 @@ onmessage = (e) => {
     postMessage({message: ret});
 }
 
-const drawMap = ({layers, tiles, cameraZoom}) => {
+const drawMap = ({layers, mapTilesets, cameraZoom, cameraOffset}) => {
     const start = performance.now();
 
     // number of tiles that can fix in the canvas
@@ -50,10 +50,13 @@ const drawMap = ({layers, tiles, cameraZoom}) => {
 
     const context = canvas.getContext('2d');
 
+    console.log(cameraOffset)
     context.clearRect(0, 0, canvasWidth, canvasHeight);
+    context.translate(0,0)
     //context.translate(canvasWidth / 2, canvasHeight / 2);
-    //console.log(cameraZoom);
     //context.scale(cameraZoom, cameraZoom);
+    //context.translate( -canvasWidth / 2 + cameraOffset.x, -canvasHeight / 2 + cameraOffset.y )
+
 
 
     for(let i = 0; i < layers.length; i++) {
@@ -62,9 +65,10 @@ const drawMap = ({layers, tiles, cameraZoom}) => {
         for(let j = 0; j < mapHeight; j++) {
             for(let i = 0; i < mapWidth; i++) {
                 const index = j * mapWidth + i;
-                const tileIndex = layer.data[index];
-                if(tileIndex === -1) continue;
-                const tile = tiles[tileIndex];
+                const tileInfo = layer.data[index];
+                const {tilesetIndex, tileIndex} = tileInfo;
+                if(tileIndex === -1 || tilesetIndex === -1) continue;
+                const tile = mapTilesets[tilesetIndex].imageData.tiles[tileIndex];
                 const colorData = new Uint8ClampedArray(Object.values(tile.data));
                 for(let y = 0; y < tileSize; y++) {
                     for(let x = 0; x < tileSize; x++) {
@@ -76,21 +80,21 @@ const drawMap = ({layers, tiles, cameraZoom}) => {
             }
         }
     }
-
     const end = performance.now();
     console.log("redraw took " + (end - start) + " ms");
 }
 
-const redrawCoordinate = ({x: i,y: j, currentLayer, tiles}) => {
+const redrawCoordinate = ({x: i,y: j, currentLayer, mapTilesets}) => {
     const start = performance.now();
 
     const context = canvas.getContext('2d');
     const layer = currentLayer;
     const index = j * mapWidth + i;
-    const tileIndex = layer.data[index];
     context.clearRect(i*tileSize, j*tileSize, tileSize, tileSize);
-    if(tileIndex === -1) return;
-    const tile = tiles[tileIndex];
+    const tileInfo = layer.data[index];
+    const {tilesetIndex, tileIndex} = tileInfo;
+    console.log(currentLayer)
+    const tile = mapTilesets[tilesetIndex].imageData.tiles[tileIndex];
     const colorData = new Uint8ClampedArray(Object.values(tile.data));
     for(let y = 0; y < tileSize; y++) {
         for(let x = 0; x < tileSize; x++) {

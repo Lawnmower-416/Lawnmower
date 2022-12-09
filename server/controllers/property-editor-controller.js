@@ -61,7 +61,7 @@ function updateProperty(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        databaseManager.updateProperty(body, req.params.propertyId).then((property) => {
+        databaseManager.updateProperty(body).then((property) => {
             if (property) {
                 return res.status(200).json({
                     success: true,
@@ -85,11 +85,11 @@ function deleteProperty(req, res) {
             errorMessage: 'Improperly formatted request'
         });
     } else {
-        databaseManager.deleteProperty(req.params.propertyId).then((property) => {
-            if (property) {
+        databaseManager.deleteProperty(req.params.propertyId).then((updatedProperty) => {
+            if (updatedProperty) {
                 return res.status(200).json({
                     success: true,
-                    property: property
+                    property: updatedProperty
                 });
             } else {
                 return res.status(400).json({

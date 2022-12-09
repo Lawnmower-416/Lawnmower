@@ -48,6 +48,10 @@ export const updateLayer = (mapId, layerId, layer) => {
     return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}`, layer, {withCredentials: true});
 }
 
+export const placeTileOnLayer = (mapId, layerId, tile, index) => {
+    return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}/place`, {tile, index}, {withCredentials: true});
+}
+
 export const deleteLayer = (mapId, layerId) => {
     return baseAPI.delete(`/editor/map/${mapId}/layer/${layerId}`)
 }
@@ -60,8 +64,8 @@ export const addProperty = (mapId, layerId, propertyName) => {
     return baseAPI.post(`/editor/map/${mapId}/layer/${layerId}/property`,{name: propertyName}, {withCredentials: true});
 }
 
-export const updateProperty = (mapId, layerId, propertyId, property) => {
-    return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}/property/${propertyId}`, property, {withCredentials: true});
+export const updateProperty = (mapId, layerId, property) => {
+    return baseAPI.put(`/editor/map/${mapId}/layer/${layerId}/property/${property._id}`, property, {withCredentials: true});
 }
 
 export const deleteProperty = (mapId, layerId, propertyId) => {

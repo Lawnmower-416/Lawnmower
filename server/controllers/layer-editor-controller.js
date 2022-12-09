@@ -90,9 +90,42 @@ function updateLayer(req, res) {
     })
 }
 
+function placeTile(req, res) {
+    const body = req.body;
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: 'Improperly formatted request'
+        })
+    }
+
+    const { tile, index } = body;
+
+    if(!tile || !index || tile.tilesetIndex === undefined || tile.tileIndex === undefined || index < 0) {
+        return res.status(400).json({
+            success: false,
+            error: 'Improperly formatted request'
+        })
+    }
+
+
+    databaseManager.placeTile(req.params.layerId, tile, index).then((updatedLayer) => {
+        if (updatedLayer) {
+            return res.status(200).json({
+                success: true
+            })
+        }
+        return res.status(404).json({
+            success: false,
+            error: 'Layer not found'
+        })
+    })
+}
+
 module.exports = {
     createLayer,
     deleteLayer,
     getLayer,
-    updateLayer
+    updateLayer,
+    placeTile
 }

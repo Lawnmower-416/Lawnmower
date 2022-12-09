@@ -21,9 +21,14 @@ function Toolbar() {
     const handleCopy = () => {
         navigator.clipboard.write(
             // eslint-disable-next-line no-undef
-            [new ClipboardItem({ 'text/plain': new Blob([JSON.stringify(store.getCopyData())], { type: 'text/plain' }) })
-            ]);
-    }
+            [new ClipboardItem({'text/plain': new Blob([JSON.stringify(store.getCopyData())], {type: 'text/plain'})})
+            ]).then(r => {
+                store.setNotification({
+                    message: 'Copied to clipboard',
+                    type: 'success'
+                })
+        });
+     }
 
     const handleCut = () => {
         const isTileset = store.tileset !== null;
@@ -63,7 +68,6 @@ function Toolbar() {
                 store.pasteDataActual
             )
         );
-        //store.clearSelectedPixels();
     }
 
     const handlePaste = () => {
