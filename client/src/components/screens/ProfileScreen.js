@@ -57,7 +57,7 @@ export default function Profile() {
 
     useEffect(() => {
         console.log({auth})
-        fetch(`http://localhost:5000/user-comments/${auth?.user?.username}`)
+        fetch(`http://34.193.24.27:3000/user-comments/${auth?.user?.username}`)
             .then(res => res.json())
             .then(result => {
                 console.log(result)

@@ -211,7 +211,7 @@ SendEmailTo = (userKey, to, subject, path, content) => {
     // const userKey = existingUser.key;
     let body;
     // Check if there are any contents we need to supply
-    if (!content) body = "http://localhost:5000" + path + "?email=" + encodeURIComponent(to) + "&key=" + encodeURIComponent(userKey);
+    if (!content) body = "http://34.193.24.27:3000" + path + "?email=" + encodeURIComponent(to) + "&key=" + encodeURIComponent(userKey);
     else body = content;
     // const subject = "Password Reset Link";
 

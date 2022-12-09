@@ -21,8 +21,7 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3001",
-    // origin: "http://34.193.24.27",
+    origin: "http://34.193.24.27",
     methods: ["GET", "POST"]
   }
 })
@@ -30,8 +29,7 @@ const io = new Server(server, {
 
 const cors = require('cors');
 app.use(cors({
-  origin: 'http://localhost:3001',
-  // origin: 'http://34.193.24.27',
+  origin: 'http://34.193.24.27',
   credentials: true
 }));
 
