@@ -10,7 +10,7 @@ const app = express();
 const hostname = "0.0.0.0";
 
 
-const port = 5000 || process.env.PORT ;
+const port = 3000 || process.env.PORT ;
 
 
 const routes = require('./routes');
