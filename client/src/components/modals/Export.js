@@ -4,7 +4,7 @@ import { Fragment, useState, useContext } from 'react'
 import EditorContext from "../../editor";
 
 
-function ExportModal({isOpen, setIsOpen, map, tileset}) {
+function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) {
     const [selected, setSelected] = useState('json')
     const { store } = useContext(EditorContext);
 
@@ -75,7 +75,7 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
                 const blob = new Blob([JSON.stringify(exportMap)], {type: "text/json"});
 
                 const a = document.createElement("a");
-                a.download = map.title+".json"; //filename
+                a.download = mapTitle+".json"; //filename
                 a.href = URL.createObjectURL(blob);
                 const clickEvt = new MouseEvent("click", {
                     view: window,
@@ -103,11 +103,10 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
                     imageheight: gottenTileset.imageHeight,
                     imagewidth: gottenTileset.imageWidth,
                 }
-            
-
+            console.log("exportTileset:", exportTileset)
             const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
             const t = document.createElement("a");
-            t.download = gottenTileset.title+".json";
+            t.download = tilesetTitle+".json";
             t.href = URL.createObjectURL(blob);
             const clickEvt = new MouseEvent("click", {
                 view: window,
@@ -155,7 +154,7 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
                                     as="h3"
                                     className="text-3xl font-medium leading-6 text-white bg-editor-primary p-3"
                                 >
-                                    Export + {map ? map.title : tileset ? tileset.title : null}
+                                    Export {map ? map.title : tileset ? tileset.title : null}
                                 </Dialog.Title>
                                 <div className="bg-editor-background">
                                     <Listbox value={selected} onChange={setSelected} className="relative mt-1" as="div">
@@ -209,6 +208,13 @@ function ExportModal({isOpen, setIsOpen, map, tileset}) {
                                             onClick={closeModal}
                                         >
                                         Export
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="inline-flex justify-center rounded-full border border-transparent bg-editor-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30"
+                                            onClick={closeModal}
+                                        >
+                                        Cancel
                                         </button>
                                     </div>
                                 </div>

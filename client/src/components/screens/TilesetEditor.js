@@ -58,7 +58,7 @@ function TilesetEditor() {
             />
             <TilesetSettingsModal isOpen={settingsOpen} setIsOpen={setSettingsOpen} />
             <EditHistoryModal isOpen={historyOpen} setIsOpen={setHistoryOpen} />
-            <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} map={null} tileset={tilesetId}/>
+            <ExportModal isOpen={exportOpen} setIsOpen={setExportOpen} map={null} mapTitle={null} tileset={tilesetId} tilesetTitle={tileset.title}/>
             <ShareModal modalOpen={shareOpen} setModalOpen={setShareOpen} />
             <DeleteTileModal isOpen={deleteTileOpen} setIsOpen={setDeleteTileOpen} />
 
