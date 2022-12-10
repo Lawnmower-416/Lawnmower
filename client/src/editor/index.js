@@ -804,7 +804,14 @@ function EditorContextProvider(props) {
 
     store.getTilesetForExport = async (tilesetId) => {
         const tileset = (await getTilesetById(tilesetId)).data.tileset;
-        return tileset;
+
+        const image = await getTilesetImage(tilesetId);
+        const imageData = image.data.tilesetImage;
+        let payload = {
+            tileset,
+            imageData
+        }
+        return payload;
     }
 
 

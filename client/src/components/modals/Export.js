@@ -24,10 +24,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
         //let gottenLayers = store.getLayersForExport(map)
         //console.log("gottenLayers", gottenLayers)
 
-
-
         store.getLayersForExport(map).then((gottenLayers) => {
-
         
             for (let i = 0; i < gottenLayers.length; i++) {
                 let layer = gottenLayers[i]
@@ -93,15 +90,15 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
         //let gottenTileset = store.getTilesetForExport(tileset)
         //console.log("gottenTileset", gottenTileset)
 
-        store.getTilesetForExport(tileset).then((gottenTileset) => {
+        store.getTilesetForExport(tileset).then((payload) => {
             let exportTileset = {
-                    name: gottenTileset.title,
-                    tilewidth: gottenTileset.tileSize,
-                    tileheight: gottenTileset.tileSize,
-                    tilecount: gottenTileset.tileCount,
-                    image: gottenTileset.image,
-                    imageheight: gottenTileset.imageHeight,
-                    imagewidth: gottenTileset.imageWidth,
+                    name: payload.tileset.title,
+                    tilewidth: payload.tileset.tileSize,
+                    tileheight: payload.tileSize,
+                    tilecount: payload.tileset.tileCount,
+                    image: payload.imageData,
+                    imageheight: payload.tileset.imageHeight,
+                    imagewidth: payload.tileset.imageWidth,
                 }
             console.log("exportTileset:", exportTileset)
             const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
