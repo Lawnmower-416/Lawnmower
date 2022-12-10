@@ -59,6 +59,8 @@ export const EditorActionType = {
     DATA_PASTED: "DATA_PASTED",
     UPDATE_PROPERTY: "UPDATE_PROPERTY",
 
+    SET_MAP_CANVAS_REF: "SET_MAP_CANVAS_REF",
+
 }
 
 export const EditorTool = {
@@ -95,6 +97,8 @@ function EditorContextProvider(props) {
         collaborators: [],
 
         dataPasted: false,
+
+        mapCanvasRef: null,
     });
 
     useEffect(() => {
@@ -281,10 +285,27 @@ function EditorContextProvider(props) {
                 });
                 break;
 
+            case EditorActionType.SET_MAP_CANVAS_REF:
+                setStore({
+                    ...store,
+                    mapCanvasRef: payload.mapCanvasRef,
+                });
+                break;
+
             default:
                 console.error("Unknown action type: " + type);
                 break;
         }
+    }
+
+    store.setCanvasRef = (mapCanvasRef) => {
+        console.log(mapCanvasRef)
+        storeReducer({
+            type: EditorActionType.SET_MAP_CANVAS_REF,
+            payload: {
+                mapCanvasRef: mapCanvasRef,
+            }
+        });
     }
 
     store.reset = () => {
