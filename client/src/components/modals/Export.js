@@ -186,6 +186,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
     }
 
     function mapExportPng() {
+        /*
         const canvas = store.mapCanvasRef;
         console.log(canvas);
         const dataUrl = canvas.toDataURL('image/png')
@@ -193,6 +194,113 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
         link.download = `${store.map.title}.png`
         link.href = dataUrl;
         link.click()
+        */
+        let exportMap = {
+            compressionlevel: -1,
+            height: store.map.height,
+            infinite: false,
+            layers: [],
+            nextlayerid: 1,
+            nextobjectid: 1,
+            orientation: "orthogonal",
+            renderorder: "right-down",
+            tileheight: store.map.tileSize,
+            tilesets: [],
+            tilewidth: store.map.tileSize,
+            type: "map",
+            width: store.map.width
+        }
+
+        //store has a state value, layers, which is an array of layer objects
+        //iterate through each one and create a new layer to be added to the exportMap.layers array
+
+        for (let i = 0; i < store.layers.length; i++) {
+            let layer = store.layers[i];
+            let exportLayer = {
+                data: layer.data,
+                properties: [],
+                height: store.map.height,
+                name: layer.name,
+                opacity: 1,
+                type: "tilelayer",
+                visible: true,
+                width: store.map.width,
+                x: 0,
+                y: 0
+            }
+            for (let j = 0; j < layer.properties.length ; j++) {
+                let property = layer.properties[j];
+                exportLayer.properties.push({
+                    name: property.name,
+                    type: property.type,
+                    value: property.value
+                })
+            }
+            exportMap.layers.push(exportLayer);
+        }
+
+        //iterate through tilesets, download png for each and extract info for json
+        for (let i = 0; i < store.mapTilesets.length; i++) {
+            let tileset = store.mapTilesets[i];
+            const tileSize = tileset.tileSize;
+            const canvas = document.createElement('canvas')
+            canvas.width = tileSize * 8;
+            canvas.height = tileSize * 8;
+            const context = canvas.getContext('2d')
+
+            const tiles = tileset.imageData.tiles;
+
+            for (let tileCount = 0; tileCount < tiles.length; tileCount++) {
+                const currentTile = tiles[tileCount];
+
+                const pixelOffsetX = (tileCount % 8) * tileSize;
+                const pixelOffsetY = Math.floor(tileCount / 8) * tileSize;
+
+                //formatted as [r, g, b, a, r, g, b, a, ...]
+                const data = new Uint8ClampedArray(Object.values(currentTile.data));
+                for (let y = 0; y < tileSize; y++) {
+                    for (let x = 0; x < tileSize; x++) {
+                        const index = (y * tileSize + x) * 4;
+                        context.fillStyle = `rgba(${data[index]}, ${data[index + 1]}, ${data[index + 2]}, ${data[index + 3]})`;
+                        context.fillRect(x + pixelOffsetX, y + pixelOffsetY, 1, 1);
+                    }
+                }
+
+            }
+            const dataUrl = canvas.toDataURL('image/png', 1.0)
+            const link = document.createElement('a')
+            link.download = `${tileset.title}.png`
+            link.href = dataUrl
+            link.click()
+
+            const image = new Image();
+            image.src = dataUrl;
+            image.onload = () => {
+                let exportTileset = {
+                    name: tileset.title,
+                    tilewidth: tileset.tileSize,
+                    tileheight: tileset.tileSize,
+                    tilecount: tiles.length,
+                    image: `${tileset.title}.png`,
+                    imageheight: image.naturalHeight,
+                    imagewidth: image.naturalWidth
+                }
+                exportMap.tilesets.push(exportTileset);
+            }
+        }
+
+        const blob = new Blob([JSON.stringify(exportMap)], {type: "text/json"});
+        const a = document.createElement("a");
+        a.download = tilesetTitle+".json";
+        a.href = URL.createObjectURL(blob);
+        const clickEvt = new MouseEvent("click", {
+            view: window,
+            bubbles: false,
+            cancelable: true
+        });
+        a.dispatchEvent(clickEvt);
+        a.remove();
+        setIsOpen(false)
     }
 
     function closeModal() {
@@ -244,7 +352,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                                     </Dialog.Title>
                                     <div className="bg-editor-background">
                                         <div className="text-black text-center font-medium text-lg">
-                                            An image file and a JSON file will be downloaded.
+                                            Image(s) and a JSON file will be downloaded.
                                         </div>
                                         {/*
                                         <Listbox value={selected} onChange={setSelected} className="relative mt-1" as="div">
