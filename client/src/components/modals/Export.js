@@ -10,11 +10,11 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
     const { store } = useContext(EditorContext);
 
 
-    const exportOptions = [
-        { name: 'Export as PNG', value: 'png' },
-        //{ name: 'Export as JPG', value: 'jpg' },
-        { name: 'Export as JSON', value: 'json' },
-    ]
+    // const exportOptions = [
+    //     { name: 'Export as PNG', value: 'png' },
+    //     //{ name: 'Export as JPG', value: 'jpg' },
+    //     { name: 'Export as JSON', value: 'json' },
+    // ]
 
 /*
   const closeModal = (e) => {
@@ -151,11 +151,36 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
 
         }
 
-        const dataUrl = canvas.toDataURL('image/png')
+        const dataUrl = canvas.toDataURL('image/png', 1.0)
         const link = document.createElement('a')
         link.download = `${store.tileset.title}.png`
         link.href = dataUrl
         link.click()
+
+        const image = new Image();
+        image.src = dataUrl;
+        
+        let exportTileset = {
+                name: store.tileset.title,
+                tilewidth: store.tileset.tileSize,
+                tileheight: store.tileset.tileSize,
+                tilecount: tiles.length,
+                image: `${store.tileset.title}.png`,
+                imageheight: image.naturalHeight,
+                imagewidth: image.naturalWidth
+            }
+        const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
+        const t = document.createElement("a");
+        t.download = tilesetTitle+".json";
+        t.href = URL.createObjectURL(blob);
+        const clickEvt = new MouseEvent("click", {
+            view: window,
+            bubbles: false,
+            cancelable: true
+        });
+        t.dispatchEvent(clickEvt);
+        t.remove();
+        setIsOpen(false)
     }
 
     function mapExportPng() {
@@ -168,24 +193,16 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
         link.click()
     }
 
-    function handleExportPng() {
-        if(store.map) {
-            mapExportPng();
-        } else {
-            tilesetExportPng()
-        }
+    function closeModal() {
+        setIsOpen(false)
     }
 
-
-
-    function closeModal() {
-        switch (selected) {
-            case 'png':
-                handleExportPng();
-                break;
+    function handleDownload() {
+        if (map!=null && tileset==null)  {
+            mapExportPng();
+        } else if (tileset!=null && map==null) {
+            tilesetExportPng();
         }
-
-        setIsOpen(false)
     }
 
     return (
@@ -219,11 +236,15 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all">
                                     <Dialog.Title
                                         as="h3"
-                                        className="text-3xl font-medium leading-6 text-white bg-editor-primary p-3"
+                                        className="text-3xl font-medium leading-6 text-white text-center bg-editor-primary p-3"
                                     >
                                         Export
                                     </Dialog.Title>
                                     <div className="bg-editor-background">
+                                        <div className="text-black text-center font-medium text-lg">
+                                            An image file and a JSON file will be downloaded.
+                                        </div>
+                                        {/*
                                         <Listbox value={selected} onChange={setSelected} className="relative mt-1" as="div">
                                             <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-sm cursor-default focus:outline-none focus:ring-1 focus:ring-editor-highlight focus:border-editor-highlight sm:text-sm">
                                                 <span className="block truncate">{selected}</span>
@@ -266,14 +287,22 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                                                     </Listbox.Option>
                                                 ))}
                                             </Listbox.Options>
-                                        </Listbox>
+                                            </Listbox>
+                                            */}
                                         <div className="pt-4 pb-4 flex items-center justify-center">
+                                            <button
+                                                type="button"
+                                                className="inline-flex justify-center rounded-full border border-transparent bg-editor-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30"
+                                                onClick={handleDownload}
+                                            >
+                                            Export
+                                            </button>
                                             <button
                                                 type="button"
                                                 className="inline-flex justify-center rounded-full border border-transparent bg-editor-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30"
                                                 onClick={closeModal}
                                             >
-                                            Export
+                                            Cancel
                                             </button>
                                         </div>
                                     </div>
