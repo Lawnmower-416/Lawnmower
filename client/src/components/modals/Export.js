@@ -214,6 +214,11 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
 
         for (let i = 0; i < store.layers.length; i++) {
             let layer = store.layers[i];
+            let visiblityProp = false
+            // if layer.visible is defined, read its value. if it is undefined, then use visibilityPropr
+            if (layer.visible !== undefined) {
+                visiblityProp = layer.visible
+            }
             let exportLayer = {
                 data: layer.data,
                 properties: [],
@@ -221,7 +226,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                 name: layer.name,
                 opacity: 1,
                 type: "tilelayer",
-                visible: true,
+                visible: visiblityProp,
                 width: store.map.width,
                 x: 0,
                 y: 0
