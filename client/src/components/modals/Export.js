@@ -159,30 +159,28 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
 
         const image = new Image();
         image.src = dataUrl;
-        image.onload = () => {
         
-            let exportTileset = {
-                    name: store.tileset.title,
-                    tilewidth: store.tileset.tileSize,
-                    tileheight: store.tileset.tileSize,
-                    tilecount: tiles.length,
-                    image: `${store.tileset.title}.png`,
-                    imageheight: image.naturalHeight,
-                    imagewidth: image.naturalWidth
-                }
-            const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
-            const t = document.createElement("a");
-            t.download = tilesetTitle+".json";
-            t.href = URL.createObjectURL(blob);
-            const clickEvt = new MouseEvent("click", {
-                view: window,
-                bubbles: false,
-                cancelable: true
-            });
-            t.dispatchEvent(clickEvt);
-            t.remove();
-            setIsOpen(false)
-        }
+        let exportTileset = {
+                name: store.tileset.title,
+                tilewidth: store.tileset.tileSize,
+                tileheight: store.tileset.tileSize,
+                tilecount: tiles.length,
+                image: `${store.tileset.title}.png`,
+                imageheight: image.naturalHeight,
+                imagewidth: image.naturalWidth
+            }
+        const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
+        const t = document.createElement("a");
+        t.download = tilesetTitle+".json";
+        t.href = URL.createObjectURL(blob);
+        const clickEvt = new MouseEvent("click", {
+            view: window,
+            bubbles: false,
+            cancelable: true
+        });
+        t.dispatchEvent(clickEvt);
+        t.remove();
+        setIsOpen(false)
     }
 
     function mapExportPng() {

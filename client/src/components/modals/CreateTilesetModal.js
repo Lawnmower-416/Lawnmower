@@ -5,10 +5,16 @@ const CreateTilesetModal = ({ modalOpen, setModalOpen }) => {
 	const { store } = useContext(GlobalStoreContext);
     const [title, setTitle] = useState("Untitled");
 	const [size, setSize] = useState("8");
+	const [maxSize, setMaxSize] = useState("128");
+	const [invalidMsg, setInvalidMsg] = useState("");
 
 	const handleCreateTileset = () => {
-		setModalOpen(!modalOpen)
-		store.createNewTileset(title, size)
+		if (size <= 0 || size > maxSize) {
+			setInvalidMsg("Invalid Tile Size. Max Tileset Size is " + maxSize);
+		} else {
+			setModalOpen(!modalOpen);
+			store.createNewTileset(title, size);
+		}
 	}
 
 	return (
@@ -23,6 +29,11 @@ const CreateTilesetModal = ({ modalOpen, setModalOpen }) => {
 			></div>
 			<div className="min-h-full flex justify-center items-center py-12 px-4 sm:px-10">
 				<div className="modal-content duration-500 rounded-2xl bg-gradient-green p-6 sm:p-10 w-full max-w-lg relative z-10 sm:pt-5 sm:pb-6">
+					{
+						invalidMsg === "" ?
+						<h4 className="text-[14px] font-bold text-red">{invalidMsg}</h4> :
+						<></>
+					}
 					<div className="mb-6 flex items-center gap-2">
 						<h4 className="text-[20px] font-bold">Title</h4>
 						<input className="rounded-lg py-1 text-white cursor-pointer bg-dark-green text-[20px] font-semibold"  value={title} onChange={(e) => setTitle(e.target.value)} />
