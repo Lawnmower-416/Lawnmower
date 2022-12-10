@@ -1,3 +1,4 @@
+const mapSchema = require("../models/map-schema");
 const tilesetSchema = require("../models/tileset-schema");
 const postService = require("../services/post.service");
 
@@ -49,7 +50,7 @@ const postController = {
       const userId = data.userId
       const postId = data.postId
       console.log({data})
-      if(data.type == 'tileset'){
+      if(data.postType == 'tileset'){
         console.log("hit51")
         const existTileSet = await tilesetSchema.findOne({_id: postId})
 
@@ -81,6 +82,38 @@ const postController = {
             // res.status(200).send('already liked')
           }
         }
+      }else if(data.postType == "map"){
+        console.log("in map like.")
+        const existMap = await mapSchema.findOne({_id: postId})
+
+        if(existMap){
+  
+          const mapLikes = existMap.likedUsers;
+          const mapDislikes = existMap.dislikedUsers;
+  
+          const isAlreadyLiked = mapLikes.filter(existUserId => {if(existUserId == userId){return existUserId}})
+          
+          if(isAlreadyLiked == 0){
+  
+            const hasInDisliked = mapDislikes.filter(existUserId => {if(existUserId == userId){return existUserId}})
+  
+            if(hasInDisliked != 0){
+              uniqueDislikes = mapDislikes.filter(existUserId =>{if(existUserId != userId){return existUserId}})
+              await mapSchema.updateOne({_id: postId}, {dislikedUsers: uniqueDislikes})
+            }else{
+              uniqueLikes = [...mapLikes, userId];
+              console.log({uniqueLikes})
+              await mapSchema.updateOne({_id: postId}, {likedUsers: uniqueLikes})
+            }
+  
+          }else{
+            // console.log('already disliked', {isAlreadydisliked})
+            console.log("likes: ", {mapLikes: mapLikes})
+            console.log("dislikes: ", {mapDislikes: mapDislikes})
+  
+            // res.status(200).send('already liked')
+          }
+        }
       }
 
       
@@ -95,7 +128,8 @@ const postController = {
       const userId = data.userId
       const postId = data.postId
 
-      if(data.type == 'tileset'){
+      if(data.postType == 'tileset'){
+        console.log("tileset dislike")
         const existTileSet = await tilesetSchema.findOne({_id: postId})
 
 
@@ -113,18 +147,38 @@ const postController = {
             if(hasInLiked.length != 0){
               const uniqueLikes = tilesetLikes.filter(existUserId =>{if(existUserId != userId){return existUserId}})
               console.log("hit99 : ", uniqueLikes )
-              const updatedTileset = await tilesetSchema.updateOne({_id: postId}, {likedUsers: uniqueLikes})
+              await tilesetSchema.updateOne({_id: postId}, {likedUsers: uniqueLikes})
             }else{
               const uniqueDislikes = [...tilesetDislikes, userId];
               await tilesetSchema.updateOne({_id: postId}, {dislikedUsers: uniqueDislikes})
             }
   
-          }else{
-            // console.log('already disliked', {isAlreadydisliked})
-            // console.log("likes: ", {tilesetLikes: tilesetLikes})
-            // console.log("dislikes: ", {tilesetDislikes: tilesetDislikes})
+          }
+        }
+      } else if(data.postType == 'map'){
+        const existMap = await mapSchema.findOne({_id: postId})
+
+
+        if(existMap){
   
-            // res.status(200).send('already liked')
+          const mapLikes = existMap.likedUsers;
+          const mapDislikes = existMap.dislikedUsers;
+  
+          const isAlreadyDisliked = mapDislikes.filter(existUserId => {if(existUserId == userId){return existUserId}})
+          
+          if(isAlreadyDisliked.length == 0){
+  
+            const hasInLiked = mapLikes.filter(existUserId => {if(existUserId == userId){return existUserId}})
+            
+            if(hasInLiked.length != 0){
+              const uniqueLikes = mapLikes.filter(existUserId =>{if(existUserId != userId){return existUserId}})
+              console.log("hit99 : ", uniqueLikes )
+              const updatedTileset = await mapSchema.updateOne({_id: postId}, {likedUsers: uniqueLikes})
+            }else{
+              const uniqueDislikes = [...mapDislikes, userId];
+              await mapSchema.updateOne({_id: postId}, {dislikedUsers: uniqueDislikes})
+            }
+  
           }
         }
       }
@@ -140,9 +194,9 @@ const postController = {
   postView: async (data) =>{
     const userId = data.userId;
     const postId = data.postId;
-    const type = data.type;
+    const postType = data.postType;
 
-    if(type == 'tileset'){
+    if(postType == 'tileset'){
       const existPost = await tilesetSchema.findOne({_id: postId});
       console.log("views: ", existPost)
       const alreadyViewed = existPost?.viewers?.filter(viewUser => {
@@ -155,6 +209,21 @@ const postController = {
         const existViews = existPost.viewers;
         const updatedViews = [...existViews, userId]
         await tilesetSchema.updateOne({_id: postId}, {viewers: updatedViews})
+      }}
+
+    }else if(postType == 'map'){
+      const existPost = await mapSchema.findOne({_id: postId});
+      console.log("views: ", existPost)
+      const alreadyViewed = existPost?.viewers?.filter(viewUser => {
+        if(viewUser == userId){
+          return viewUser;
+        }
+      })
+
+      if(alreadyViewed.length == 0){{
+        const existViews = existPost.viewers;
+        const updatedViews = [...existViews, userId]
+        await mapSchema.updateOne({_id: postId}, {viewers: updatedViews})
       }}
     }
   }

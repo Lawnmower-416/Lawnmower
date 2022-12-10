@@ -1,18 +1,126 @@
-import {Dialog, Listbox, Transition} from '@headlessui/react'
-import {CheckIcon, ChevronDownIcon} from '@heroicons/react/24/outline'
-import {Fragment, useContext, useState} from 'react'
+
+import { Dialog, Listbox, Transition } from '@headlessui/react'
+import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
+import { Fragment, useState, useContext } from 'react'
 import EditorContext from "../../editor";
 
-function ExportModal({isOpen, setIsOpen}) {
+
+function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) {
+    const [selected, setSelected] = useState('json')
     const { store } = useContext(EditorContext);
 
-    const [selected, setSelected] = useState('json')
 
     const exportOptions = [
         { name: 'Export as PNG', value: 'png' },
         //{ name: 'Export as JPG', value: 'jpg' },
         { name: 'Export as JSON', value: 'json' },
     ]
+
+/*
+  const closeModal = (e) => {
+    e.preventDefault();
+
+    if (map!=null && tileset==null) {
+        let exportLayers = []
+        let exportTilesets = []
+
+        //let gottenLayers = store.getLayersForExport(map)
+        //console.log("gottenLayers", gottenLayers)
+
+        store.getLayersForExport(map).then((gottenLayers) => {
+        
+            for (let i = 0; i < gottenLayers.length; i++) {
+                let layer = gottenLayers[i]
+                exportLayers.push({
+                    name: layer.name,
+                    locked: layer.locked,
+                    properties: layer.properties,
+                    height: layer.height,
+                    width: layer.width,
+                    data: layer.data,
+                })
+            }
+
+            //let gottenTilesets = store.getMapsTilesetsForExport(map)
+            //console.log("gottenTilesets", gottenTilesets)
+
+            store.getMapsTilesetsForExport(map).then((gottenTilesets) => {
+                for (let i = 0; i < gottenTilesets.length; i++) {
+                    let tileset = gottenTilesets[i]
+                    exportTilesets.push({
+                        name: tileset.title,
+                        tilewidth: tileset.tileSize,
+                        tileheight: tileset.tileSize,
+                        tilecount: tileset.tileCount,
+                        image: tileset.image,
+                        imageheight: tileset.imageHeight,
+                        imagewidth: tileset.imageWidth,
+                    }
+                    )
+                }
+
+                let exportMap = {
+                    height: map.height,
+                    layers: exportLayers,
+                    tilesets: exportTilesets,
+                    nextobjectid: 1,
+                    orientation: "isometric",
+                    tileheight: map.tileSize,
+                    tilewidth: map.tileSize,
+                    version: 1,
+                    tiledversion: "1.7.2",
+                    width: map.width
+                }
+
+                const blob = new Blob([JSON.stringify(exportMap)], {type: "text/json"});
+
+                const a = document.createElement("a");
+                a.download = mapTitle+".json"; //filename
+                a.href = URL.createObjectURL(blob);
+                const clickEvt = new MouseEvent("click", {
+                    view: window,
+                    bubbles: false,
+                    cancelable: true
+                });
+                a.dispatchEvent(clickEvt);
+                a.remove();
+                setIsOpen(false)
+            })
+        })
+    }
+    if (tileset!= null && map==null) {
+        
+        //let gottenTileset = store.getTilesetForExport(tileset)
+        //console.log("gottenTileset", gottenTileset)
+
+        store.getTilesetForExport(tileset).then((payload) => {
+            let exportTileset = {
+                    name: payload.tileset.title,
+                    tilewidth: payload.tileset.tileSize,
+                    tileheight: payload.tileset.tileSize,
+                    tilecount: payload.tileset.tileCount,
+                    image: payload.imageData,
+                    imageheight: payload.tileset.imageHeight,
+                    imagewidth: payload.tileset.imageWidth,
+                }
+            console.log("exportTileset:", exportTileset)
+            const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
+            const t = document.createElement("a");
+            t.download = tilesetTitle+".json";
+            t.href = URL.createObjectURL(blob);
+            const clickEvt = new MouseEvent("click", {
+                view: window,
+                bubbles: false,
+                cancelable: true
+            });
+            t.dispatchEvent(clickEvt);
+            t.remove();
+            setIsOpen(false)
+            setIsOpen(false)
+        })
+    }
+  }
+  */
 
     function tilesetExportPng() {
         const tileSize = store.tileset.tileSize;
@@ -145,7 +253,6 @@ function ExportModal({isOpen, setIsOpen}) {
                                                                 </span>
                                                                 {selected ? (
                                                                     <span
-
                                                                         className={`${
                                                                             active ? 'text-white' : 'text-white'
                                                                         }

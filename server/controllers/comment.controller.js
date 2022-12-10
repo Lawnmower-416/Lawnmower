@@ -2,15 +2,17 @@ const commentService = require("../services/comment.service");
 const postService = require("../services/post.service");
 const databaseManager = require("../controllers/AWSManager/AWSmongoose-manager");
 const Tileset = require("../models/tileset-schema");
+const mapSchema = require("../models/map-schema");
+const tilesetSchema = require("../models/tileset-schema");
 
 const commentController = {
   createComment: async(data) => {
     try {
       const parent = data.parent || null
 
-      console.log({data})
+      console.log("send comment: ", data)
 
-      if(data.type == 'tileset' && data.userId != null){
+      if(data.postType == 'tileset' && data.userId != null){
         
       
 
@@ -82,12 +84,79 @@ const commentController = {
         })
         console.log('updated tiles: ', updatedTileset)
         return updatedTileset;
+      }
 
 
-        // await postService.updatePost({_id: data.post}, {comments: updatedPostComments})
-        // const updatedPost = await postService.findOnePost({_id: data.post})
-        // return updatedPost
-        // res.status(200).send(newComment)
+    } else if(data.postType == 'map'){
+      
+      const existPost = await mapSchema.findOne({_id:data.postId});
+      console.log("existPost", existPost);
+      const postComments = existPost?.comments;
+
+      const newComment = await commentService.createComment(data)
+      console.log("newComment", newComment);
+      
+      if(parent){
+        const parentComment = await commentService.findOneComment({_id: parent})
+        const children = parentComment.children;
+        children.push(newComment._id)
+
+        const updatedParentComment = await commentService.updateOneComment({_id: parent}, {children: children})
+        console.log("updatedParentComment", updatedParentComment);
+      
+        const updatedMap = await mapSchema.findOne({_id: data.postId})
+        .populate({
+          path: 'comments', model: 'Comment',
+          populate: {
+            path: 'children', model: 'Comment',
+            populate: {
+              path: 'children', model: 'Comment',
+              populate: {
+                path: 'children', model: 'Comment',
+                populate: {
+                  path: 'children', model: 'Comment',
+                  populate: {
+                    path: 'children', model: 'Comment',
+                    populate: {
+                      path: 'children', model: 'Comment',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          
+        })
+        return updatedMap
+        // res.status(200).send(newComment)        
+      }else{
+        const updatedPostComments = [...postComments, newComment._id]
+        console.log("updatedPostComments", updatedPostComments)
+        const updatedMap = await mapSchema.findOneAndUpdate({_id: data.postId}, {comments: updatedPostComments})
+        .populate({
+          path: 'comments', model: 'Comment',
+          populate: {
+            path: 'children', model: 'Comment',
+            populate: {
+              path: 'children', model: 'Comment',
+              populate: {
+                path: 'children', model: 'Comment',
+                populate: {
+                  path: 'children', model: 'Comment',
+                  populate: {
+                    path: 'children', model: 'Comment',
+                    populate: {
+                      path: 'children', model: 'Comment',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          
+        })
+        console.log('updated tiles: ', updatedMap)
+        return updatedMap;
       }
     }
 
@@ -118,6 +187,15 @@ const commentController = {
     } catch (error) {
       console.log(error)
       // res.status(401).send(error.message)
+    }
+  },
+
+  getComment: async(filter) => {
+    try {
+      const comments = await commentService.findComments(filter)
+      return comments;
+    } catch (error) {
+      console.log(error)
     }
   },
 

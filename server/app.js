@@ -21,7 +21,6 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
   cors: {
-    //origin: "http://localhost:3001",
     origin: "http://34.193.24.27",
     methods: ["GET", "POST"]
   }
@@ -30,7 +29,6 @@ const io = new Server(server, {
 
 const cors = require('cors');
 app.use(cors({
-  //origin: 'http://localhost:3001',
   origin: 'http://34.193.24.27',
   credentials: true
 }));
@@ -48,7 +46,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 routes(app);
 
 const getUpdatePost = async(data, server) => {
-  const updatedTileset = await tilesetSchema.findOne({_id: data.postId})
+  console.log("updated post", data)
+  if(data.postType =='tileset'){
+    const updatedTileset = await tilesetSchema.findOne({_id: data.postId})
     .populate({
       path: 'comments', model: 'Comment',
       populate: {
@@ -73,6 +73,33 @@ const getUpdatePost = async(data, server) => {
     
     server.broadcast.emit('updated_post', updatedTileset)
     server.emit('updated_post', updatedTileset)
+  }else if(data.postType == 'map'){
+    const updatedMap = await mapSchema.findOne({_id: data.postId})
+    .populate({
+      path: 'comments', model: 'Comment',
+      populate: {
+        path: 'children', model: 'Comment',
+        populate: {
+          path: 'children', model: 'Comment',
+          populate: {
+            path: 'children', model: 'Comment',
+            populate: {
+              path: 'children', model: 'Comment',
+              populate: {
+                path: 'children', model: 'Comment',
+                populate: {
+                  path: 'children', model: 'Comment',
+                },
+              },
+            },
+          },
+        },
+      },      
+    })
+    
+    server.broadcast.emit('updated_post', updatedMap)
+    server.emit('updated_post', updatedMap)
+  }
 }
 
 // For Chat
@@ -97,7 +124,6 @@ io.on('connection', server => {
   
   
   server.on('send_comment', async(data) => {
-    console.log(data)
     await commentController.createComment(data)
     await getUpdatePost(data, server)
   })
@@ -122,6 +148,7 @@ io.on('connection', server => {
   })
 
   server.on('comment_delete', async(data) => {
+    console.log("comment_delete: ", data)
     await commentController.deleteComment({_id: data.commentId});
     await getUpdatePost(data, server)
     // 
@@ -144,7 +171,6 @@ io.on('connection', server => {
   })
 
   server.on('post_view', async(data) => {
-    console.log('hit')
     console.log({data})
     await postController.postView(data)
 
@@ -170,6 +196,7 @@ const db = require('./db');
 const postController = require('./controllers/post.controller');
 const commentController = require('./controllers/comment.controller');
 const tilesetSchema = require('./models/tileset-schema');
+const mapSchema = require('./models/map-schema');
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 server.listen(port, () => {

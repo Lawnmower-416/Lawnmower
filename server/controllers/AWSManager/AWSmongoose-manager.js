@@ -73,6 +73,39 @@ updateMapGeneral = async (updatedMap) => {
     return await Map.findOneAndUpdate({ _id: updatedMap.map._id}, updatedMap.map, {new: true});
 }
 
+forkMap = async (body, userId) => {
+    const {map, owner, ownerUsername} = body;
+
+    const newBody = {
+        owner: owner._id,
+        ownerUsername: ownerUsername,
+        title: map.title,
+        height: map.height,
+        width: map.width,
+        tileSize: map.tileSize,
+        tilesets: map.tilesets,
+        layers: map.layers,
+    }
+
+    let newMap = new Map(newBody);
+    if (newMap) {
+
+        const updatedMap = await newMap.save().catch(err => {return null;});
+
+        if (!updatedMap) return null;
+
+        let user = await User.findOne({ _id: userId }).catch(err => {return null;});
+
+        user.maps.push(updatedMap._id);
+        await user.save().catch(err => {return null;});
+
+        return updatedMap;
+
+    }
+
+}
+
+
 createTileset = async (body, userId) => {
     let newTileset = new Tileset(body);
     if (newTileset) {
@@ -194,12 +227,44 @@ getUserByUsername = async (username) => {
     return user;
 }
 
+forkTileset = async (body, userId) => {
+    const {tileset, owner, ownerUsername} = body;
+
+    const newBody = {
+        owner: owner._id,
+        ownerUsername: ownerUsername,
+        title: tileset.title,
+        tileSize: tileset.tileSize,
+        image: tileset.image,
+        imageHeight: tileset.imageHeight,
+        imageWidtth: tileset.imageWidth,
+        tileCount: tileset.tileCount,
+    }
+    
+    let newTileset = new Tileset(newBody);
+    if (newTileset) {
+
+        const updatedTileset = await newTileset.save().catch(err => {return null;});
+
+        if (!updatedTileset) return null;
+
+        let user = await User.findOne({ _id: userId }).catch(err => {return null;});
+
+        user.tilesets.push(updatedTileset._id);
+        await user.save().catch(err => {return null;});
+
+        return updatedTileset;
+    }
+}
+
+
 module.exports = {
     createMap,
     deleteMap,
     getMapById,
     getMaps,
     updateMapGeneral,
+    forkMap,
     createTileset,
     deleteTileset,
     getTilesetById,
@@ -209,5 +274,6 @@ module.exports = {
     createReport,
     updateReport,
     deleteReport,
-    getUserByUsername
+    getUserByUsername,
+    forkTileset,
 }

@@ -659,7 +659,7 @@ function EditorContextProvider(props) {
         const layers = [...store.layers];
         const layer = layers[store.currentLayer];
         prop.value = value;
-        await updateProperty(store.map._id, layer._id, prop._id, prop);
+        await updateProperty(store.map._id, layer._id, prop);
 
         storeReducer({
             type: EditorActionType.UPDATE_LAYERS,
@@ -775,6 +775,67 @@ function EditorContextProvider(props) {
             return false;
         }
     }
+
+    store.getLayersForExport = async (mapId) => {
+        const res = await getMapById(mapId);
+        if (res.status === 200) {
+            const {map} = res.data;
+
+            //TODO: Error handling
+
+            const layerPromises = [];
+            for (let i = 0; i < map.layers.length; i++) {
+                layerPromises.push(getLayer(map._id, map.layers[i]));
+            }
+            const layersResponses = await Promise.all(layerPromises);
+
+            const layers = [];
+            for (let i = 0; i < layersResponses.length; i++) {
+                const layer = layersResponses[i].data.layer;
+                //layer.data = new Int16Array(layer.data);
+                layers.push(layer);
+            }
+
+            for(let i = 0; i < layers.length; i++) {
+                const layer = layers[i];
+                const layerId = layer._id;
+                let propertyPromises = [];
+                if(layer.properties) {
+                    for(let j = 0; j < layer.properties.length; j++) {
+                        propertyPromises.push(getProperty(mapId, layerId, layer.properties[j]));
+                    }
+                    const propertyResponses = await Promise.all(propertyPromises);
+
+                    const properties = [];
+                    for(let j = 0; j < propertyResponses.length; j++) {
+                        properties.push(propertyResponses[j].data.property);
+                    }
+                    layer.properties = properties;
+                }
+            }
+
+            return layers;
+        }
+    }
+
+    store.getMapsTilesetsForExport = async (mapId) => {
+        const mapTilesets = (await getAllTilesets(mapId)).data.tilesets;
+        return mapTilesets;
+    }
+
+    store.getTilesetForExport = async (tilesetId) => {
+        const tileset = (await getTilesetById(tilesetId)).data.tileset;
+
+        const image = await getTilesetImage(tilesetId);
+        const imageData = image.data.tilesetImage;
+        let payload = {
+            tileset,
+            imageData
+        }
+        return payload;
+    }
+
+
 
 // -------------------TILESET EDITING--------------------- //
     /**

@@ -35,7 +35,7 @@ const ReportModal = ({ modalOpen, setModalOpen, reporter, reportee }) => {
 				<div className="min-h-full flex justify-center items-center py-12 px-4 sm:px-10">
 					<div className="modal-content duration-500 rounded-2xl bg-gradient-green p-6 sm:p-10 w-full max-w-lg relative z-10 sm:pt-5 sm:pb-6">
 						<h4 className="text-[26px] text-center mb-5 font-bold leading-tight">
-							Report {reportee.username}
+							Report {reportee ? reportee.username : ""}
 						</h4>
 						<form id="report-form" onSubmit={handleReport} className="p-4 sm:p-6 bg-[#ddd] min-h-[350px]">
 							<label className="flex items-center mb-6">

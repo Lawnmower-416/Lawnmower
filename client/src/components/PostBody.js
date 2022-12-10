@@ -3,7 +3,7 @@ import moment from 'moment'
 import { socket } from '../config/SocketIO'
 import AuthContext from '../auth'
 
-export default function PostBody({currentPost, userName}) {
+export default function PostBody({currentPost, postType }) {
 
   const {auth} = useContext(AuthContext)
 
@@ -11,7 +11,7 @@ export default function PostBody({currentPost, userName}) {
     socket.emit('post_like', {
       postId: currentPost._id,
       userId: auth.user._id,
-      type:"tileset"
+      postType: postType
     })
   }
 
@@ -19,7 +19,7 @@ export default function PostBody({currentPost, userName}) {
     socket.emit('post_dislike', {
       postId: currentPost._id,
       userId: auth.user._id,
-      type:"tileset"
+      postType: postType
     })
   }
 

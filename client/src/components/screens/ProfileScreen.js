@@ -16,6 +16,7 @@ import CreateMapModal from "../modals/CreateMapModal";
 import CreateTilesetModal from "../modals/CreateTilesetModal";
 import DeleteAccount from "../modals/DeleteAccount";
 import GlobalStoreContext from "../../store";
+import UserCommentCard from "../UserCommentCard";
 
 export default function Profile() {
 
@@ -33,8 +34,6 @@ export default function Profile() {
         user = auth.user;
     }
 
-    const userComments = (contentBefore ? [contentBefore] : (user && user.comments)) || [];
-
     const [username, setUsername] = useState(user ? user.username : "");
     const [email, setEmail] = useState(user ? user.email : "");
     const [joinDate, setJoinDate] = useState(user ?
@@ -51,8 +50,20 @@ export default function Profile() {
     const [deleteAccountModal, setDeleteAccountModal] = useState(false);
     const [updateAvatarModal, setUpdateAvatarModal] = useState(false);
 
+    const [userComments, setUserComments] = useState([]);
     let userMaps = [];
     let userTilesets = [];
+
+
+    useEffect(() => {
+        console.log({auth})
+        fetch(`http://34.193.24.27:3000/user-comments/${auth?.user?.username}`)
+            .then(res => res.json())
+            .then(result => {
+                console.log(result)
+                setUserComments(result);
+            })
+    }, [auth])
 
     const getTotalPoints = (content) => {
         let totalPoints = 0;
@@ -237,9 +248,13 @@ export default function Profile() {
                     <div className="col-span-2 bg-dark-green-lighter rounded-md">
                         <div className="snap-y h-[64rem] overflow-y-auto p-8 space-y-2">
                             {
-                                (currentTab === "Maps" && shownMaps) ? shownMaps.map((m, i) => <ItemCard key={i} inProfile={true} map={m} />)
-                                : (currentTab === "Tilesets" && shownTilesets) ? shownTilesets.map((t, i) => <ItemCard key={i} inProfile={true} tileset={t} />)
-                                    : getUserCommentsFromMapsAndTilesets()
+                                (currentTab === "Maps" && shownMaps) && shownMaps.map((m, i) => <ItemCard key={i} inProfile={true} map={m} postType="map"/>)                                
+                            }
+                            {
+                                (currentTab === "Tilesets" && shownTilesets) && shownTilesets.map((t, i) => <ItemCard key={i} inProfile={true} tileset={t} postType="tileset"/>)                                
+                            }
+                            {
+                                (currentTab === "Comments" && shownTilesets) && userComments.map((d, i) => <UserCommentCard key={i} inProfile={true} data={d} postType="tileset"/>)                                
                             }
                         </div>
                     </div>

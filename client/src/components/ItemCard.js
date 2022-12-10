@@ -7,6 +7,7 @@ import CommentCard from "./CommentCard";
 import { DeleteMapModal } from "./modals/DeleteMapModal";
 import { Menu } from '@headlessui/react';
 import ReportModal from "./modals/ReportModal";
+import ForkModal from "./modals/ForkModal";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
 
@@ -24,10 +25,12 @@ export default function ItemCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const [deleteMapModal, setDeleteMapModal] = useState(false);
     const [openReportModal, setReportModal] = useState(false);
+    const [openForkModal, setForkModal] = useState(false);
     const [expandComments , setExpandComments] = useState(false);
 
     const location = useLocation();
     const path = location.pathname;
+    const postType = props.postType;
 
     // props.map is defined if the item card is being used for maps
     // props.tileset is defined if the item card is being used for tilesets
@@ -147,10 +150,10 @@ export default function ItemCard(props) {
                                 <Menu.Button>
                                     <p className="text-xl text-left">By: {ownerUsername}</p>
                                 </Menu.Button>
-                                <Menu.Items className="absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg w-">
+                                <Menu.Items className="absolute translate-x-0 bg-darker-gray rounded-xl shadow-lg border-2">
                                     <Menu.Item>
                                             {({ active }) => (
-                                                <Link to={ownerProfileLink} className="block px-4 py-2 text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray" state={{contentBefore: currentData}}
+                                                <Link to={ownerProfileLink} className="text-white block px-4 py-2 text-md hover:bg-darker-gray rounded-t-xl w-full border-b-2 border-dark-gray" state={{contentBefore: currentData}}
                                                 >Profile                                            
                                                 </Link>
                                             )}
@@ -158,11 +161,21 @@ export default function ItemCard(props) {
                                     <Menu.Item>
                                         {/*TODO: this menu is dynamic based on if the user is logged in or not*/}
                                             {({ active }) => (
-                                                <button className="block px-4 py-2 text-md hover:bg-darker-gray rounded-b-xl w-full"
+                                                <button className="text-white block px-4 py-2 text-md hover:bg-darker-gray w-full border-b-2 border-dark-gray"
                                                 onClick={() => setReportModal(!openReportModal)}>Report                                            
                                                 </button>
                                             )}
                                     </Menu.Item>
+                                    {<Menu.Item>
+                                            {({ active }) => (
+                                                <button 
+                                                    className={"text-white block px-4 py-2 text-md hover:bg-darker-gray rounded-b-xl w-full"}
+                                                    onClick={() => setForkModal(!openForkModal)}
+                                                >
+                                                    Fork                                            
+                                                </button>
+                                            )}
+                                    </Menu.Item>}
                                 </Menu.Items>
                             </Menu>
 
@@ -188,7 +201,7 @@ export default function ItemCard(props) {
 {/* frontend*2. commentout line 199-206 & addded line 193-197 */}
 
                         {/* Comments Part */}   
-                        <Link to={`/expandedcommunity?id=${props.tileset?._id}&type=tileset`}>
+                        <Link to={`/expandedcommunity?id=${props.tileset?._id || props.map?._id}&postType=${postType}`}>
                             <p className="font-bold relative bottom-0 cursor-pointer">
                                 Show Comments
                             </p>
@@ -212,7 +225,8 @@ export default function ItemCard(props) {
                     : <div></div>
                 }
             </div>
-            <ReportModal modalOpen={openReportModal} setModalOpen={setReportModal} reporter={{username: user.username, _id: user._id}} reportee={{username: ownerUsername, _id: owner}} />
+            <ReportModal modalOpen={openReportModal} setModalOpen={setReportModal} />
+            <ForkModal modalOpen={openForkModal} setModalOpen={setForkModal} mapId={props.map ? props.map._id : null } tilesetId={props.tileset ? props.tileset._id : null}/>
         </div>
         </>
     )
