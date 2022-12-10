@@ -37,7 +37,7 @@ const CreateMapModal = ({ modalOpen, setModalOpen }) => {
 			<div className="min-h-full flex justify-center items-center py-12 px-4 sm:px-10">
 				<div className="modal-content duration-500 rounded-2xl bg-gradient-green p-6 sm:p-10 w-full max-w-lg relative z-10 sm:pt-5 sm:pb-6">
 					{
-						invalidMsg === "" ?
+						invalidMsg !== "" ?
 						<h4 className="text-[14px] font-bold text-red">{invalidMsg}</h4> :
 						<></>
 					}
