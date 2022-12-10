@@ -9,6 +9,7 @@ onmessage = (e) => {
     const {type, data} = e.data;
 
     let ret = "SUCCESS";
+    let payload = null;
     switch (type) {
         case "INIT":
             mapHeight = data.mapHeight;
@@ -32,13 +33,20 @@ onmessage = (e) => {
             ret = "redrawCoordinate SUCCESS";
             break;
 
+        case 'exportMapPng':
+            let imageData = exportMapPng();
+            payload = {
+                data: imageData
+            };
+            break;
+
         default:
             console.log("unknown message type");
             ret = "UNKNOWN: " + type;
             break;
     }
 
-    postMessage({message: ret});
+    postMessage({message: ret, data: payload});
 }
 
 const drawMap = ({layers, mapTilesets, cameraZoom, cameraOffset}) => {
@@ -100,10 +108,16 @@ const redrawCoordinate = ({x: i,y: j, currentLayer, mapTilesets}) => {
         for(let x = 0; x < tileSize; x++) {
             const index = (y * tileSize + x) * 4;
             context.fillStyle = `rgba(${colorData[index]}, ${colorData[index+1]}, ${colorData[index+2]}, ${colorData[index+3]})`;
-            context.fillRect(x + (i * tileSize), y + (j * tileSize), 1, 1);
-        }
-    }
+context.fillRect(x + (i * tileSize), y + (j * tileSize), 1, 1);
+}
+}
 
-    const end = performance.now();
-    console.log("redrawCoord took " + (end - start) + " ms");
+const end = performance.now();
+console.log("redrawCoord took " + (end - start) + " ms");
+}
+
+const exportMapPng = () => {
+    const context = canvas.getContext('2d');
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    return imageData;
 }
