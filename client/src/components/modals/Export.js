@@ -125,8 +125,8 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
     function tilesetExportPng() {
         const tileSize = store.tileset.tileSize;
         const canvas = document.createElement('canvas')
-        canvas.width = tileSize * 8;
-        canvas.height = tileSize * 8;
+        canvas.width = tileSize;
+        canvas.height = tileSize;
         const context = canvas.getContext('2d')
 
         const tiles = store.tilesetImage.tiles;
