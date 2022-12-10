@@ -8,9 +8,20 @@ const CreateMapModal = ({ modalOpen, setModalOpen }) => {
 	const [sizeW, setSizeW] = useState("256");
 	const [sizeT, setSizeT] = useState("8");
 
+	const [maxMapSize, setMaxMapSize] = useState("512");
+	const [maxTileSize, setMaxTileSize] = useState("128");
+	const [invalidMsg, setInvalidMsg] = useState("");
+
 	const handleCreateMap = () => {
-		setModalOpen(!modalOpen)
-		store.createNewMap(title, size, sizeW, sizeT);
+		if (size <= 0 || size > maxMapSize || sizeW <= 0 || sizeW > maxMapSize)
+		{
+			setInvalidMsg("Invalid Map Size. Max Map Size (Length and Width) is " + maxMapSize);
+		} else if (sizeT <= 0 || sizeT > maxTileSize) {
+			setInvalidMsg("Invalid Tile Size. Max Tileset Size is " + maxTileSize);
+		} else {
+			setModalOpen(!modalOpen);		
+			store.createNewMap(title, size, sizeW, sizeT);
+		}
 	}
 
 	return (
@@ -25,6 +36,11 @@ const CreateMapModal = ({ modalOpen, setModalOpen }) => {
 			></div>
 			<div className="min-h-full flex justify-center items-center py-12 px-4 sm:px-10">
 				<div className="modal-content duration-500 rounded-2xl bg-gradient-green p-6 sm:p-10 w-full max-w-lg relative z-10 sm:pt-5 sm:pb-6">
+					{
+						invalidMsg === "" ?
+						<h4 className="text-[14px] font-bold text-red">{invalidMsg}</h4> :
+						<></>
+					}
 					<div className="mb-6 flex flex-wrap items-center gap-2">
 						<h4 className="text-[20px] font-bold">Title</h4>
 						<input
