@@ -94,7 +94,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
             let exportTileset = {
                     name: payload.tileset.title,
                     tilewidth: payload.tileset.tileSize,
-                    tileheight: payload.tileSize,
+                    tileheight: payload.tileset.tileSize,
                     tilecount: payload.tileset.tileCount,
                     image: payload.imageData,
                     imageheight: payload.tileset.imageHeight,
