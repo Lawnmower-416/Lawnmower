@@ -221,8 +221,29 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
             if (layer.visible !== undefined) {
                 visiblityProp = layer.visible
             }
+            let dataProp = []
+            // we have layer.data. Layer.data is an array of objects
+            // each object has a tilesetIndex property and a tileIndex property
+            // iterate through each object in Layer.data
+            // for each object, 
+            for (let j = 0; j < layer.data.length; j++) {
+                let tile = layer.data[j];
+                if (tile.tilesetIndex === -1) {
+                    dataProp.push(0)
+                } else if (tile.tilesetIndex === 0) {
+                    dataProp.push(tile.tileIndex + 1)
+                } else {
+                    let tilesetIndex = tile.tilesetIndex
+                    let tileIndex = tile.tileIndex
+                    let tilesetLength = 0
+                    for (let k = 0; k < tilesetIndex; k++) {
+                        tilesetLength += store.tilesets[k].tiles.length
+                    }
+                    dataProp.push(tilesetLength + tileIndex + 1)
+                }
+            }
             let exportLayer = {
-                data: layer.data,
+                data: dataProp,
                 properties: [],
                 height: store.map.height,
                 name: layer.name,
@@ -296,7 +317,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
 
         const blob = new Blob([JSON.stringify(exportMap)], {type: "text/json"});
         const a = document.createElement("a");
-        a.download = tilesetTitle+".json";
+        a.download = store.map.title+".json";
         a.href = URL.createObjectURL(blob);
         const clickEvt = new MouseEvent("click", {
             view: window,
