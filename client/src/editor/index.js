@@ -638,7 +638,7 @@ function EditorContextProvider(props) {
         const layers = [...store.layers];
         const layer = layers[store.currentLayer];
         prop.value = value;
-        await updateProperty(store.map._id, layer._id, prop._id, prop);
+        await updateProperty(store.map._id, layer._id, prop);
 
         storeReducer({
             type: EditorActionType.UPDATE_LAYERS,
