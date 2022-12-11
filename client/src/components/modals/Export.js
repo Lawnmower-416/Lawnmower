@@ -181,27 +181,30 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
 
             const image = new Image();
             image.src = dataUrl;
-            loadImage = (image) => {
+            const loadImage = (image) => {
                 return new Promise((resolve, reject) => {
                     image.onload = () => {
+                        let exportTileset = {
+                            name: tileset.title,
+                            tilewidth: tileset.tileSize,
+                            tileheight: tileset.tileSize,
+                            tilecount: tiles.length,
+                            image: `${tileset.title}.png`,
+                            imageheight: image.naturalHeight,
+                            imagewidth: image.naturalWidth
+                        }
+                        exportMap.tilesets.push(exportTileset)
+                        console.log("id and title", tileset.id, tileset.title)
+
+
                         resolve(image)
                     }
                 })
             }
-    
-            loadImage(image).then(() => {
-                let exportTileset = {
-                    name: tileset.title,
-                    tilewidth: tileset.tileSize,
-                    tileheight: tileset.tileSize,
-                    tilecount: tiles.length,
-                    image: `${tileset.title}.png`,
-                    imageheight: image.naturalHeight,
-                    imagewidth: image.naturalWidth
-                }
-                exportMap.tilesets.push(exportTileset)
-                console.log("id and title", tileset.id, tileset.title)
-            })
+            const promiseResolver = async () => {
+                await loadImage(image)
+            }
+            promiseResolver()
         }
 
         const blob = new Blob([JSON.stringify(exportMap)], {type: "text/json"});
