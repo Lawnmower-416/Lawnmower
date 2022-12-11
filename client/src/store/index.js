@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 import api from "./../requests/store-request";
 import AuthContext from "../auth";
 import { useNavigate, useLocation } from "react-router-dom";
+import {uploadTilesetImage} from "../requests/tileset-editor-api";
 
 
 export const GlobalStoreContext = createContext();
@@ -552,6 +553,25 @@ function GlobalStoreContextProvider(props) {
         } catch (error) {
             console.log("Error creating new tileset: ", error);
         }
+    }
+
+    store.importTileset = async (title, tileSize, tilesetImage) => {
+        let owner = auth.user
+        let ownerUsername = auth.user.username
+        let response = await api.createTileset(owner, ownerUsername, title, tileSize).catch((error) => {
+            console.log(error);
+            return {data: {success: false, error: error}}
+        });
+        if (response.data.success) {
+            auth.user.tilesets.push(response.data.tileset._id)
+            store.loadUserContent();
+            const stringImage = JSON.stringify(tilesetImage);
+            const res = await uploadTilesetImage(response.data.tileset._id, stringImage);
+            history("/tilesetEditor/" + response.data.tileset._id)
+        } else {
+            console.log(response.data.error);
+        }
+
     }
 
     // update view count
