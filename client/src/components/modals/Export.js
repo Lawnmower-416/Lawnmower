@@ -181,7 +181,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
 
             const image = new Image();
             image.src = dataUrl;
-            loadImage = (image) => {
+            const loadImage = (image) => {
                 return new Promise((resolve, reject) => {
                     image.onload = () => {
                         resolve(image)
