@@ -200,10 +200,12 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                     imagewidth: image.naturalWidth
                 }
                 exportMap.tilesets.push(exportTileset)
+                console.log("id and title", tileset.id, tileset.title)
             })
         }
 
         const blob = new Blob([JSON.stringify(exportMap)], {type: "text/json"});
+        console.log("exportmap.tilesets", exportMap.tilesets)
         const a = document.createElement("a");
         a.download = store.map.title+".json";
         a.href = URL.createObjectURL(blob);
