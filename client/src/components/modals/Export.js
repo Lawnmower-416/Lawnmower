@@ -10,118 +10,6 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
     const { store } = useContext(EditorContext);
 
 
-    // const exportOptions = [
-    //     { name: 'Export as PNG', value: 'png' },
-    //     //{ name: 'Export as JPG', value: 'jpg' },
-    //     { name: 'Export as JSON', value: 'json' },
-    // ]
-
-/*
-  const closeModal = (e) => {
-    e.preventDefault();
-
-    if (map!=null && tileset==null) {
-        let exportLayers = []
-        let exportTilesets = []
-
-        //let gottenLayers = store.getLayersForExport(map)
-        //console.log("gottenLayers", gottenLayers)
-
-        store.getLayersForExport(map).then((gottenLayers) => {
-        
-            for (let i = 0; i < gottenLayers.length; i++) {
-                let layer = gottenLayers[i]
-                exportLayers.push({
-                    name: layer.name,
-                    locked: layer.locked,
-                    properties: layer.properties,
-                    height: layer.height,
-                    width: layer.width,
-                    data: layer.data,
-                })
-            }
-
-            //let gottenTilesets = store.getMapsTilesetsForExport(map)
-            //console.log("gottenTilesets", gottenTilesets)
-
-            store.getMapsTilesetsForExport(map).then((gottenTilesets) => {
-                for (let i = 0; i < gottenTilesets.length; i++) {
-                    let tileset = gottenTilesets[i]
-                    exportTilesets.push({
-                        name: tileset.title,
-                        tilewidth: tileset.tileSize,
-                        tileheight: tileset.tileSize,
-                        tilecount: tileset.tileCount,
-                        image: tileset.image,
-                        imageheight: tileset.imageHeight,
-                        imagewidth: tileset.imageWidth,
-                    }
-                    )
-                }
-
-                let exportMap = {
-                    height: map.height,
-                    layers: exportLayers,
-                    tilesets: exportTilesets,
-                    nextobjectid: 1,
-                    orientation: "isometric",
-                    tileheight: map.tileSize,
-                    tilewidth: map.tileSize,
-                    version: 1,
-                    tiledversion: "1.7.2",
-                    width: map.width
-                }
-
-                const blob = new Blob([JSON.stringify(exportMap)], {type: "text/json"});
-
-                const a = document.createElement("a");
-                a.download = mapTitle+".json"; //filename
-                a.href = URL.createObjectURL(blob);
-                const clickEvt = new MouseEvent("click", {
-                    view: window,
-                    bubbles: false,
-                    cancelable: true
-                });
-                a.dispatchEvent(clickEvt);
-                a.remove();
-                setIsOpen(false)
-            })
-        })
-    }
-    if (tileset!= null && map==null) {
-        
-        //let gottenTileset = store.getTilesetForExport(tileset)
-        //console.log("gottenTileset", gottenTileset)
-
-        store.getTilesetForExport(tileset).then((payload) => {
-            let exportTileset = {
-                    name: payload.tileset.title,
-                    tilewidth: payload.tileset.tileSize,
-                    tileheight: payload.tileset.tileSize,
-                    tilecount: payload.tileset.tileCount,
-                    image: payload.imageData,
-                    imageheight: payload.tileset.imageHeight,
-                    imagewidth: payload.tileset.imageWidth,
-                }
-            console.log("exportTileset:", exportTileset)
-            const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
-            const t = document.createElement("a");
-            t.download = tilesetTitle+".json";
-            t.href = URL.createObjectURL(blob);
-            const clickEvt = new MouseEvent("click", {
-                view: window,
-                bubbles: false,
-                cancelable: true
-            });
-            t.dispatchEvent(clickEvt);
-            t.remove();
-            setIsOpen(false)
-            setIsOpen(false)
-        })
-    }
-  }
-  */
-
     function tilesetExportPng() {
         const tileSize = store.tileset.tileSize;
         const canvas = document.createElement('canvas')
@@ -159,6 +47,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
 
         const image = new Image();
         image.src = dataUrl;
+        
         image.onload = () => {
         
             let exportTileset = {
@@ -186,15 +75,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
     }
 
     function mapExportPng() {
-        /*
-        const canvas = store.mapCanvasRef;
-        console.log(canvas);
-        const dataUrl = canvas.toDataURL('image/png')
-        const link = document.createElement('a')
-        link.download = `${store.map.title}.png`
-        link.href = dataUrl;
-        link.click()
-        */
+
         let exportMap = {
             compressionlevel: -1,
             height: store.map.height,
@@ -300,7 +181,15 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
 
             const image = new Image();
             image.src = dataUrl;
-            image.onload = () => {
+            loadImage = (image) => {
+                return new Promise((resolve, reject) => {
+                    image.onload = () => {
+                        resolve(image)
+                    }
+                })
+            }
+    
+            loadImage(image).then(() => {
                 let exportTileset = {
                     name: tileset.title,
                     tilewidth: tileset.tileSize,
@@ -310,8 +199,8 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                     imageheight: image.naturalHeight,
                     imagewidth: image.naturalWidth
                 }
-                exportMap.tilesets.push(exportTileset);
-            }
+                exportMap.tilesets.push(exportTileset)
+            })
         }
 
         const blob = new Blob([JSON.stringify(exportMap)], {type: "text/json"});
@@ -379,51 +268,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                                         <div className="text-black text-center font-medium text-lg">
                                             Image(s) and a JSON file will be downloaded.
                                         </div>
-                                        {/*
-                                        <Listbox value={selected} onChange={setSelected} className="relative mt-1" as="div">
-                                            <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-sm cursor-default focus:outline-none focus:ring-1 focus:ring-editor-highlight focus:border-editor-highlight sm:text-sm">
-                                                <span className="block truncate">{selected}</span>
-                                                <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                                    <ChevronDownIcon className="h-5 w-5 text-white"/>
-                                                </span>
-                                            </Listbox.Button>
-                                            <Listbox.Options>
-                                                {exportOptions.map((option) => (
-                                                    <Listbox.Option
-                                                        as="div"
-                                                        key={option.value}
-                                                        className={({ active }) =>
-                                                            `${active ? 'text-white bg-editor-highlight' : 'text-gray-900'}
-                                                                cursor-default select-none relative py-2 pl-10 pr-4`
-                                                        }
-                                                        value={option.value}
-                                                    >
-                                                        {({ selected, active }) => (
-                                                            <>
-                                                                <span
-                                                                    className={`${
-                                                                        selected ? 'font-medium' : 'font-normal'
-                                                                    } block truncate`}
-                                                                >
-                                                                    {option.name}
-                                                                </span>
-                                                                {selected ? (
-                                                                    <span
-                                                                        className={`${
-                                                                            active ? 'text-white' : 'text-white'
-                                                                        }
-                                                                            absolute inset-y-0 left-0 flex items-center pl-3`}
-                                                                    >
-                                                                        <CheckIcon className="h-6 w-6 text-editor-secondary" aria-hidden="true" />
-                                                                    </span>
-                                                                ) : null}
-                                                            </>
-                                                        )}
-                                                    </Listbox.Option>
-                                                ))}
-                                            </Listbox.Options>
-                                            </Listbox>
-                                            */}
+                                        
                                         <div className="pt-4 pb-4 flex items-center justify-center">
                                             <button
                                                 type="button"
