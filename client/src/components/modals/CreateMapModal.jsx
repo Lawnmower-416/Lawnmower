@@ -13,10 +13,10 @@ const CreateMapModal = ({ modalOpen, setModalOpen }) => {
 	const [invalidMsg, setInvalidMsg] = useState("");
 
 	const handleCreateMap = () => {
-		if (size <= 0 || size > maxMapSize || sizeW <= 0 || sizeW > maxMapSize)
+		if (parseInt(size) <= 0 || parseInt(size) > parseInt(maxMapSize) || parseInt(sizeW) <= 0 || parseInt(sizeW) > parseInt(maxMapSize))
 		{
 			setInvalidMsg("Invalid Map Size. Max Map Size (Length and Width) is " + maxMapSize);
-		} else if (sizeT <= 0 || sizeT > maxTileSize) {
+		} else if (parseInt(sizeT) <= 0 || parseInt(sizeT) > parseInt(maxTileSize)) {
 			setInvalidMsg("Invalid Tile Size. Max Tileset Size is " + maxTileSize);
 		} else {
 			setModalOpen(!modalOpen);		
