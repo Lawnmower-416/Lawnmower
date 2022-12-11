@@ -8,7 +8,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { Disclosure } from '@headlessui/react'
 import { Link } from 'react-router-dom';
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import EditorContext from "../../../editor";
 import AuthContext from "../../../auth";
 
@@ -16,7 +16,26 @@ function Headerbar({title, setSettingsOpen, setHistoryOpen, setExportOpen, setSh
     const { store } = useContext(EditorContext);
     const { auth } = useContext(AuthContext);
 
-    const userProfileRoute = "/profile/" + auth.user._id;
+    const [canEdit, setCanEdit] = useState(false);
+
+    useEffect(() => {
+        if(!auth.user) {
+            setCanEdit(false);
+            return;
+        } else {
+            if(store.map) {
+                if (store.map.owner === auth.user._id || store.collaborators.find(c => c.id === auth.user.id)) {
+                    setCanEdit(true);
+                }
+            } else {
+                if(store.tileset.owner === auth.user._id || store.collaborators.find(c => c.id === auth.user.id)) {
+                    setCanEdit(true);
+                }
+            }
+        }
+    }, []);
+
+    const userProfileRoute = auth.user ? ("/profile/" + auth.user._id) : "/community";
 
     return (
         <Disclosure as="nav" className="bg-editor-primary h-14">
@@ -35,16 +54,22 @@ function Headerbar({title, setSettingsOpen, setHistoryOpen, setExportOpen, setSh
                                 {title}
                             </h1>
                             <div className="flex items-center">
-                                <Cog6ToothIcon className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer" onClick={() => setSettingsOpen(true)}/>
-                                <CloudIcon className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer" onClick={() => setHistoryOpen(true)}/>
+                                { canEdit && (
+                                    <Cog6ToothIcon
+                                        className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer"
+                                        onClick={() => setSettingsOpen(true)}/>
+                                )}
                                 <ArrowDownTrayIcon className="h-10 w-10 text-white hover:text-editor-highlight" onClick={() => setExportOpen(true)} />
-                                <RocketLaunchIcon className="h-10 w-10 text-white hover:text-editor-highlight" onClick={() => {
-                                    if(store.tileset) {
-                                        store.saveTileset()
-                                    } else {
-                                        store.saveMap();
-                                    }
-                                }} />
+                                { canEdit && (
+                                    <RocketLaunchIcon className="h-10 w-10 text-white hover:text-editor-highlight" onClick={() => {
+                                        if(store.tileset) {
+                                            store.saveTileset()
+                                        } else {
+                                            store.saveMap();
+                                        }
+                                    }} />
+                                )}
+
 
                             </div>
                         </div>

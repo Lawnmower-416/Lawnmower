@@ -496,6 +496,17 @@ updateAvatar = async (req, res, next) => {
     }
 }
 
+PublicMapInfoVerify = async (req, res, next) => {
+    const response = await Map.findOne({ _id: req.params.mapId, public: true });
+    console.log(response);
+    if (response) {
+        console.log("Map is public");
+        next();
+    } else {
+        return await MapVerify(req, res, next);
+    }
+}
+
 MapVerify = async (req, res, next) => {
     const collaborator = auth.verifyUser(req); // Returns the userId
     if (!collaborator) {
@@ -508,6 +519,15 @@ MapVerify = async (req, res, next) => {
     }
     else return res.status(401).json({ success: false, errorMessage: "Unauthorized"});
 };
+
+PublicTilesetInfoVerify = async (req, res, next) => {
+    const response = await Tileset.findOne({ _id: req.params.tilesetId, public: true });
+    if (response) {
+        next();
+    } else {
+        return await TilesetVerify(req, res, next);
+    }
+}
 
 TilesetVerify = async (req, res, next) => {
     const collaborator = auth.verifyUser(req); // Returns the userId
@@ -531,7 +551,9 @@ module.exports = {
     changePassword,
     verifyUserAccount,
     deleteAccount,
+    PublicMapInfoVerify,
     MapVerify,
+    PublicTilesetInfoVerify,
     TilesetVerify,
     getAUser,
     SendEmailTo,

@@ -10,16 +10,16 @@ const PropertyEditorController = require('../controllers/property-editor-control
 const TagsController = require('../controllers/tags-editor-controller');
 
 // gets all basic info about a map needed for editing
-router.get('/map/:mapId', AuthController.MapVerify, ContentController.getMapById);
+router.get('/map/:mapId', AuthController.PublicMapInfoVerify, ContentController.getMapById);
 // Handles update a map in the database request
 router.put('/map/:mapId', AuthController.MapVerify, MapEditorController.updateMap);
 // Gets all tilesets for the maps
-router.get('/map/:mapId/tilesets', AuthController.MapVerify, TilesetEditorController.getTilesetsForMapById);
+router.get('/map/:mapId/tilesets', AuthController.PublicMapInfoVerify, TilesetEditorController.getTilesetsForMapById);
 
 //Adds a collaborator to a map
 router.post('/map/:mapId/collaborator', AuthController.MapVerify, MapEditorController.addCollaborator);
 // Gets all collaborators for a map
-router.get('/map/:mapId/collaborators', AuthController.MapVerify, MapEditorController.getCollaborators);
+router.get('/map/:mapId/collaborators', AuthController.PublicMapInfoVerify, MapEditorController.getCollaborators);
 //Adds a collaborator to a tileset
 router.post('/tileset/:tilesetId/collaborator', AuthController.TilesetVerify, MapEditorController.addCollaboratorForTileset);
 // Gets all collaborators for a tileset
@@ -27,14 +27,14 @@ router.get('/tileset/:tilesetId/collaborators', AuthController.TilesetVerify, Ma
 
 // Layer Routes
 router.post('/map/:mapId/layer', AuthController.MapVerify, LayerEditorController.createLayer);
-router.get('/map/:mapId/layer/:layerId', AuthController.MapVerify, LayerEditorController.getLayer);
+router.get('/map/:mapId/layer/:layerId', AuthController.PublicMapInfoVerify, LayerEditorController.getLayer);
 router.put('/map/:mapId/layer/:layerId', AuthController.MapVerify, LayerEditorController.updateLayer);
 router.delete('/map/:mapId/layer/:layerId', AuthController.MapVerify, LayerEditorController.deleteLayer);
 router.put('/map/:mapId/layer/:layerId/place', AuthController.MapVerify, LayerEditorController.placeTile);
 
 // Property Routes
 router.post('/map/:mapId/layer/:layerId/property', AuthController.MapVerify, PropertyEditorController.createProperty);
-router.get('/map/:mapId/layer/:layerId/property/:propertyId', AuthController.MapVerify, PropertyEditorController.getProperty);
+router.get('/map/:mapId/layer/:layerId/property/:propertyId', AuthController.PublicMapInfoVerify, PropertyEditorController.getProperty);
 router.put('/map/:mapId/layer/:layerId/property/:propertyId', AuthController.MapVerify, PropertyEditorController.updateProperty);
 router.delete('/map/:mapId/layer/:layerId/property/:propertyId', AuthController.MapVerify, PropertyEditorController.deleteProperty);
 
@@ -50,12 +50,12 @@ router.delete('/tag/:tagId', TagsController.deleteTag);
 router.put('/tileset/:tilesetId/image', AuthController.TilesetVerify, TilesetEditorController.uploadTilesetImage);
 router.put('/tileset/:tilesetId', AuthController.TilesetVerify, TilesetEditorController.updateTileset);
 // router.get('/tileset/:tilesetId/export/:versionId', AuthController.TilesetVerify, TilesetEditorController.export) TODO: LATER
-router.get('/tileset/:tilesetId/image', AuthController.TilesetVerify, TilesetEditorController.getTilesetImage);
+router.get('/tileset/:tilesetId/image', AuthController.PublicTilesetInfoVerify, TilesetEditorController.getTilesetImage);
 
 //Adds a collaborator to a tileset
 router.post('/tileset/:tilesetId/collaborator', AuthController.TilesetVerify, TilesetEditorController.addCollaborator);
 // Gets all collaborators for a tileset
-router.get('/tileset/:tilesetId/collaborators', AuthController.TilesetVerify, TilesetEditorController.getCollaborators);
+router.get('/tileset/:tilesetId/collaborators', AuthController.PublicTilesetInfoVerify, TilesetEditorController.getCollaborators);
 
 
 module.exports = router;

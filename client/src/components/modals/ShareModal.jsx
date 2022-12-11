@@ -8,9 +8,16 @@ const ShareModal = ({ modalOpen, setModalOpen }) => {
 	const { auth } = useContext(AuthContext);
 	const { store } = useContext(EditorContext);
 
+	const [owner, setOwner] = useState(null);
+
 	useEffect(() => {
 		if(store.collaborators.length === 0) {
 			store.loadCollaborators();
+			if(store.tileset) {
+				setOwner(store.tileset.ownerUsername);
+			} else {
+				setOwner(store.map.ownerUsername);
+			}
 		}
 	}, [modalOpen]);
 
@@ -33,7 +40,11 @@ const ShareModal = ({ modalOpen, setModalOpen }) => {
 	};
 
 	const handleSubmit = () => {
-		store.setTilesetVisiblity(isPublic);
+		if(store.tileset) {
+			store.setTilesetVisiblity(isPublic);
+		} else {
+			store.setMapVisibility(isPublic);
+		}
 		setModalOpen(false);
 	}
 
@@ -131,7 +142,7 @@ const ShareModal = ({ modalOpen, setModalOpen }) => {
 								<div className="flex items-center">
 									<img className="w-7 mr-1" src={avatar} alt="" />
 									<h5 className="text-[18px] font-medium text-white">
-										{auth.user.username}
+										{owner}
 									</h5>
 								</div>
 								<h5 className="text-[18px] font-medium text-white">
