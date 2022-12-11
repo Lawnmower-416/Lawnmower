@@ -9,7 +9,7 @@ const CreateTilesetModal = ({ modalOpen, setModalOpen }) => {
 	const [invalidMsg, setInvalidMsg] = useState("");
 
 	const handleCreateTileset = () => {
-		if (size <= 0 || size > maxSize) {
+		if (parseInt(size) <= 0 || parseInt(size) > parseInt(maxSize)) {
 			setInvalidMsg("Invalid Tile Size. Max Tileset Size is " + maxSize);
 		} else {
 			setModalOpen(!modalOpen);
