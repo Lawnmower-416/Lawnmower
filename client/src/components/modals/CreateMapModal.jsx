@@ -13,10 +13,10 @@ const CreateMapModal = ({ modalOpen, setModalOpen }) => {
 	const [invalidMsg, setInvalidMsg] = useState("");
 
 	const handleCreateMap = () => {
-		if (size <= 0 || size > maxMapSize || sizeW <= 0 || sizeW > maxMapSize)
+		if (parseInt(size) <= 0 || parseInt(size) > parseInt(maxMapSize) || parseInt(sizeW) <= 0 || parseInt(sizeW) > parseInt(maxMapSize))
 		{
 			setInvalidMsg("Invalid Map Size. Max Map Size (Length and Width) is " + maxMapSize);
-		} else if (sizeT <= 0 || sizeT > maxTileSize) {
+		} else if (parseInt(sizeT) <= 0 || parseInt(sizeT) > parseInt(maxTileSize)) {
 			setInvalidMsg("Invalid Tile Size. Max Tileset Size is " + maxTileSize);
 		} else {
 			setModalOpen(!modalOpen);		
@@ -37,7 +37,7 @@ const CreateMapModal = ({ modalOpen, setModalOpen }) => {
 			<div className="min-h-full flex justify-center items-center py-12 px-4 sm:px-10">
 				<div className="modal-content duration-500 rounded-2xl bg-gradient-green p-6 sm:p-10 w-full max-w-lg relative z-10 sm:pt-5 sm:pb-6">
 					{
-						invalidMsg === "" ?
+						invalidMsg !== "" ?
 						<h4 className="text-[14px] font-bold text-red">{invalidMsg}</h4> :
 						<></>
 					}

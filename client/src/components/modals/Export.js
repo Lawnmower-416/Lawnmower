@@ -159,28 +159,30 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
 
         const image = new Image();
         image.src = dataUrl;
+        image.onload = () => {
         
-        let exportTileset = {
-                name: store.tileset.title,
-                tilewidth: store.tileset.tileSize,
-                tileheight: store.tileset.tileSize,
-                tilecount: tiles.length,
-                image: `${store.tileset.title}.png`,
-                imageheight: image.naturalHeight,
-                imagewidth: image.naturalWidth
-            }
-        const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
-        const t = document.createElement("a");
-        t.download = tilesetTitle+".json";
-        t.href = URL.createObjectURL(blob);
-        const clickEvt = new MouseEvent("click", {
-            view: window,
-            bubbles: false,
-            cancelable: true
-        });
-        t.dispatchEvent(clickEvt);
-        t.remove();
-        setIsOpen(false)
+            let exportTileset = {
+                    name: store.tileset.title,
+                    tilewidth: store.tileset.tileSize,
+                    tileheight: store.tileset.tileSize,
+                    tilecount: tiles.length,
+                    image: `${store.tileset.title}.png`,
+                    imageheight: image.naturalHeight,
+                    imagewidth: image.naturalWidth
+                }
+            const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
+            const t = document.createElement("a");
+            t.download = tilesetTitle+".json";
+            t.href = URL.createObjectURL(blob);
+            const clickEvt = new MouseEvent("click", {
+                view: window,
+                bubbles: false,
+                cancelable: true
+            });
+            t.dispatchEvent(clickEvt);
+            t.remove();
+            setIsOpen(false)
+        }
     }
 
     function mapExportPng() {
@@ -219,8 +221,29 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
             if (layer.visible !== undefined) {
                 visiblityProp = layer.visible
             }
+            let dataProp = []
+            // we have layer.data. Layer.data is an array of objects
+            // each object has a tilesetIndex property and a tileIndex property
+            // iterate through each object in Layer.data
+            // for each object, 
+            for (let j = 0; j < layer.data.length; j++) {
+                let tile = layer.data[j];
+                if (tile.tilesetIndex === -1) {
+                    dataProp.push(0)
+                } else if (tile.tilesetIndex === 0) {
+                    dataProp.push(tile.tileIndex + 1)
+                } else {
+                    let tilesetIndex = tile.tilesetIndex
+                    let tileIndex = tile.tileIndex
+                    let tilesetLength = 0
+                    for (let k = 0; k < tilesetIndex; k++) {
+                        tilesetLength += store.tilesets[k].tiles.length
+                    }
+                    dataProp.push(tilesetLength + tileIndex + 1)
+                }
+            }
             let exportLayer = {
-                data: layer.data,
+                data: dataProp,
                 properties: [],
                 height: store.map.height,
                 name: layer.name,
@@ -268,7 +291,6 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                         context.fillRect(x + pixelOffsetX, y + pixelOffsetY, 1, 1);
                     }
                 }
-
             }
             const dataUrl = canvas.toDataURL('image/png', 1.0)
             const link = document.createElement('a')
@@ -294,7 +316,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
 
         const blob = new Blob([JSON.stringify(exportMap)], {type: "text/json"});
         const a = document.createElement("a");
-        a.download = tilesetTitle+".json";
+        a.download = store.map.title+".json";
         a.href = URL.createObjectURL(blob);
         const clickEvt = new MouseEvent("click", {
             view: window,
