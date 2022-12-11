@@ -291,27 +291,26 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                         context.fillRect(x + pixelOffsetX, y + pixelOffsetY, 1, 1);
                     }
                 }
+            }
+            const dataUrl = canvas.toDataURL('image/png', 1.0)
+            const link = document.createElement('a')
+            link.download = `${tileset.title}.png`
+            link.href = dataUrl
+            link.click()
 
-                const dataUrl = canvas.toDataURL('image/png', 1.0)
-                const link = document.createElement('a')
-                link.download = `${tileset.title}.png`
-                link.href = dataUrl
-                link.click()
-
-                const image = new Image();
-                image.src = dataUrl;
-                image.onload = () => {
-                    let exportTileset = {
-                        name: tileset.title,
-                        tilewidth: tileset.tileSize,
-                        tileheight: tileset.tileSize,
-                        tilecount: tiles.length,
-                        image: `${tileset.title}.png`,
-                        imageheight: image.naturalHeight,
-                        imagewidth: image.naturalWidth
-                    }
-                    exportMap.tilesets.push(exportTileset);
+            const image = new Image();
+            image.src = dataUrl;
+            image.onload = () => {
+                let exportTileset = {
+                    name: tileset.title,
+                    tilewidth: tileset.tileSize,
+                    tileheight: tileset.tileSize,
+                    tilecount: tiles.length,
+                    image: `${tileset.title}.png`,
+                    imageheight: image.naturalHeight,
+                    imagewidth: image.naturalWidth
                 }
+                exportMap.tilesets.push(exportTileset);
             }
         }
 
