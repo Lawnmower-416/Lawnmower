@@ -684,10 +684,6 @@ function EditorContextProvider(props) {
     store.exportVersion = async (versionId) => {
 
     }
-    // handles importing a tileset
-    store.importTileset = async (tilesetId) => {
-
-    }
 
     store.addTilesetToMap = async (tileset) => {
         const updatedMap = {...store.map, tilesets: [...store.map.tilesets, tileset._id]};
