@@ -33,6 +33,8 @@ function MainEditor() {
 
     const [lastRedraw, setLastRedraw] = useState(null);
 
+    const [canEdit, setCanEdit] = useState(false);
+
     const layers = store.layers;
     const currentLayer = store.layers[store.currentLayer];
 
@@ -46,6 +48,15 @@ function MainEditor() {
     const highlightRef = useRef(null);
 
     useEffect(() => {
+        if(!auth.user) {
+            setCanEdit(false);
+            return;
+        } else {
+            if(store.map.owner === auth.user._id || store.collaborators.find(c => c.id === auth.user.id)) {
+                setCanEdit(true);
+            }
+        }
+
         const socket = io("http://34.193.24.27:3000");//"http://localhost:3000");
 
         socket.on("disconnect", () => {
@@ -72,7 +83,7 @@ function MainEditor() {
         setSocket(socket);
 
         return () => {
-            socket.disconnect();
+            if(socket) socket.disconnect();
         }
     }, [store.map && store.map._id]);
 
@@ -318,7 +329,7 @@ function MainEditor() {
 
     return (
         <main className="flex flex-col w-full bg-white overflow-x-hidden overflow-y-auto mb-14">
-            <Toolbar />
+            {canEdit && <Toolbar />}
             <div className="flex w-full mx-auto px-6 py-8 justify-center">
                 {ref === null || highlightRef === null ? <div /> : (
                     <>

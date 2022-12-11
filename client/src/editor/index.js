@@ -98,7 +98,7 @@ function EditorContextProvider(props) {
 
         dataPasted: false,
 
-        mapCanvasRef: null,
+        mapCanvasRef: null
     });
 
     useEffect(() => {
@@ -683,6 +683,22 @@ function EditorContextProvider(props) {
     // handles downloading a prior version of the content
     store.exportVersion = async (versionId) => {
 
+    }
+
+    store.setMapVisibility = async (isPublic) => {
+        const map = store.map;
+        map.public = isPublic;
+        await updateMap(map._id, map);
+
+        storeReducer({
+            type: EditorActionType.SET_MAP,
+            payload: {
+                map,
+                layers: store.layers,
+                mapTilesets: store.mapTilesets,
+                tiles: store.tiles
+            }
+        });
     }
 
     store.addTilesetToMap = async (tileset) => {
