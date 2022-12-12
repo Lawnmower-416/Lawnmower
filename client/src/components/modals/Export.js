@@ -190,7 +190,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                 columns: 8,
                 margin: 0,
                 spacing: 0,
-                firstgrid: 1
+                firstgid: 1
             }
             exportMap.tilesets.push(exportTileset)
         }
