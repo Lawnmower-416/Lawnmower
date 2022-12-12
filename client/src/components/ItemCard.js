@@ -10,6 +10,8 @@ import ReportModal from "./modals/ReportModal";
 import ForkModal from "./modals/ForkModal";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
+import mapThumbnail from  "../components/modals/images/mapthumbnail.png"
+import tilesetThumbnail from  "../components/modals/images/tilesetthumbnail.png"
 
 
 /**
@@ -43,7 +45,13 @@ export default function ItemCard(props) {
     const publicStatus = currentData.public || false
     const comments = currentData.comments || "Error Loading Comments";
 
-    const thumbnail = currentData.thumbnail || "Error Loading Thumbnail";
+    let thumbnail = currentData.thumbnail || "Error Loading Thumbnail";
+
+    if (props.map) {
+        thumbnail = <img src={mapThumbnail} alt="Map Thumbnail" className="object-cover h-48 w-48 content-center" />
+    } else if (props.tileset) {
+        thumbnail = <img src={tilesetThumbnail} alt="Tileset Thumbnail" className="object-cover h-48 w-48 content-center" />
+    }
 
     const ownerProfileLink = "/profile/" + owner
 
@@ -133,10 +141,7 @@ export default function ItemCard(props) {
                     <div className="flex order-2 align-middle content-center items-center p-2">
                         {/* Col 2 */}
                             <div className="flex">
-                                {
-                                    thumbnail
-                                    ? <img className="object-cover h-48 w-48 content-center border-2" src={thumbnail} alt="thumbnail" />
-                                    : <QuestionMarkCircleIcon className="w-32" /> }
+                                {thumbnail}
                             </div>
                     </div>
                 {/* Column 3: Map/Tileset Name, Author, Creation Date */}

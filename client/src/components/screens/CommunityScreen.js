@@ -184,8 +184,8 @@ export default function CommunityScreen() {
                                 <div className='mr-5 space-y-3'>
                                     {
                                         mapTabBool 
-                                        ?   (publicMaps.filter((map) => map.title.toLowerCase().includes(text.toLowerCase()))).map((d, i) => <ItemCard map={d} key={i} inProfile={true}/>)
-                                        :   (publicTilesets.filter((tileset) => tileset.title.toLowerCase().includes(text.toLowerCase()))).map((d, i) => <ItemCard tileset={d} key={i} inProfile={true}/>)
+                                        ?   (publicMaps.filter((map) => map.title.toLowerCase().includes(text.toLowerCase()))).map((d, i) => <ItemCard map={d} key={i} inProfile={true} postType = "map" />)
+                                        :   (publicTilesets.filter((tileset) => tileset.title.toLowerCase().includes(text.toLowerCase()))).map((d, i) => <ItemCard tileset={d} key={i} inProfile={true} postType = "tileset" />)
 
                                     }
                                 </div>

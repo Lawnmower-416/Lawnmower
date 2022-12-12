@@ -24,6 +24,7 @@ export default function Home() {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
   const userTilesets = store.userTilesets
+  const userMaps = store.userMaps
 
   useEffect(() => {
     console.log({auth})
@@ -35,11 +36,18 @@ export default function Home() {
       setCurrentPost(data)
     })
 
-    socket.emit('post_view', {
-      postId: postID,
-      userId: auth.user._id,
-      postType: postType
-    })
+    if(auth.user?._id){
+      socket.emit('post_view', {
+        postId: postID,
+        userId: auth.user?._id,
+        postType: postType
+      })
+    }else{
+      socket.emit('guest_view', {
+        postId: postID,
+        postType: postType
+      })
+    }
 
   }, [socket])
 
@@ -49,19 +57,21 @@ export default function Home() {
 /**
  * frontend*. added
  */
-  useEffect(() => {
-    if(userTilesets.length == 0){
-      navigate('/login')
-    }
-    console.log({postID}, {userTilesets})
-    userTilesets.map((tileset, index) => {
-      if(tileset._id == postID){
-        setCurrentPost(tileset);
-        console.log({tileset})
-      }
-    })
+  // useEffect(() => {
+  //   // if(userTilesets.length == 0){
+  //   //   navigate('/login')
+  //   // }
+  
+  //   userTilesets.map((tileset, index) => {
+  //     if(tileset._id == postID){
+  //       // setCurrentPost(tileset);
+  //       console.log({tileset})
+  //     }
+  //   })
 
-  }, [userTilesets, postID])
+  //   console.log("UserMaps: ", {userMaps})
+
+  // }, [userTilesets, postID, userMaps])
   
   
 

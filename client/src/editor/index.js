@@ -708,7 +708,7 @@ function EditorContextProvider(props) {
 
     }
 
-    store.changeMapTitle = (title) => {
+ store.changeMapTitle = (title) => {
         const newMap = {...store.map, title}
         updateMap(store.map._id, newMap).then(res => {
             if(res.status === 200) {

@@ -1,11 +1,26 @@
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
-import {useRef, useEffect, useContext} from 'react';
+import {useRef, useEffect, useContext, useState} from 'react';
 import EditorContext from "../../../editor";
 import toast from "react-hot-toast";
+import AuthContext from "../../../auth";
 function TileSidebar({ tiles, openDeleteTileModal }) {
-
+    const { auth } = useContext(AuthContext)
     const { store } = useContext(EditorContext);
+
+    const [canEdit, setCanEdit] = useState(false);
+
+
+    useEffect(() => {
+        if(!auth.user) {
+            setCanEdit(false);
+            return;
+        } else {
+            if(store.tileset.owner === auth.user._id || store.collaborators.find(c => c.id === auth.user.id)) {
+                setCanEdit(true);
+            }
+        }
+    }, []);
 
     function handleAddTile() {
         if(store.tilesetImage.tiles.length >= 64) {
@@ -41,12 +56,14 @@ function TileSidebar({ tiles, openDeleteTileModal }) {
                                 />
                             ))}
                         </div>
+                        {canEdit && (
                         <div className="flex justify-center">
                              <PlusCircleIcon
                                  className="h-10 w-10 text-white hover:text-editor-highlight hover:cursor-pointer"
                                  onClick={handleAddTile}
                              />
                         </div>
+                        )}
                         </div>
                     </div>
                 </div>

@@ -33,6 +33,8 @@ const CreateTilesetModal = ({ modalOpen, setModalOpen }) => {
 		} else {
 			setModalOpen(!modalOpen);
 
+
+
 			//put selectedFile on Canvas and get 2d array of pixels
 			const canvas = document.createElement("canvas");
 			const ctx = canvas.getContext("2d");
@@ -93,7 +95,7 @@ const CreateTilesetModal = ({ modalOpen, setModalOpen }) => {
 						<input
 							type="text"
 							value={size}
-							onChange={(e) => setSize(e.target.value)}
+							onChange={(e) => setSize(e.target.value/2)}
 							className="rounded-lg py-2 px-2 text-white bg-dark-green text-[18px] font-semibold outline-0 w-20 text-center"
 						/>
 					</div>
