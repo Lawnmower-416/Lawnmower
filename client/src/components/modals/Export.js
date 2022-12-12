@@ -126,12 +126,12 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
             let exportLayer = {
                 data: dataProp,
                 properties: [],
-                height: store.map.height,
+                height: store.map.height / 2,
                 name: layer.name,
                 opacity: 1,
                 type: "tilelayer",
                 visible: visiblityProp,
-                width: store.map.width,
+                width: store.map.width / 2,
                 x: 0,
                 y: 0
             }
@@ -186,7 +186,11 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                 tilecount: tiles.length,
                 image: `${tileset.title}.png`,
                 imageheight: 64,
-                imagewidth: 64
+                imagewidth: 64,
+                columns: 8,
+                margin: 0,
+                spacing: 0,
+                firstgrid: 1
             }
             exportMap.tilesets.push(exportTileset)
         }
