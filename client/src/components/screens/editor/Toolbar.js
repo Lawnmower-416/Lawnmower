@@ -6,6 +6,7 @@ import { Disclosure } from '@headlessui/react'
 import {useContext} from "react";
 import EditorContext, {EditorTool} from "../../../editor";
 import BulkTileChangeTransaction from "../../../transactions/BulkTileChangeTransaction";
+import toast from "react-hot-toast";
 
 function Toolbar() {
 
@@ -23,10 +24,7 @@ function Toolbar() {
             // eslint-disable-next-line no-undef
             [new ClipboardItem({'text/plain': new Blob([JSON.stringify(store.getCopyData())], {type: 'text/plain'})})
             ]).then(r => {
-                store.setNotification({
-                    message: 'Copied to clipboard',
-                    type: 'success'
-                })
+                toast.success('Copied to clipboard')
         });
      }
 

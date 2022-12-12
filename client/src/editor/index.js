@@ -626,15 +626,29 @@ function EditorContextProvider(props) {
         });
     }
     // handles renaming a property
-    store.renameProp = async (prop) => {
+    store.renameProperty = async (propertyIndex, name) => {
+        const layers = [...store.layers];
+        const layer = layers[store.currentLayer];
+        const property = layer.properties[propertyIndex];
+        property.name = name;
+        await updateProperty(store.map._id, layer._id, property);
+
+        storeReducer({
+            type: EditorActionType.UPDATE_LAYERS,
+            payload: {
+                layers
+            }
+        });
 
     }
     // handles changing a property's type
     store.changePropType = async (prop, type) => {
-        prop.type = type;
+        const layers = [...store.layers];
+        const layer = layers[store.currentLayer];
+        const property = layer.properties.find(p => p._id === prop._id);
+        property.type = type;
 
-        const currentLayer = store.layers[store.currentLayer];
-        const res = await updateProperty(store.map._id, currentLayer._id, prop).catch(err => {
+        const res = await updateProperty(store.map._id, layer._id, property).catch(err => {
             if(err.response && err.response.status === 401) {
                 return err.response;
             } else {
@@ -644,11 +658,11 @@ function EditorContextProvider(props) {
 
         if(res && res.status === 200) {
             storeReducer({
-                type: EditorActionType.UPDATE_PROPERTY,
+                type: EditorActionType.UPDATE_LAYERS,
                 payload: {
-                    property: prop
+                    layers
                 }
-            })
+            });
             return true;
         }
         return false;

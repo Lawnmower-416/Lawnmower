@@ -1,4 +1,11 @@
-import { LockClosedIcon, LockOpenIcon, ChevronLeftIcon, EyeSlashIcon, EyeIcon } from '@heroicons/react/24/outline'
+import {
+    LockClosedIcon,
+    LockOpenIcon,
+    ChevronLeftIcon,
+    EyeSlashIcon,
+    EyeIcon,
+    CheckIcon
+} from '@heroicons/react/24/outline'
 import { Switch } from "@headlessui/react";
 import {useContext, useEffect, useState} from "react";
 import EditorContext from "../../../editor";
@@ -11,6 +18,10 @@ function LayerSidebar() {
 
     const [addingProperty, setAddingProperty] = useState(false);
 
+    const [editingPropertyIndex, setEditingPropertyIndex] = useState(null);
+
+    const [propertyName, setPropertyName] = useState("");
+
     const { store } = useContext(EditorContext);
 
     const layers = store.layers;
@@ -19,6 +30,26 @@ function LayerSidebar() {
     useEffect(() => {
 
     }, [store.layers, currentLayer && currentLayer.properties]);
+
+    function handleClick(e, index) {
+        e.preventDefault();
+        if(e.type === 'click' || e.key === 'Enter') {
+            store.selectLayer(index);
+        } else if(e.type === 'contextmenu') {
+
+        }
+
+    }
+
+    function handlePropertyRename() {
+        if(editingPropertyIndex !== null) {
+            if(propertyName.length > 0) {
+                store.renameProperty(editingPropertyIndex, propertyName);
+            }
+            setEditingPropertyIndex(null);
+            setPropertyName("");
+        }
+    }
 
     function displayLockIcon(isLocked, index) {
         if (isLocked) {
@@ -186,7 +217,8 @@ function LayerSidebar() {
                                             " bg-editor-highlight" :
                                             (item.visible ? " bg-editor-secondary" : " bg-editor-tertiary"))
                                     }
-                                    onClick={() => store.selectLayer(index)}
+                                    onClick={(e) => handleClick(e, index)}
+                                    onContextMenu={(e) => handleClick(e,index)}
                                 >
                                     {item.name}
                                     <div className="group flex items-center justify-between">
@@ -229,12 +261,33 @@ function LayerSidebar() {
                                     key={item._id}
                                     className="col-span-2 grid grid-cols-2"
                                 >
-                                    <h3
-                                        className="bg-editor-secondary text-white col-span-1"
-                                    >
-                                        {item.name}
-                                    </h3>
-                                    {displayCustomPropertyField(item)}
+                                    { editingPropertyIndex === index ?
+                                        (
+                                         <input
+                                             type="text"
+                                             name="name"
+                                             onChange={(e) => setPropertyName(e.target.value)}
+                                             value={propertyName}
+                                         />
+                                        ) :
+                                        (<h3
+                                            className="bg-editor-secondary text-white col-span-1"
+                                            onDoubleClick={() => setEditingPropertyIndex(index)}
+                                        >
+                                            {item.name}
+                                        </h3>
+                                        )
+
+                                    }
+                                    {editingPropertyIndex === index ? (
+                                        <button
+                                            onClick={handlePropertyRename}
+                                        >
+                                            <CheckIcon className="h-6 w-6 text-white hover:text-editor-highlight hover:cursor-pointer"/>
+                                        </button>
+                                        ) :
+                                        displayCustomPropertyField(item)
+                                    }
                                 </div>
                             ))}
                             <div className="flex justify-center col-span-2">
