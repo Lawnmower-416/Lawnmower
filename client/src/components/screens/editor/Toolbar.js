@@ -20,8 +20,16 @@ function Toolbar() {
     const isFill = currentTool === EditorTool.FILL;
 
     const handleCopy = () => {
+        if(store.selectedPixels.length === 0 && store.selectedTiles.length === 0){
+            toast.error('Nothing selected');
+            return;
+        }
+
+        if(store.selectedPixels.length > 250) {
+            toast.error('Too many pixels selected');
+            return;
+        }
         navigator.clipboard.write(
-            // eslint-disable-next-line no-undef
             [new ClipboardItem({'text/plain': new Blob([JSON.stringify(store.getCopyData())], {type: 'text/plain'})})
             ]).then(r => {
                 toast.success('Copied to clipboard')
@@ -31,8 +39,19 @@ function Toolbar() {
     const handleCut = () => {
         const isTileset = store.tileset !== null;
 
+        if(store.selectedPixels.length === 0 && store.selectedTiles.length === 0){
+            toast.error('Nothing selected');
+            return;
+        }
+
+        if(store.selectedPixels.length > 100) {
+            toast.error('Too many pixels selected');
+            return;
+        }
+
         const minX = Math.min(...store.selectedPixels.map(p => p.x));
         const minY = Math.min(...store.selectedPixels.map(p => p.y));
+
         //Undo subtracting done in copy calculation to get actual position
         let oldData;
         if(isTileset) {
@@ -55,7 +74,7 @@ function Toolbar() {
 
         let newData = isTileset ?
             oldData.map(pixel => ({...pixel, color: {r: 0, g: 0, b: 0, a: 0}})) :
-            oldData.map(pixel => ({...pixel, tile: -1}));
+            oldData.map(pixel => ({...pixel, tile: {tilesetIndex: -1, tileIndex: -1}}));
         console.log(oldData);
         console.log(newData);
         handleCopy();

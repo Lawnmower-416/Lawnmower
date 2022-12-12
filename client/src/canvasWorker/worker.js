@@ -52,28 +52,22 @@ onmessage = (e) => {
 const drawMap = ({layers, mapTilesets, cameraZoom, cameraOffset}) => {
     const start = performance.now();
 
-    // number of tiles that can fix in the canvas
-    const tilesPerRow = Math.floor(canvasWidth / tileSize);
-    const tilesPerColumn = Math.floor(canvasHeight / tileSize);
-
     const context = canvas.getContext('2d');
 
     console.log(cameraOffset)
+    context.translate(0,0);
     context.clearRect(0, 0, canvasWidth, canvasHeight);
-    context.translate(0,0)
-    //context.translate(canvasWidth / 2, canvasHeight / 2);
-    //context.scale(cameraZoom, cameraZoom);
-    //context.translate( -canvasWidth / 2 + cameraOffset.x, -canvasHeight / 2 + cameraOffset.y )
-
-
+    //context.translate(0,250)
 
     for(let i = 0; i < layers.length; i++) {
         const layer = layers[i];
+        console.log(layer)
         if(!layer.visible) continue;
         for(let j = 0; j < mapHeight; j++) {
             for(let i = 0; i < mapWidth; i++) {
                 const index = j * mapWidth + i;
                 const tileInfo = layer.data[index];
+                if(!tileInfo) continue;
                 const {tilesetIndex, tileIndex} = tileInfo;
                 if(tileIndex === -1 || tilesetIndex === -1) continue;
                 const tile = mapTilesets[tilesetIndex].imageData.tiles[tileIndex];
@@ -88,6 +82,9 @@ const drawMap = ({layers, mapTilesets, cameraZoom, cameraOffset}) => {
             }
         }
     }
+    cameraZoom = 1;
+    context.scale(cameraZoom, cameraZoom)
+
     const end = performance.now();
     console.log("redraw took " + (end - start) + " ms");
 }
@@ -108,9 +105,9 @@ const redrawCoordinate = ({x: i,y: j, currentLayer, mapTilesets}) => {
         for(let x = 0; x < tileSize; x++) {
             const index = (y * tileSize + x) * 4;
             context.fillStyle = `rgba(${colorData[index]}, ${colorData[index+1]}, ${colorData[index+2]}, ${colorData[index+3]})`;
-context.fillRect(x + (i * tileSize), y + (j * tileSize), 1, 1);
-}
-}
+            context.fillRect(x + (i * tileSize), y + (j * tileSize), 1, 1);
+        }
+    }
 
 const end = performance.now();
 console.log("redrawCoord took " + (end - start) + " ms");

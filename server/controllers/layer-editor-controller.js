@@ -101,7 +101,7 @@ function placeTile(req, res) {
 
     const { tile, index } = body;
 
-    if(!tile || !index || tile.tilesetIndex === undefined || tile.tileIndex === undefined || index < 0) {
+    if(!tile || (index === undefined) || tile.tilesetIndex === undefined || tile.tileIndex === undefined || index < 0) {
         return res.status(400).json({
             success: false,
             error: 'Improperly formatted request'
