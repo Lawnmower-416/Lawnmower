@@ -230,7 +230,7 @@ export default function ItemCard(props) {
                     : <div></div>
                 }
             </div>
-            <ReportModal modalOpen={openReportModal} setModalOpen={setReportModal} />
+            <ReportModal modalOpen={openReportModal} setModalOpen={setReportModal} reporter={user.username || "Guest"} reportee={owner}  />
             <ForkModal modalOpen={openForkModal} setModalOpen={setForkModal} mapId={props.map ? props.map._id : null } tilesetId={props.tileset ? props.tileset._id : null}/>
         </div>
         </>

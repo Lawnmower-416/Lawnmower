@@ -16,7 +16,7 @@ const ReportModal = ({ modalOpen, setModalOpen, reporter, reportee }) => {
 		let v = [];
 		values.forEach(checkbox => v.push(checkbox.value));
 		let reason = v.toString() + `, Other: ${other}`;
-		store.reportUser(reporter._id, reportee, reason);
+		store.reportUser(reporter?._id || reportee._id, reportee, reason);
 	}
 	const handleChange = (event) => {
 		setOther(event.target.value);
