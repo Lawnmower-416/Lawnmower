@@ -46,7 +46,6 @@ const HomeScreen = () => {
                 <button
                   onClick={handleGuestMode}
                 >
-                Expanded Community Page Test
                 </button>
               </Link>
             </div>
