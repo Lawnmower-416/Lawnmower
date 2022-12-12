@@ -122,7 +122,6 @@ function EditorContextProvider(props) {
                 break;
 
             case EditorActionType.SET_MAP:
-                console.log(payload.tiles)
                 setStore({
                     ...store,
                     map: payload.map,
@@ -288,7 +287,6 @@ function EditorContextProvider(props) {
                 break;
 
             case EditorActionType.LAYER_REFRESHED:
-                console.log("layer refreshed")
                 setStore({
                     ...store,
                     layerRefreshed: !store.layerRefreshed,
@@ -309,7 +307,6 @@ function EditorContextProvider(props) {
     }
 
     store.setCanvasRef = (mapCanvasRef) => {
-        console.log(mapCanvasRef)
         storeReducer({
             type: EditorActionType.SET_MAP_CANVAS_REF,
             payload: {
@@ -712,13 +709,38 @@ function EditorContextProvider(props) {
     }
 
     store.changeMapTitle = (title) => {
-        updateMap(store.map._id, {...store.map, title}).then(res => {
+        const newMap = {...store.map, title}
+        updateMap(store.map._id, newMap).then(res => {
             if(res.status === 200) {
-                store.setMap(store.map._id);
+                storeReducer({
+                    type: EditorActionType.SET_MAP,
+                    payload: {
+                        map: newMap,
+                        layers: store.layers,
+                        mapTilesets: store.mapTilesets,
+                        tiles: store.tiles
+                    }
+                });
             }
         }).catch(() => {
             return {
                 status: 400
+            }
+        });
+    }
+
+    store.setMapVisibility = async (isPublic) => {
+        const map = store.map;
+        map.public = isPublic;
+        await updateMap(map._id, map);
+
+        storeReducer({
+            type: EditorActionType.SET_MAP,
+            payload: {
+                map,
+                layers: store.layers,
+                mapTilesets: store.mapTilesets,
+                tiles: store.tiles
             }
         });
     }
@@ -1185,7 +1207,7 @@ function EditorContextProvider(props) {
     store.getCopyData = () => {
         const minX = Math.min(...store.selectedPixels.map(p => p.x));
         const minY = Math.min(...store.selectedPixels.map(p => p.y));
-
+        console.log(minX, minY);
         const ret = [];
         for (let i = 0; i < store.selectedPixels.length; i++) {
             const {x, y} = store.selectedPixels[i];
@@ -1208,16 +1230,14 @@ function EditorContextProvider(props) {
                 });
             } else { //map case
                 const currentLayer = store.layers[store.currentLayer];
-                console.log(x, y, currentLayer.data[y * store.map.tileSize + x])
-
                 ret.push({
                     x: x - minX,
                     y: y - minY,
-                    tile: currentLayer.data[y * store.map.tileSize + x]
+                    tile: currentLayer.data[y * store.map.width + x]
                 });
             }
-
         }
+        console.log(ret);
         return ret;
     }
 
@@ -1232,10 +1252,35 @@ function EditorContextProvider(props) {
         const minY = store.selectedPixels[0].y;
 
         if(store.tileset) {
+            const newImage = { ...store.tilesetImage };
+            const tileIndexToEdit = store.currentTileIndex;
+            const tile = newImage.tiles[tileIndexToEdit].data;
+
             for (let i = 0; i < pixels.length; i++) {
                 const {x, y, color} = pixels[i];
-                store.editTile(x + minX, y + minY, color);
+
+                const redIndex = (y + minY) * (store.tileset.tileSize * 4) + (x + minX) * 4;
+                const greenIndex = redIndex + 1;
+                const blueIndex = redIndex + 2;
+                const alphaIndex = redIndex + 3;
+
+                tile[redIndex] = color.red;
+                tile[greenIndex] = color.green;
+                tile[blueIndex] = color.blue;
+                tile[alphaIndex] = color.alpha;
+                //store.editTile(x + minX, y + minY, color, null, true);
             }
+
+            uploadTilesetImage(store.tileset._id, newImage).then(res => {
+                storeReducer({
+                    type: EditorActionType.EDIT_TILE,
+                    payload: {
+                        tilesetImage: newImage,
+                    }
+                });
+            });
+
+            return;
         } else {
             const layer = store.layers[store.currentLayer];
 
@@ -1243,18 +1288,13 @@ function EditorContextProvider(props) {
                 const {x, y, tile} = pixels[i];
                 store.placeTile(x + minX, y + minY, tile, layer._id, true);
             }
+            updateLayer(store.map._id, layer._id, layer).then(r => {
+                toast.success("Layer updated");
+                storeReducer({
+                    type: EditorActionType.DATA_PASTED,
+                })
+            });
         }
-
-
-
-        updateLayer(store.map._id, layer._id, layer).then(r => {
-            toast.success("Layer updated");
-            storeReducer({
-                type: EditorActionType.DATA_PASTED,
-            })
-        });
-
-
     }
 
     /**
@@ -1263,10 +1303,32 @@ function EditorContextProvider(props) {
      */
     store.pasteDataActual = (pixels) => {
         if(store.tileset) {
+            const newImage = { ...store.tilesetImage };
+            const tileIndexToEdit = store.currentTileIndex;
+            const tile = newImage.tiles[tileIndexToEdit].data;
+
             for (let i = 0; i < pixels.length; i++) {
                 const {x, y, color} = pixels[i];
-                store.editTile(x, y, color);
+                const redIndex = y * (store.tileset.tileSize * 4) + x * 4;
+                const greenIndex = redIndex + 1;
+                const blueIndex = redIndex + 2;
+                const alphaIndex = redIndex + 3;
+
+                tile[redIndex] = color.red;
+                tile[greenIndex] = color.green;
+                tile[blueIndex] = color.blue;
+                tile[alphaIndex] = color.alpha;
+                //store.editTile(x, y, color, null, true);
             }
+
+            uploadTilesetImage(store.tileset._id, newImage).then(res => {
+                storeReducer({
+                    type: EditorActionType.EDIT_TILE,
+                    payload: {
+                        tilesetImage: newImage,
+                    }
+                });
+            });
             return;
         }
 
@@ -1274,7 +1336,6 @@ function EditorContextProvider(props) {
 
         for (let i = 0; i < pixels.length; i++) {
             const {x, y, tile} = pixels[i];
-            console.log(x, y, tile);
             store.placeTile(x, y, tile, layer._id, true);
         }
 

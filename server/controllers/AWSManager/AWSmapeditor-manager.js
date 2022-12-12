@@ -11,10 +11,11 @@ module.exports.addCollaborator = async (mapId, newCollaborator) => {
     const updatedUser = await User.findOneAndUpdate({_id: newCollaborator._id}, 
         {$push: {maps: mapId}}).catch(err => false);
     if (!updatedUser) return null;
-    return await Map.findOneAndUpdate(
+    const newMap = await Map.findOneAndUpdate(
         { _id: mapId},
         {$push: {collaborators: newCollaborator._id}},
         {returnOriginal: false});
+    return newMap;
 }
 
 module.exports.getCollaborators = async (mapId) => {
@@ -31,10 +32,12 @@ module.exports.addCollaboratorForTileset = async (tilesetId, newCollaborator) =>
     const updatedUser = await User.findOneAndUpdate({_id: newCollaborator._id}, 
         {$push: {tilesets: tilesetId}}).catch(err => false);
     if (!updatedUser) return null;
-    return await Tileset.findOneAndUpdate(
+    const newTileset = await Tileset.findOneAndUpdate(
         { _id: tilesetId},
         {$push: {collaborators: newCollaborator._id}},
         {returnOriginal: false});
+
+    return newTileset;
 }
 
 module.exports.getCollaboratorsForTileset = async (mapId) => {
