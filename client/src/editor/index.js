@@ -61,6 +61,7 @@ export const EditorActionType = {
 
     SET_MAP_CANVAS_REF: "SET_MAP_CANVAS_REF",
 
+    LAYER_REFRESHED: "LAYER_REFRESHED",
 }
 
 export const EditorTool = {
@@ -98,7 +99,7 @@ function EditorContextProvider(props) {
 
         dataPasted: false,
 
-        mapCanvasRef: null
+        layerRefreshed: false,
     });
 
     useEffect(() => {
@@ -243,6 +244,7 @@ function EditorContextProvider(props) {
                 setStore({
                     ...store,
                     layers: payload.layers,
+                    layerRefreshed: payload.layerRefreshed || store.layerRefreshed,
                 });
                 break;
 
@@ -282,6 +284,14 @@ function EditorContextProvider(props) {
                 setStore({
                     ...store,
                     dataPasted: !store.dataPasted,
+                });
+                break;
+
+            case EditorActionType.LAYER_REFRESHED:
+                console.log("layer refreshed")
+                setStore({
+                    ...store,
+                    layerRefreshed: !store.layerRefreshed,
                 });
                 break;
 
@@ -493,7 +503,7 @@ function EditorContextProvider(props) {
      * @param startX {number} x-coordinate
      * @param startY {number} y-coordinate
      */
-    store.mapFloodFill = (startX, startY) => {
+    store.mapFloodFill = async (startX, startY) => {
         const layers = [...store.layers];
         const layer = layers[store.currentLayer];
         const data = layer.data;
@@ -510,29 +520,31 @@ function EditorContextProvider(props) {
             const [x, y] = queue.pop();
             const tileIndex = y * (mapWidth) + x;
 
-            if (data[tileIndex] === tileToReplace) {
-                data[tileIndex] = store.currentTileIndex;
+            if (data[tileIndex].tilesetIndex === tileToReplace.tilesetIndex &&
+                data[tileIndex].tileIndex === tileToReplace.tileIndex) {
+                data[tileIndex] = store.currentTile;
                 rerenderList.push({x, y});
 
-                if (x > 0) {
-                    queue.push([x - 1, y]);
-                }
-                if (x < mapWidth - 1) {
-                    queue.push([x + 1, y]);
-                }
-                if (y > 0) {
-                    queue.push([x, y - 1]);
-                }
-                if (y < mapHeight - 1) {
-                    queue.push([x, y + 1]);
+                if(queue.length < 1000) {
+                    if (x > 0) {
+                        queue.push([x - 1, y]);
+                    }
+                    if (x < mapWidth - 1) {
+                        queue.push([x + 1, y]);
+                    }
+                    if (y > 0) {
+                        queue.push([x, y - 1]);
+                    }
+                    if (y < mapHeight - 1) {
+                        queue.push([x, y + 1]);
+                    }
                 }
             }
-            console.log(queue.length)
         }
 
         layer.data = data;
 
-        //await updateLayer(store.map._id, layer._id, layer);
+        await updateLayer(store.map._id, layer._id, layer);
 
         storeReducer({
             type: EditorActionType.UPDATE_LAYERS,
@@ -698,6 +710,27 @@ function EditorContextProvider(props) {
     store.exportVersion = async (versionId) => {
 
     }
+    
+ store.changeMapTitle = (title) => {
+        const newMap = {...store.map, title}
+        updateMap(store.map._id, newMap).then(res => {
+            if(res.status === 200) {
+                storeReducer({
+                    type: EditorActionType.SET_MAP,
+                    payload: {
+                        map: newMap,
+                        layers: store.layers,
+                        mapTilesets: store.mapTilesets,
+                        tiles: store.tiles
+                    }
+                });
+            }
+        }).catch(() => {
+            return {
+                status: 400
+            }
+        });
+    }
 
     store.setMapVisibility = async (isPublic) => {
         const map = store.map;
@@ -719,6 +752,24 @@ function EditorContextProvider(props) {
         const updatedMap = {...store.map, tilesets: [...store.map.tilesets, tileset._id]};
         await updateMap(store.map._id, updatedMap);
         await store.setMap(store.map._id);
+    }
+
+    store.refreshLayer = async (layerId) => {
+        const layers = [...store.layers];
+        const layer = layers.find(l => l._id === layerId);
+        const res = await getLayer(store.map._id, layer._id);
+        layer.data = res.data.layer.data;
+        storeReducer({
+            type: EditorActionType.UPDATE_LAYERS,
+            payload: {
+                layers,
+                refreshLayer: !store.refreshLayer,
+            }
+        });
+
+        // storeReducer({
+        //     type: EditorActionType.LAYER_REFRESHED,
+        // });
     }
 
     store.setMap = async (mapId) => {
@@ -1009,7 +1060,7 @@ function EditorContextProvider(props) {
      * @param y {number} y-coordinate
      * @param color {{red: number, green: number, blue: number, alpha: number}}
      */
-    store.editTile = (x, y, color, tileIndex) => {
+    store.editTile = (x, y, color, tileIndex, isDuplicate) => {
         if(x < 0 || y < 0 || x >= store.tileset.tileSize || y >= store.tileset.tileSize) return;
 
         const newImage = { ...store.tilesetImage };
@@ -1026,15 +1077,23 @@ function EditorContextProvider(props) {
         tile[greenIndex] = c.green;
         tile[blueIndex] = c.blue;
         tile[alphaIndex] = c.alpha;
-
-        storeReducer({
-            type: EditorActionType.EDIT_TILE,
-            payload: {
-                tilesetImage: newImage
-            }
-        });
-
-        //TODO: Update DB after swap from S3 bucket
+        if(!isDuplicate) {
+            uploadTilesetImage(store.tileset._id, newImage).then(res => {
+                storeReducer({
+                    type: EditorActionType.EDIT_TILE,
+                    payload: {
+                        tilesetImage: newImage,
+                    }
+                });
+            });
+        } else {
+            storeReducer({
+                type: EditorActionType.EDIT_TILE,
+                payload: {
+                    tilesetImage: newImage,
+                }
+            });
+        }
     }
 
     /**
@@ -1174,6 +1233,7 @@ function EditorContextProvider(props) {
                 });
             } else { //map case
                 const currentLayer = store.layers[store.currentLayer];
+                console.log(x, y, currentLayer.data[y * store.map.tileSize + x])
 
                 ret.push({
                     x: x - minX,
@@ -1196,17 +1256,22 @@ function EditorContextProvider(props) {
         const minX = store.selectedPixels[0].x;
         const minY = store.selectedPixels[0].y;
 
-        for (let i = 0; i < pixels.length; i++) {
-            if(store.tileset && store.tileset._id) {
+        if(store.tileset) {
+            for (let i = 0; i < pixels.length; i++) {
                 const {x, y, color} = pixels[i];
                 store.editTile(x + minX, y + minY, color);
-            } else { //map case
+            }
+        } else {
+            const layer = store.layers[store.currentLayer];
+
+            for (let i = 0; i < pixels.length; i++) {
                 const {x, y, tile} = pixels[i];
-                store.placeTile(x + minX, y + minY, tile, true);
+                store.placeTile(x + minX, y + minY, tile, layer._id, true);
             }
         }
 
-        const layer = store.layers[store.currentLayer];
+
+
         updateLayer(store.map._id, layer._id, layer).then(r => {
             toast.success("Layer updated");
             storeReducer({
@@ -1222,16 +1287,22 @@ function EditorContextProvider(props) {
      * @param pixels {Array} Array of tiles with their x and y coordinates and color
      */
     store.pasteDataActual = (pixels) => {
-        for (let i = 0; i < pixels.length; i++) {
-            if(store.tileset && store.tileset._id) {
+        if(store.tileset) {
+            for (let i = 0; i < pixels.length; i++) {
                 const {x, y, color} = pixels[i];
                 store.editTile(x, y, color);
-            } else { //map case
-                const {x, y, tile} = pixels[i];
-                store.placeTile(x, y, tile, undefined, true);
             }
+            return;
         }
+
         const layer = store.layers[store.currentLayer];
+
+        for (let i = 0; i < pixels.length; i++) {
+            const {x, y, tile} = pixels[i];
+            console.log(x, y, tile);
+            store.placeTile(x, y, tile, layer._id, true);
+        }
+
         updateLayer(store.map._id, layer._id, layer).then(r => {
             toast.success("Layer updated");
 
@@ -1239,7 +1310,6 @@ function EditorContextProvider(props) {
                 type: EditorActionType.DATA_PASTED,
             })
         });
-
     }
 
     /**

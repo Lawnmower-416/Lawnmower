@@ -12,12 +12,12 @@ function MainEditor() {
     const { store } = useContext(EditorContext);
     const { auth } = useContext(AuthContext);
 
-    const MAX_ZOOM = 5;
-    const MIN_ZOOM = 0.01;
-    const ZOOM_SPEED = 0.005;
+    const MAX_ZOOM = 200;
+    const MIN_ZOOM = 0.075;
+    const ZOOM_SPEED = 4;
 
-    const canvasHeight = 576;
-    const canvasWidth = 1024;
+    const canvasHeight = 768;
+    const canvasWidth = 768;
 
     const [socket, setSocket] = useState(null);
 
@@ -32,13 +32,14 @@ function MainEditor() {
     const [translateDragStart, setTranslateDragStart] = useState(null);
 
     const [lastRedraw, setLastRedraw] = useState(null);
+    const [floodFillActive, setFloodFillActive] = useState(false);
 
     const [canEdit, setCanEdit] = useState(false);
 
     const layers = store.layers;
     const currentLayer = store.layers[store.currentLayer];
 
-    let cameraZoom = 1;
+    const [totalCameraZoom, setTotalCameraZoom] = useState(1);
     let isDragging = false;
 
 
@@ -75,6 +76,15 @@ function MainEditor() {
             toast.success(data.message);
         });
 
+        socket.on("refreshLayer", (data) => {
+            toast.promise(store.refreshLayer(data.layerId), {
+                loading: "Refreshing layer...",
+                success: "Layer refreshed",
+                error: "Failed to refresh layer"
+            });
+        });
+
+
         socket.emit("join", {
             id:store.map._id,
             username: auth.user.username
@@ -91,8 +101,8 @@ function MainEditor() {
         if(socket && worker && !socketConfigured) {
             socket.on("place", (data) => {
                 console.log(data);
-                const {x, y, tileIndex, layerId} = data;
-                store.placeTile(x, y, tileIndex, layerId, true);
+                const {x, y, tile, layerId} = data;
+                store.placeTile(x, y, tile, layerId, true);
                 const layer = store.layers.find(layer => layer._id === layerId);
                 worker.postMessage({type: 'redrawCoordinate', data: {
                     x,
@@ -124,39 +134,24 @@ function MainEditor() {
             canvasHeight: canvasHeight,
         }}, [offscreenCanvas]);
 
-        const handleScroll = event => {
-            //const timer = setTimeout(() => {
-            const mousex = event.clientX - canvas.offsetLeft;
-            const mousey = event.clientY - canvas.offsetTop;
-
-                cameraZoom += event.deltaY * ZOOM_SPEED;
-                cameraZoom = Math.min(cameraZoom, MAX_ZOOM);
-                cameraZoom = Math.max(cameraZoom, MIN_ZOOM);
-                console.log(cameraZoom);
-                worker.postMessage({type: 'drawMap', data: {
-                    layers: layers,
-                    mapTilesets: store.mapTilesets,
-                    cameraZoom: cameraZoom,
-                    cameraOffset
-               }});
-            //}, 3000);
-        };
-
-        window.addEventListener('wheel', handleScroll);
+        //window.addEventListener('wheel', handleScroll);
 
         return () => {
-            window.removeEventListener('wheel', handleScroll);
+            //window.removeEventListener('wheel', handleScroll);
             worker.terminate();
         };
     }, [store.mapHeight]);
 
+    useEffect(() => {
+        console.log(totalCameraZoom)
+    }, [totalCameraZoom]);
 
     useEffect(() => {
         if (worker) {
             worker.postMessage({type: 'drawMap', data: {
                 layers,
                 mapTilesets: store.mapTilesets,
-                cameraZoom,
+                cameraZoom: 1,
                 cameraOffset
             }});
         }
@@ -167,11 +162,26 @@ function MainEditor() {
             worker.postMessage({type: 'drawMap', data: {
                 layers,
                 mapTilesets: store.mapTilesets,
-                cameraZoom,
+                cameraZoom: 1,
+                cameraOffset
+            }});
+
+            socket.emit("refreshLayer", {
+                layerId: currentLayer._id
+            });
+        }
+    }, [store.dataPasted]);
+
+    useEffect(() => {
+        if(worker) {
+            worker.postMessage({type: 'drawMap', data: {
+                layers,
+                mapTilesets: store.mapTilesets,
+                cameraZoom: 1,
                 cameraOffset
             }});
         }
-    }, [store.dataPasted]);
+    }, [store.layerRefreshed]);
 
     useEffect(() => {
         highlightPixels();
@@ -184,8 +194,8 @@ function MainEditor() {
         if(selectedPixels.length >= 2) {
             const {x: startX, y: startY} = selectedPixels[0];
             const {x: endX, y: endY} = selectedPixels[selectedPixels.length - 1];
-            const width = endX - startX;
-            const height = endY - startY;
+            const width = endX - startX + 1;
+            const height = endY - startY + 1;
             const tileSize = store.map.tileSize;
             highlight.fillStyle = 'rgba(255, 255, 255, 0.5)';
             highlight.fillRect(startX * tileSize, startY * tileSize, width * tileSize, height * tileSize);
@@ -194,8 +204,13 @@ function MainEditor() {
 
     const handleClick = (e) => {
         const rect = ref.current.getBoundingClientRect();
-        const x = Math.floor((e.clientX - rect.left) / store.map.tileSize);
-        const y = Math.floor((e.clientY - rect.top) / store.map.tileSize);
+
+        //get x and y tile coordinates of click
+        const x = Math.floor((e.clientX - rect.left) / (store.map.tileSize));
+        const y = Math.floor((e.clientY - rect.top) / (store.map.tileSize));
+
+        console.log(x, y);
+
         switch(store.currentTool) {
             case EditorTool.SELECT:
                 store.setSelectedPixels([{x, y}]);
@@ -206,6 +221,12 @@ function MainEditor() {
                     toast.error("This layer is locked");
                     return;
                 }
+
+                if(x < 0 || y < 0 || x >= store.map.width || y >= store.map.height) {
+                    toast.error("You can't place tiles outside the map");
+                    return;
+                }
+
                 store.placeTile(x, y)
                 worker.postMessage({type: 'redrawCoordinate', data: {
                     x,
@@ -216,7 +237,7 @@ function MainEditor() {
                 socket.emit("place", {
                     x,
                     y,
-                    tileIndex: store.currentTileIndex,
+                    tile: store.currentTile,
                     layerId: currentLayer._id
                 });
             break;
@@ -226,23 +247,32 @@ function MainEditor() {
                     toast.error("This layer is locked");
                     return;
                 }
-                const rerenderList = store.mapFloodFill(x, y);
-                if (rerenderList.length > 100) {
-                    worker.postMessage({type: 'drawMap', data: {
-                        layers,
-                        mapTilesets: store.mapTilesets,
-                        cameraZoom
-                    }});
-                } else{
-                    for (let i = 0; i < rerenderList.length; i++) {
-                        worker.postMessage({type: 'redrawCoordinate', data: {
-                            x: rerenderList[i].x,
-                            y: rerenderList[i].y,
-                            currentLayer,
-                            mapTilesets: store.mapTilesets
-                        }});
-                    }
+
+                if(floodFillActive) {
+                    toast.error("Flood fill already active");
+                    return;
                 }
+
+                if(store.currentTile === null) {
+                    toast.error("No tile selected");
+                    return;
+                }
+                setFloodFillActive(true);
+                toast.promise(store.mapFloodFill(x, y), {
+                    loading: "Filling...",
+                    success: "Filled",
+                    error: "Failed to fill"
+                }).then(r => {
+                    setFloodFillActive(false);
+                    worker.postMessage({type: 'drawMap', data: {
+                            layers,
+                            mapTilesets: store.mapTilesets,
+                            cameraZoom: 1
+                        }});
+                    socket.emit("majorLayerChange", {
+                        layerId: currentLayer._id
+                    });
+                }).catch(() => setFloodFillActive(false));
             break;
 
             default:
@@ -250,6 +280,28 @@ function MainEditor() {
                 break;
         }
     }
+
+    const handleScroll = event => {
+        // let cameraZoom;
+        // if(event.deltaY > 0) {
+        //     cameraZoom =  1/ (ZOOM_SPEED * 2);
+        // } else {
+        //     cameraZoom = ZOOM_SPEED;
+        // }
+        //
+        // if(totalCameraZoom * cameraZoom > MAX_ZOOM || totalCameraZoom * cameraZoom < MIN_ZOOM) {
+        //     return;
+        // }
+        // setTotalCameraZoom(totalCameraZoom * cameraZoom);
+        // console.log(totalCameraZoom * cameraZoom);
+        //
+        // worker.postMessage({type: 'drawMap', data: {
+        //         layers: layers,
+        //         mapTilesets: store.mapTilesets,
+        //         cameraZoom,
+        //         cameraOffset
+        //     }});
+    };
 
     const handleHover = (e) => {
         if(translateDragStart !== null) {
@@ -262,7 +314,7 @@ function MainEditor() {
                 worker.postMessage({type: 'drawMap', data: {
                     layers,
                     mapTilesets: store.mapTilesets,
-                    cameraZoom,
+                    cameraZoom: 1,
                     cameraOffset
                 }});
                 setLastRedraw(Date.now());
@@ -271,8 +323,8 @@ function MainEditor() {
 
         const tileSize = store.map.tileSize;
         const rect = ref.current.getBoundingClientRect();
-        const x = Math.floor((e.clientX - rect.left) / tileSize);
-        const y = Math.floor((e.clientY - rect.top) / tileSize);
+        const x = Math.floor((e.clientX - rect.left) / (tileSize * totalCameraZoom));
+        const y = Math.floor((e.clientY - rect.top) / (tileSize * totalCameraZoom));
         const highlight = highlightRef.current.getContext('2d');
         if(lastHoverTile) {
             if(lastHoverTile.x === x && lastHoverTile.y === y) return;
@@ -290,15 +342,16 @@ function MainEditor() {
 
     const handleDragStart = (e) => {
         if(store.currentTool === EditorTool.SELECT) {
-            let x = e.clientX / cameraZoom - cameraOffset.x;
-            let y = e.clientY / cameraZoom - cameraOffset.y;
+            const rect = ref.current.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / (store.map.tileSize * totalCameraZoom));
+            const y = Math.floor((e.clientY - rect.top) / (store.map.tileSize * totalCameraZoom));
             setTranslateDragStart({x,y});
         }
         if(store.currentTool !== EditorTool.REGION) return;
 
         const rect = ref.current.getBoundingClientRect();
-        const x = Math.floor((e.clientX - rect.left) / store.map.tileSize);
-        const y = Math.floor((e.clientY - rect.top) / store.map.tileSize);
+        const x = Math.floor((e.clientX - rect.left) / (store.map.tileSize * totalCameraZoom));
+        const y = Math.floor((e.clientY - rect.top) / (store.map.tileSize * totalCameraZoom));
         setDragStart({x, y});
     }
 
@@ -309,8 +362,8 @@ function MainEditor() {
         if(store.currentTool !== EditorTool.REGION) return;
 
         const rect = ref.current.getBoundingClientRect();
-        const endX = Math.floor((e.clientX - rect.left) / store.map.tileSize);
-        const endY = Math.floor((e.clientY - rect.top) / store.map.tileSize);
+        const endX = Math.floor((e.clientX - rect.left) / (store.map.tileSize * totalCameraZoom));
+        const endY = Math.floor((e.clientY - rect.top) / (store.map.tileSize * totalCameraZoom));
 
         const {x: startX, y: startY} = dragStart;
         const minX = Math.min(startX, endX);
@@ -341,6 +394,7 @@ function MainEditor() {
                             onMouseDown={handleDragStart}
                             onMouseUp={handleDragEnd}
                             onClick={handleClick}
+                            onWheel={handleScroll}
                             className="border-dark-gray border-2 absolute z-10"
                         />
                         <canvas

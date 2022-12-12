@@ -1,12 +1,19 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
+import {Fragment, useContext, useState} from 'react'
+import EditorContext from "../../editor";
 
 function MapSettingsModal({isOpen, setIsOpen}) {
-  function closeModal() {
-    setIsOpen(false)
-  }
+    const { store } = useContext(EditorContext);
 
-  return (
+    const [title , setTitle] = useState(store.map.title);
+
+
+    function closeModal() {
+        store.changeMapTitle(title);
+        setIsOpen(false)
+    }
+
+    return (
     <>
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -42,25 +49,18 @@ function MapSettingsModal({isOpen, setIsOpen}) {
                                     Settings
                                 </Dialog.Title>
                                 <div className="bg-editor-background">
-                                    <div className="grid grid-rows-4">
+                                    <div className="grid grid-rows-2">
                                         <div className="row-span-1">
                                             Title
                                         </div>
                                         <div>
-                                            <input type="text" className="w-full text-black p-2" value={"Title"}/>
+                                            <input
+                                                type="text"
+                                                className="w-full text-black p-2"
+                                               value={title}
+                                                onChange={(e) => setTitle(e.target.value)}
+                                            />
                                         </div>
-                                        <div className="row-span-1">
-                                            Map Size
-                                        </div>
-                                        <span className="row-span-1 flex justify-center">
-                                            <div className="mr-7">
-                                                <input type="text" className="w-8 text-black p-2" value={1}/> Length
-                                            </div>
-                                            <div>
-                                                <input type="text" className="w-8 text-black p-2" value={1}/> Width
-                                            </div>
-                                        </span>
-
                                     </div>
 
                                     <div className="pt-4 pb-4 flex items-center justify-center">
@@ -80,7 +80,7 @@ function MapSettingsModal({isOpen, setIsOpen}) {
             </Dialog>
         </Transition>
     </>
-  )
+    )
 }
 
 export default MapSettingsModal;

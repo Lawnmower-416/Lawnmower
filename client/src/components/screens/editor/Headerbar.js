@@ -60,17 +60,6 @@ function Headerbar({title, setSettingsOpen, setHistoryOpen, setExportOpen, setSh
                                         onClick={() => setSettingsOpen(true)}/>
                                 )}
                                 <ArrowDownTrayIcon className="h-10 w-10 text-white hover:text-editor-highlight" onClick={() => setExportOpen(true)} />
-                                { canEdit && (
-                                    <RocketLaunchIcon className="h-10 w-10 text-white hover:text-editor-highlight" onClick={() => {
-                                        if(store.tileset) {
-                                            store.saveTileset()
-                                        } else {
-                                            store.saveMap();
-                                        }
-                                    }} />
-                                )}
-
-
                             </div>
                         </div>
 

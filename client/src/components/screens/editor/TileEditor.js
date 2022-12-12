@@ -55,7 +55,7 @@ function TileEditor() {
         socket.on("place", (data) => {
             const {x, y, color, tileIndex} = data;
 
-            store.editTile(x, y, color, tileIndex);
+            store.editTile(x, y, color, tileIndex, true);
         });
 
         socket.emit("join", {
