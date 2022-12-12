@@ -78,7 +78,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
 
         let exportMap = {
             compressionlevel: -1,
-            height: store.map.height,
+            height: store.map.height / 2,
             infinite: false,
             layers: [],
             nextlayerid: 1,
@@ -89,7 +89,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
             tilesets: [],
             tilewidth: store.map.tileSize,
             type: "map",
-            width: store.map.width
+            width: store.map.width / 2
         }
 
         //store has a state value, layers, which is an array of layer objects
@@ -126,12 +126,12 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
             let exportLayer = {
                 data: dataProp,
                 properties: [],
-                height: store.map.height / 2,
+                height: store.map.height,
                 name: layer.name,
                 opacity: 1,
                 type: "tilelayer",
                 visible: visiblityProp,
-                width: store.map.width / 2,
+                width: store.map.width,
                 x: 0,
                 y: 0
             }
