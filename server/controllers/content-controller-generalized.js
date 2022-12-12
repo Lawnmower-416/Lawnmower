@@ -234,7 +234,9 @@ function createReport(req, res) {
         const response = SendEmailTo(null, "lawnmower416@outlook.com", `Report Generated for ${report._id}`, null, JSON.stringify(report));
         if (response.isError) return res.status(400).json({ success: false, errorMessage: "Couldn't send email to admin..." });
         return res.status(200).json({ success: true, report: report });
-    }).catch(err => {return res.status(500).json({ success: true, errorMessage: "Something went wrong..."}) });
+    }).catch(err => {
+        console.log(err);
+        return res.status(500).json({ success: true, errorMessage: "Something went wrong..."}) });
 }
 
 function updateReport(req, res) {  // todo: check body
