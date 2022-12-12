@@ -622,7 +622,7 @@ function GlobalStoreContextProvider(props) {
 
     store.reportUser = async (reporter, reportee, reason) => {
         try {
-            const response = await api.reportUser(reporter, reportee._id, reason);
+            const response = await api.reportUser(reporter, reportee, reason);
             if (!response.data.success) {
                 console.log("Repored User Failed...");
             } else {
