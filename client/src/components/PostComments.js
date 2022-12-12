@@ -46,7 +46,7 @@ export default function PostComments({ postType, currentPost}) {
         comments?.map((comment, index) => (
           <div key={index}>
             {
-              !comment?.parent && <Comment comment={comment} userName={auth.user.username} currentPost={currentPost} postType={postType} />
+              !comment?.parent && <Comment comment={comment} userName={auth.user?.username} currentPost={currentPost} postType={postType} />
             }
             
             {/* {
@@ -65,13 +65,15 @@ export default function PostComments({ postType, currentPost}) {
 
 
       {/* Comment input  */}
-      <form onSubmit={handleSubmit} className="postcomment__input_root">
-        <img src="/assets/user.png" alt="" height={120} width={120}/>
-        <input onChange={handleChange} type="text" name="message" id='message' placeholder='Add a comment…' required/>
-        <div className="postcomment__input_submit">
-          <button type="submit">SEND</button>
-        </div>
-      </form>
+      { auth.user?._id && (
+        <form onSubmit={handleSubmit} className="postcomment__input_root">
+          <img src="/assets/user.png" alt="" height={120} width={120}/>
+          <input onChange={handleChange} type="text" name="message" id='message' placeholder='Add a comment…' required/>
+          <div className="postcomment__input_submit">
+            <button type="submit">SEND</button>
+          </div>
+        </form>
+      )}
       
     </div>
   )
