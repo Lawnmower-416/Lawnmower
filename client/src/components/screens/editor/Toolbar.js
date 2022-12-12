@@ -73,7 +73,7 @@ function Toolbar() {
         }
 
         let newData = isTileset ?
-            oldData.map(pixel => ({...pixel, color: {r: 0, g: 0, b: 0, a: 0}})) :
+            oldData.map(pixel => ({...pixel, color: {red: 0, green: 0, blue: 0, alpha: 0}})) :
             oldData.map(pixel => ({...pixel, tile: {tilesetIndex: -1, tileIndex: -1}}));
         console.log(oldData);
         console.log(newData);
@@ -88,61 +88,61 @@ function Toolbar() {
     }
 
     const handlePaste = () => {
-        navigator.clipboard.readText().then(text => {
-            try{
-                const minX = store.selectedPixels[0].x;
-                const minY = store.selectedPixels[0].y;
+            navigator.clipboard.readText().then(text => {
+                try {
+                    const minX = store.selectedPixels[0].x;
+                    const minY = store.selectedPixels[0].y;
 
-                const pixels = JSON.parse(text);
-                const oldData = [];
-                for (let i = 0; i < pixels.length; i++) {
-                    const x = pixels[i].x;
-                    const y = pixels[i].y;
+                    const pixels = JSON.parse(text);
+                    const oldData = [];
+                    for (let i = 0; i < pixels.length; i++) {
+                        const x = pixels[i].x;
+                        const y = pixels[i].y;
 
-                    //Undo subtracting done in copy calculation to get actual position
-                    if(store.tileset !== null) {
-                        const oldColor = store.getPixel(x + minX, y + minY);
-                        oldData.push({
-                            x: x + minX,
-                            y: y + minY,
-                            color: oldColor
-                        });
-                    } else {
-                        const oldTile = store.layers[store.currentLayer].data[(y + minY) * store.map.width + (x + minX)];
-                        oldData.push({
-                            x: x + minX,
-                            y: y + minY,
-                            tile: oldTile
-                        });
+                        //Undo subtracting done in copy calculation to get actual position
+                        if (store.tileset !== null) {
+                            const oldColor = store.getPixel(x + minX, y + minY);
+                            oldData.push({
+                                x: x + minX,
+                                y: y + minY,
+                                color: oldColor
+                            });
+                        } else {
+                            const oldTile = store.layers[store.currentLayer].data[(y + minY) * store.map.width + (x + minX)];
+                            oldData.push({
+                                x: x + minX,
+                                y: y + minY,
+                                tile: oldTile
+                            });
+                        }
                     }
-                }
 
-                let newData;
-                if(store.tileset !== null) {
-                    newData = pixels.map(pixel => ({
-                        x: pixel.x + minX,
-                        y: pixel.y + minY,
-                        color: pixel.color
-                    }));
-                } else {
-                    newData = pixels.map(pixel => ({
-                        x: pixel.x + minX,
-                        y: pixel.y + minY,
-                        tile: pixel.tile
-                    }));
-                }
+                    let newData;
+                    if (store.tileset !== null) {
+                        newData = pixels.map(pixel => ({
+                            x: pixel.x + minX,
+                            y: pixel.y + minY,
+                            color: pixel.color
+                        }));
+                    } else {
+                        newData = pixels.map(pixel => ({
+                            x: pixel.x + minX,
+                            y: pixel.y + minY,
+                            tile: pixel.tile
+                        }));
+                    }
 
-                store.addTransaction(
-                    new BulkTileChangeTransaction(
-                        oldData,
-                        newData,
-                        store.pasteDataActual
-                    )
-                );
-            } catch (e) {
-                console.error(e);
-            }
-        });
+                    store.addTransaction(
+                        new BulkTileChangeTransaction(
+                            oldData,
+                            newData,
+                            store.pasteDataActual
+                        )
+                    );
+                } catch (e) {
+                    toast.error('Invalid clipboard data');
+                }
+            });
     }
 
 

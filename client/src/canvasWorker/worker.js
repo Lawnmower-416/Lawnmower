@@ -54,14 +54,12 @@ const drawMap = ({layers, mapTilesets, cameraZoom, cameraOffset}) => {
 
     const context = canvas.getContext('2d');
 
-    console.log(cameraOffset)
     context.translate(0,0);
     context.clearRect(0, 0, canvasWidth, canvasHeight);
     //context.translate(0,250)
 
     for(let i = 0; i < layers.length; i++) {
         const layer = layers[i];
-        console.log(layer)
         if(!layer.visible) continue;
         for(let j = 0; j < mapHeight; j++) {
             for(let i = 0; i < mapWidth; i++) {
@@ -98,7 +96,6 @@ const redrawCoordinate = ({x: i,y: j, currentLayer, mapTilesets}) => {
     context.clearRect(i*tileSize, j*tileSize, tileSize, tileSize);
     const tileInfo = layer.data[index];
     const {tilesetIndex, tileIndex} = tileInfo;
-    console.log(currentLayer)
     const tile = mapTilesets[tilesetIndex].imageData.tiles[tileIndex];
     const colorData = new Uint8ClampedArray(Object.values(tile.data));
     for(let y = 0; y < tileSize; y++) {
