@@ -54,10 +54,14 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                     name: store.tileset.title,
                     tilewidth: store.tileset.tileSize,
                     tileheight: store.tileset.tileSize,
-                    tilecount: tiles.length,
+                    tilecount: 64,
                     image: `${store.tileset.title}.png`,
                     imageheight: image.naturalHeight,
-                    imagewidth: image.naturalWidth
+                    imagewidth: image.naturalWidth,
+                    columns: 8,
+                    margin: 0,
+                    spacing: 0,
+                    firstgid: 1
                 }
             const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
             const t = document.createElement("a");
@@ -194,7 +198,7 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                 name: tileset.title,
                 tilewidth: tileset.tileSize,
                 tileheight: tileset.tileSize,
-                tilecount: tiles.length,
+                tilecount: 64,
                 image: `${tileset.title}.png`,
                 imageheight: 256,
                 imagewidth: 256,
