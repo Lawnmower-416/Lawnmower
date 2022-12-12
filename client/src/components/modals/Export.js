@@ -137,10 +137,21 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
             }
             for (let j = 0; j < layer.properties.length ; j++) {
                 let property = layer.properties[j];
+                let nameProp = property.name
+                let typeProp = property.type
+                if (typeProp === "Boolean") {
+                    typeProp = "bool"
+                }
+                let valueProp = property.value
+                if (valueProp === "false") {
+                    valueProp = false
+                } else if (valueProp === "true") {
+                    valueProp = true
+                }
                 exportLayer.properties.push({
-                    name: property.name,
-                    type: property.type,
-                    value: property.value
+                    name: nameProp,
+                    type: typeProp,
+                    value: valueProp
                 })
             }
             exportMap.layers.push(exportLayer);
@@ -185,8 +196,8 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                 tileheight: tileset.tileSize,
                 tilecount: tiles.length,
                 image: `${tileset.title}.png`,
-                imageheight: 64,
-                imagewidth: 64,
+                imageheight: 256,
+                imagewidth: 256,
                 columns: 8,
                 margin: 0,
                 spacing: 0,
