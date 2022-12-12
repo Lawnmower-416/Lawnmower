@@ -54,10 +54,14 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                     name: store.tileset.title,
                     tilewidth: store.tileset.tileSize,
                     tileheight: store.tileset.tileSize,
-                    tilecount: tiles.length,
+                    tilecount: 64,
                     image: `${store.tileset.title}.png`,
                     imageheight: image.naturalHeight,
-                    imagewidth: image.naturalWidth
+                    imagewidth: image.naturalWidth,
+                    columns: 8,
+                    margin: 0,
+                    spacing: 0,
+                    firstgid: 1
                 }
             const blob = new Blob([JSON.stringify(exportTileset)], {type: "text/json"});
             const t = document.createElement("a");
@@ -137,10 +141,21 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
             }
             for (let j = 0; j < layer.properties.length ; j++) {
                 let property = layer.properties[j];
+                let nameProp = property.name
+                let typeProp = property.type
+                if (typeProp === "Boolean") {
+                    typeProp = "bool"
+                }
+                let valueProp = property.value
+                if (valueProp === "false") {
+                    valueProp = false
+                } else if (valueProp === "true") {
+                    valueProp = true
+                }
                 exportLayer.properties.push({
-                    name: property.name,
-                    type: property.type,
-                    value: property.value
+                    name: nameProp,
+                    type: typeProp,
+                    value: valueProp
                 })
             }
             exportMap.layers.push(exportLayer);
@@ -183,10 +198,14 @@ function ExportModal({isOpen, setIsOpen, map, mapTitle, tileset, tilesetTitle}) 
                 name: tileset.title,
                 tilewidth: tileset.tileSize,
                 tileheight: tileset.tileSize,
-                tilecount: tiles.length,
+                tilecount: 64,
                 image: `${tileset.title}.png`,
-                imageheight: 64,
-                imagewidth: 64
+                imageheight: 256,
+                imagewidth: 256,
+                columns: 8,
+                margin: 0,
+                spacing: 0,
+                firstgid: 1
             }
             exportMap.tilesets.push(exportTileset)
         }

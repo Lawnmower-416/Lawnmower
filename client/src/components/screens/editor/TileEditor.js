@@ -15,6 +15,9 @@ function TileEditor() {
 
     const [socket, setSocket] = useState(null);
 
+    const [canEdit, setCanEdit] = useState(false);
+
+
     const ref = useRef(null);
 
     const editorSize = 600;
@@ -23,6 +26,14 @@ function TileEditor() {
     const currentTile = store.tilesetImage.tiles[store.currentTileIndex];
 
     useEffect(() => {
+        if(!auth.user) {
+            setCanEdit(false);
+            return;
+        } else {
+            if(store.tileset.owner === auth.user._id || store.collaborators.find(c => c.id === auth.user.id)) {
+                setCanEdit(true);
+            }
+        }
         const socket = io("http://34.193.24.27:3000");//"http://localhost:3000");
 
         socket.on("disconnect", () => {
@@ -55,7 +66,7 @@ function TileEditor() {
         setSocket(socket);
 
         return () => {
-            socket.disconnect();
+            if(socket) socket.disconnect();
         }
     }, [store.tileset && store.tileset._id]);
 
@@ -226,7 +237,9 @@ function TileEditor() {
     
     return (
         <main className="flex flex-col w-full bg-white overflow-x-hidden overflow-y-auto mb-14">
-            <Toolbar />
+            {canEdit && (
+                <Toolbar />
+            )}
             <div className="flex w-full mx-auto px-6 py-8 justify-center">
                 {ref &&
                     <canvas

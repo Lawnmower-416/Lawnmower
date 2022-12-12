@@ -710,15 +710,40 @@ function EditorContextProvider(props) {
     store.exportVersion = async (versionId) => {
 
     }
-
-    store.changeMapTitle = (title) => {
-        updateMap(store.map._id, {...store.map, title}).then(res => {
+    
+ store.changeMapTitle = (title) => {
+        const newMap = {...store.map, title}
+        updateMap(store.map._id, newMap).then(res => {
             if(res.status === 200) {
-                store.setMap(store.map._id);
+                storeReducer({
+                    type: EditorActionType.SET_MAP,
+                    payload: {
+                        map: newMap,
+                        layers: store.layers,
+                        mapTilesets: store.mapTilesets,
+                        tiles: store.tiles
+                    }
+                });
             }
         }).catch(() => {
             return {
                 status: 400
+            }
+        });
+    }
+
+    store.setMapVisibility = async (isPublic) => {
+        const map = store.map;
+        map.public = isPublic;
+        await updateMap(map._id, map);
+
+        storeReducer({
+            type: EditorActionType.SET_MAP,
+            payload: {
+                map,
+                layers: store.layers,
+                mapTilesets: store.mapTilesets,
+                tiles: store.tiles
             }
         });
     }

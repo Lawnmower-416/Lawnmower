@@ -176,6 +176,11 @@ io.on('connection', server => {
 
     await getUpdatePost(data, server)
   })
+
+  server.on('guest_view', async(data) => {
+    console.log({data})
+    await getUpdatePost(data, server)
+  })
 })
 
 const authRouter = require('./routes/auth-router');
