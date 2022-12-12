@@ -43,7 +43,7 @@ export default function Comment({comment, userName, currentPost, postType }) {
       case 'reply': 
         socket.emit('send_comment', {
           userId:currentPost.owner,
-          username: auth.user.username || "Guest", 
+          username: auth.user?.username || "Guest", 
           message: inputMessage, 
           postId: currentPost._id || null, 
           postType: postType, 
